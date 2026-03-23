@@ -1,0 +1,217 @@
+/* Custom prose styling for Editor.js content */
+.prose-custom {
+  color: #1f2937;
+  line-height: 1.625;
+}
+
+.prose-custom h1,
+.prose-custom h2,
+.prose-custom h3,
+.prose-custom h4,
+.prose-custom h5,
+.prose-custom h6 {
+  color: #111827;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  margin-top: 2rem;
+}
+
+.prose-custom h1:first-child,
+.prose-custom h2:first-child,
+.prose-custom h3:first-child,
+.prose-custom h4:first-child,
+.prose-custom h5:first-child,
+.prose-custom h6:first-child {
+  margin-top: 0;
+}
+
+.prose-custom h1 {
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+}
+
+@media (min-width: 768px) {
+  .prose-custom h1 {
+    font-size: 2.25rem;
+    line-height: 2.5rem;
+  }
+}
+
+.prose-custom h2 {
+  font-size: 1.5rem;
+  line-height: 2rem;
+}
+
+@media (min-width: 768px) {
+  .prose-custom h2 {
+    font-size: 1.875rem;
+    line-height: 2.25rem;
+  }
+}
+
+.prose-custom h3 {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+}
+
+@media (min-width: 768px) {
+  .prose-custom h3 {
+    font-size: 1.5rem;
+    line-height: 2rem;
+  }
+}
+
+.prose-custom h4 {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+}
+
+@media (min-width: 768px) {
+  .prose-custom h4 {
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+  }
+}
+
+.prose-custom p {
+  margin-bottom: 1.5rem;
+  font-size: 1.125rem;
+  line-height: 1.75;
+}
+
+.prose-custom ul,
+.prose-custom ol {
+  margin-bottom: 1.5rem;
+  padding-left: 1.5rem;
+}
+
+.prose-custom li {
+  margin-bottom: 0.5rem;
+  font-size: 1.125rem;
+  line-height: 1.75;
+}
+
+.prose-custom ul li {
+  list-style-type: disc;
+}
+
+.prose-custom ol li {
+  list-style-type: decimal;
+}
+
+.prose-custom blockquote {
+  border-left: 4px solid #3b82f6;
+  padding-left: 1.5rem;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+  background-color: #f9fafb;
+  font-style: italic;
+  font-size: 1.125rem;
+  line-height: 1.75;
+}
+
+.prose-custom img {
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+
+.prose-custom hr {
+  margin-top: 3rem;
+  margin-bottom: 3rem;
+  border-color: #d1d5db;
+}
+
+.prose-custom strong {
+  font-weight: 600;
+  color: #111827;
+}
+
+.prose-custom em {
+  font-style: italic;
+}
+
+.prose-custom code {
+  background-color: #f3f4f6;
+  color: #111827;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace;
+}
+
+.prose-custom pre {
+  background-color: #111827;
+  color: #f9fafb;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  overflow-x: auto;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+
+.prose-custom pre code {
+  background-color: transparent;
+  padding: 0;
+  color: inherit;
+}
+
+.prose-custom a {
+  color: #3b82f6;
+  text-decoration: underline;
+  transition: color 0.15s ease-in-out;
+}
+
+.prose-custom a:hover {
+  color: #1d4ed8;
+}
+
+/* RTL specific adjustments */
+.rtl .prose-custom ul,
+.rtl .prose-custom ol {
+  padding-right: 1.5rem;
+  padding-left: 0;
+}
+
+.rtl .prose-custom blockquote {
+  border-left: none;
+  border-right: 4px solid #3b82f6;
+  padding-right: 1.5rem;
+  padding-left: 1rem;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .prose-custom {
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+  
+  .prose-custom h1 {
+    font-size: 1.5rem;
+    line-height: 2rem;
+  }
+  
+  .prose-custom h2 {
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+  }
+  
+  .prose-custom h3 {
+    font-size: 1.125rem;
+    line-height: 1.75rem;
+  }
+  
+  .prose-custom p {
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+  
+  .prose-custom li {
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+}

@@ -1,0 +1,284 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "retry": "Retry"
+  },
+  "navigation": {
+    "home": "Home",
+    "about": "About",
+    "companies": "Companies",
+    "services": "Services",
+    "projects": "Projects",
+    "blog": "Blog",
+    "contact": "Contact"
+  },
+  "header": {
+    "cta": "Get in Touch",
+    "menu": "Menu",
+    "close": "Close"
+  },
+  "admin": {
+    "auth": {
+      "welcome": "Welcome Back",
+      "signIn": "Sign in to access your dashboard",
+      "username": "Username",
+      "emailAddress": "Email Address",
+      "password": "Password",
+      "signInButton": "Sign In",
+      "pleaseWait": "Please wait...",
+      "invalidCredentials": "Invalid username or password",
+      "forgotPassword": "Forgot your password? Contact your administrator.",
+      "demoNote": "Demo: Use any email/password to access"
+    },
+    "settings": {
+      "title": "Settings",
+      "accountSettings": "Account Settings",
+      "accountSettingsDescription": "Manage your administrator account",
+      "changePassword": "Change Password",
+      "changePasswordDescription": "Update your administrator account password",
+      "currentPassword": "Current Password",
+      "newPassword": "New Password",
+      "confirmNewPassword": "Confirm New Password",
+      "changePasswordButton": "Change Password",
+      "changingPassword": "Changing Password...",
+      "passwordRequirement": "Password must be at least 8 characters long",
+      "passwordMismatch": "New passwords do not match",
+      "passwordTooShort": "New password must be at least 8 characters long",
+      "changePasswordFailed": "Failed to change password",
+      "passwordChangedSuccess": "Password changed successfully!",
+      "notAuthenticated": "You must be logged in to perform this action",
+      "sessionManagement": "Session Management",
+      "sessionManagementDescription": "If you're experiencing authentication issues after changing your password, clear your session and log in again.",
+      "logoutAndClearSession": "Logout and Clear Session"
+    },
+    "sidebar": {
+      "dashboard": "Dashboard",
+      "blogPosts": "Blog Posts",
+      "projects": "Projects",
+      "companies": "Companies",
+      "employees": "Employees",
+      "categories": "Categories"
+    },
+    "header": {
+      "logout": "Logout"
+    },
+    "dashboard": {
+      "title": "Dashboard",
+      "subtitle": "Welcome back! Here's what's happening with your content today.",
+      "stats": {
+        "blogPosts": "Total Blog Posts",
+        "blogTrend": "+3 from last month",
+        "projects": "Total Projects",
+        "projectTrend": "+2 from last month",
+        "employees": "Total Employees",
+        "employeeTrend": "+5 from last month",
+        "companies": "Total Companies",
+        "companyTrend": "No change"
+      },
+      "activity": {
+        "blogPost": "Created new blog post",
+        "twoHoursAgo": "2 hours ago",
+        "projectStatus": "Updated project status",
+        "fourHoursAgo": "4 hours ago",
+        "newEmployee": "Added new employee",
+        "sixHoursAgo": "6 hours ago",
+        "companyProfile": "Modified company profile",
+        "oneDayAgo": "1 day ago"
+      },
+      "recentActivity": {
+        "title": "Recent Activity"
+      },
+      "quickActions": {
+        "title": "Quick Actions",
+        "newBlogPost": "New Blog Post",
+        "createContent": "Create content",
+        "addProject": "Add Project",
+        "newProject": "New project",
+        "addEmployee": "Add Employee",
+        "teamMember": "Team member"
+      }
+    },
+    "blog": {
+      "title": "Blog Management",
+      "subtitle": "Manage your blog posts",
+      "list": {
+        "title": "Blog Posts",
+        "newPost": "+ New Post",
+        "columns": {
+          "title": "Title",
+          "category": "Category",
+          "publishedDate": "Published Date",
+          "status": "Status",
+          "actions": "Actions"
+        },
+        "status": {
+          "published": "Published",
+          "draft": "Draft"
+        },
+        "actions": {
+          "edit": "Edit",
+          "delete": "Delete"
+        },
+        "noPosts": "No blog posts found"
+      },
+      "form": {
+        "create": "Create Blog Post",
+        "edit": "Edit Blog Post",
+        "notFound": "Blog Post Not Found",
+        "notFoundDescription": "The blog post you're looking for doesn't exist or has been deleted.",
+        "description": "Create a new blog post with content in both English and Arabic.",
+        "editDescription": "Update your blog post content in both English and Arabic.",
+        "sections": {
+          "englishContent": "English Content",
+          "arabicContent": "Arabic Content"
+        },
+        "errors": {
+          "titleEnRequired": "English title is required",
+          "titleArRequired": "Arabic title is required",
+          "excerptEnRequired": "English excerpt is required",
+          "excerptArRequired": "Arabic excerpt is required",
+          "contentEnRequired": "English content is required",
+          "contentArRequired": "Arabic content is required"
+        },
+        "fields": {
+          "titleEn": "Title (EN)",
+          "titleAr": "Title (AR)",
+          "excerptEn": "Excerpt (EN)",
+          "excerptAr": "Excerpt (AR)",
+          "category": "Category",
+          "coverImage": "Cover Image",
+          "content": "Content",
+          "published": "Published"
+        },
+        "placeholders": {
+          "titleEn": "Enter blog title in English",
+          "titleAr": "Enter blog title in Arabic",
+          "excerptEn": "Enter blog excerpt in English",
+          "excerptAr": "Enter blog excerpt in Arabic",
+          "content": "Write your blog content here..."
+        },
+        "buttons": {
+          "saveDraft": "Save Draft",
+          "publish": "Publish",
+          "update": "Update",
+          "cancel": "Cancel"
+        }
+      }
+    }
+  },
+  "hero": {
+    "title": "Building Excellence, Engineering Tomorrow",
+    "subtitle": "Leading construction and engineering solutions with decades of expertise and innovation",
+    "cta": "Start Your Project"
+  },
+  "home": {
+    "title": "Super Arc Group",
+    "subtitle": "A leading corporate company dedicated to excellence and innovation."
+  },
+  "about": {
+    "sectionLabel": "About Super Arc Group",
+    "title": "About Super Arc Group",
+    "description": "With over 25 years of excellence in the construction industry, Super Arc Group has established itself as a leader in delivering innovative engineering solutions across the Middle East and beyond.",
+    "experience": "Years of Experience",
+    "companies": "Companies Served",
+    "portfolio": "Projects Completed",
+    "standards": "International Standards"
+  },
+  "services": {
+    "sectionLabel": "Our Services",
+    "title": "Our Services",
+    "description": "Comprehensive construction and engineering solutions tailored to your needs",
+    "infrastructure": {
+      "title": "Infrastructure Development",
+      "description": "Large-scale infrastructure projects including roads, bridges, and utilities"
+    },
+    "industrial": {
+      "title": "Industrial Construction",
+      "description": "Specialized industrial facilities and manufacturing plants"
+    },
+    "commercial": {
+      "title": "Commercial Buildings",
+      "description": "Modern commercial spaces and office buildings"
+    },
+    "residential": {
+      "title": "Residential Projects",
+      "description": "Quality residential complexes and housing developments"
+    }
+  },
+  "projects": {
+    "sectionLabel": "Our Projects",
+    "title": "Featured Projects",
+    "description": "Explore our portfolio of successful projects across various sectors",
+    "viewAllButton": "View All Projects",
+    "noImage": "Project Image",
+    "viewDetails": "View project details",
+    "pageTitle": "Our Projects",
+    "pageDescription": "Browse our portfolio of executed projects across multiple sectors.",
+    "noProjects": "No projects found for this category.",
+    "allCategories": "All",
+    "infrastructure": "Infrastructure",
+    "industrial": "Industrial",
+    "commercial": "Commercial",
+    "residential": "Residential"
+  },
+  "contact": {
+    "sectionLabel": "Contact Us",
+    "title": "Let's Discuss Your Next Project",
+    "description": "Get in touch with Super Arc Group to discuss your project requirements. Our team will respond promptly.",
+    "form": {
+      "name": "Full Name",
+      "email": "Email",
+      "phone": "Phone",
+      "subject": "Subject",
+      "message": "Message",
+      "submit": "Send Message",
+      "submitting": "Sending...",
+      "success": "Message sent successfully! We'll get back to you soon.",
+      "error": "Failed to send message. Please try again.",
+      "required": "This field is required",
+      "invalidEmail": "Please enter a valid email address",
+      "invalidPhone": "Please enter a valid phone number",
+      "minLength": "Must be at least {min} characters"
+    },
+    "info": {
+      "title": "Contact Information",
+      "email": "info@superarcgroup.com",
+      "phone": "+971 4 123 4567",
+      "address": "123 Business Ave, Dubai, UAE"
+    }
+  },
+  "companies": {
+    "sectionLabel": "Our Partner Companies",
+    "title": "Trusted by Leading Companies",
+    "description": "We are proud to partner with industry leaders and innovative companies across various sectors, delivering exceptional results together.",
+    "viewCompany": "View Company"
+  },
+  "blog": {
+    "title": "Insights & Articles",
+    "description": "Latest news, insights, and technical perspectives from Super Arc Group.",
+    "noPosts": "No articles found.",
+    "noPostsDescription": "Check back later for new articles and insights from our team.",
+    "filterBy": "Filter by category",
+    "readMore": "Read more",
+    "minRead": "min read",
+    "categories": {
+      "all": "All Articles",
+      "infrastructure": "Infrastructure",
+      "technology": "Technology",
+      "sustainability": "Sustainability",
+      "industrial": "Industrial",
+      "management": "Management",
+      "quality": "Quality",
+      "logistics": "Logistics"
+    }
+  },
+  "footer": {
+    "rights": " 2025 Super Arc Group. All rights reserved.",
+    "tagline": "Building the Future, Today",
+    "quickLinks": "Quick Links",
+    "services": "Services",
+    "contact": "Contact Info",
+    "copyright": " 2024 Super Arc Group. All rights reserved."
+  }
+}

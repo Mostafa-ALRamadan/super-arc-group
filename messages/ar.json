@@ -1,0 +1,285 @@
+{
+  "common": {
+    "loading": "جاري التحميل...",
+    "error": "خطأ",
+    "retry": "إعادة المحاولة"
+  },
+  "navigation": {
+    "home": "الرئيسية",
+    "about": "من نحن",
+    "companies": "الشركات",
+    "services": "الخدمات",
+    "projects": "المشاريع",
+    "blog": "المدونة",
+    "contact": "اتصل بنا"
+  },
+  "header": {
+    "cta": "تواصل معنا",
+    "menu": "القائمة",
+    "close": "إغلاق"
+  },
+  "admin": {
+    "auth": {
+      "welcome": "مرحباً بعودتك",
+      "signIn": "سجل الدخول للوصول إلى لوحة التحكم",
+      "username": "اسم المستخدم",
+      "emailAddress": "البريد الإلكتروني",
+      "password": "كلمة المرور",
+      "signInButton": "تسجيل الدخول",
+      "pleaseWait": "جاري التحميل...",
+      "invalidCredentials": "اسم المستخدم أو كلمة المرور غير صحيحة",
+      "forgotPassword": "نسيت كلمة المرور؟ تواصل مع مدير النظام.",
+      "demoNote": "تجريبي: استخدم أي بريد إلكتروني/كلمة مرور للوصول"
+    },
+    "settings": {
+      "title": "الإعدادات",
+      "accountSettings": "إعدادات الحساب",
+      "accountSettingsDescription": "إدارة حساب المشرف",
+      "changePassword": "تغيير كلمة المرور",
+      "changePasswordDescription": "تحديث كلمة مرور حساب المشرف",
+      "currentPassword": "كلمة المرور الحالية",
+      "newPassword": "كلمة المرور الجديدة",
+      "confirmNewPassword": "تأكيد كلمة المرور الجديدة",
+      "changePasswordButton": "تغيير كلمة المرور",
+      "changingPassword": "جاري تغيير كلمة المرور...",
+      "passwordRequirement": "يجب أن تكون كلمة المرور 8 أحرف على الأقل",
+      "passwordMismatch": "كلمات المرور الجديدة غير متطابقة",
+      "passwordTooShort": "يجب أن تكون كلمة المرور الجديدة 8 أحرف على الأقل",
+      "changePasswordFailed": "فشل في تغيير كلمة المرور",
+      "passwordChangedSuccess": "تم تغيير كلمة المرور بنجاح!",
+      "notAuthenticated": "يجب أن تكون مسجلاً للدخول للقيام بهذا الإجراء",
+      "sessionManagement": "إدارة الجلسة",
+      "sessionManagementDescription": "إذا كنت تواجه مشاكل في المصادقة بعد تغيير كلمة المرور، امسح الجلسة وسجل الدخول مرة أخرى.",
+      "logoutAndClearSession": "تسجيل الخروج ومسح الجلسة"
+    },
+    "sidebar": {
+      "dashboard": "لوحة التحكم",
+      "blogPosts": "مقالات المدونة",
+      "projects": "المشاريع",
+      "companies": "الشركات",
+      "employees": "الموظفين",
+      "categories": "الفئات",
+      "messages": "الرسائل"
+    },
+    "header": {
+      "logout": "تسجيل الخروج"
+    },
+    "dashboard": {
+      "title": "لوحة التحكم",
+      "subtitle": "مرحباً بعودتك! إليك ما يحدث مع محتواك اليوم.",
+      "stats": {
+        "blogPosts": "إجمالي مقالات المدونة",
+        "blogTrend": "+3 من الشهر الماضي",
+        "projects": "إجمالي المشاريع",
+        "projectTrend": "+2 من الشهر الماضي",
+        "employees": "إجمالي الموظفين",
+        "employeeTrend": "+5 من الشهر الماضي",
+        "companies": "إجمالي الشركات",
+        "companyTrend": "لا يوجد تغيير"
+      },
+      "activity": {
+        "blogPost": "إنشاء مقال مدونة جديد",
+        "twoHoursAgo": "منذ ساعتين",
+        "projectStatus": "تحديث حالة المشروع",
+        "fourHoursAgo": "منذ 4 ساعات",
+        "newEmployee": "إضافة موظف جديد",
+        "sixHoursAgo": "منذ 6 ساعات",
+        "companyProfile": "تعديل ملف الشركة",
+        "oneDayAgo": "منذ يوم واحد"
+      },
+      "recentActivity": {
+        "title": "النشاط الأخير"
+      },
+      "quickActions": {
+        "title": "إجراءات سريعة",
+        "newBlogPost": "مقال مدونة جديد",
+        "createContent": "إنشاء محتوى",
+        "addProject": "إضافة مشروع",
+        "newProject": "مشروع جديد",
+        "addEmployee": "إضافة موظف",
+        "teamMember": "عضو الفريق"
+      }
+    },
+    "blog": {
+      "title": "إدارة المدونة",
+      "subtitle": "إدارة مقالات المدونة",
+      "list": {
+        "title": "مقالات المدونة",
+        "newPost": "+ مقال جديد",
+        "columns": {
+          "title": "العنوان",
+          "category": "الفئة",
+          "publishedDate": "تاريخ النشر",
+          "status": "الحالة",
+          "actions": "الإجراءات"
+        },
+        "status": {
+          "published": "منشور",
+          "draft": "مسودة"
+        },
+        "actions": {
+          "edit": "تعديل",
+          "delete": "حذف"
+        },
+        "noPosts": "لم يتم العثور على مقالات"
+      },
+      "form": {
+        "create": "إنشاء مقال مدونة",
+        "edit": "تعديل مقال المدونة",
+        "notFound": "مقال المدونة غير موجود",
+        "notFoundDescription": "مقال المدونة الذي تبحث عنه غير موجود أو تم حذفه.",
+        "description": "إنشاء مقال مدونة جديد بمحتوى باللغتين الإنجليزية والعربية.",
+        "editDescription": "تحديث محتوى مقال المدونة باللغتين الإنجليزية والعربية.",
+        "sections": {
+          "englishContent": "المحتوى الإنجليزي",
+          "arabicContent": "المحتوى العربي"
+        },
+        "errors": {
+          "titleEnRequired": "العنوان الإنجليزي مطلوب",
+          "titleArRequired": "العنوان العربي مطلوب",
+          "excerptEnRequired": "المقتطف الإنجليزي مطلوب",
+          "excerptArRequired": "المقتطف العربي مطلوب",
+          "contentEnRequired": "المحتوى الإنجليزي مطلوب",
+          "contentArRequired": "المحتوى العربي مطلوب"
+        },
+        "fields": {
+          "titleEn": "العنوان (EN)",
+          "titleAr": "العنوان (AR)",
+          "excerptEn": "المقتطف (EN)",
+          "excerptAr": "المقتطف (AR)",
+          "category": "الفئة",
+          "coverImage": "صورة الغلاف",
+          "content": "المحتوى",
+          "published": "منشور"
+        },
+        "placeholders": {
+          "titleEn": "أدخل عنوان المدونة بالإنجليزية",
+          "titleAr": "أدخل عنوان المدونة بالعربية",
+          "excerptEn": "أدخل مقتطف المدونة بالإنجليزية",
+          "excerptAr": "أدخل مقتطف المدونة بالعربية",
+          "content": "اكتب محتوى المدونة هنا..."
+        },
+        "buttons": {
+          "saveDraft": "حفظ المسودة",
+          "publish": "نشر",
+          "update": "تحديث",
+          "cancel": "إلغاء"
+        }
+      }
+    }
+  },
+  "hero": {
+    "title": "بناء التميز، هندسة المستقبل",
+    "subtitle": "حلول الهندسة والبناء الرائدة مع عقود من الخبرة والابتكار",
+    "cta": "ابدأ مشروعك"
+  },
+  "home": {
+    "title": "مجموعة سوبر آرك",
+    "subtitle": "شركة رائدة مكرسة للتميز والابتكار."
+  },
+  "about": {
+    "sectionLabel": "معلومات عنا",
+    "title": "معلومات عنا",
+    "description": "مع أكثر من 25 عاماً من التميز في صناعة البناء، أثبتت مجموعة سوبر آرك نفسها كقائدة في تقديم حلول هندسية مبتكرة في جميع أنحاء الشرق الأوسط وما وراءها.",
+    "experience": "سنوات الخبرة",
+    "companies": "الشركات التي خدمتها",
+    "portfolio": "المشاريع المكتملة",
+    "standards": "المعايير الدولية"
+  },
+  "services": {
+    "sectionLabel": "خدماتنا",
+    "title": "خدماتنا",
+    "description": "حلول البناء والهندسة الشاملة المصممة وفقاً لاحتياجاتك",
+    "infrastructure": {
+      "title": "تطوير البنية التحتية",
+      "description": "مشاريع البنية التحتية الكبيرة بما في ذلك الطرق والجسور والمرافق"
+    },
+    "industrial": {
+      "title": "البناء الصناعي",
+      "description": "المنشآت الصناعية المتخصصة ومصانع التصنيع"
+    },
+    "commercial": {
+      "title": "المباني التجارية",
+      "description": "المساحات التجارية الحديثة والمباني المكتبية"
+    },
+    "residential": {
+      "title": "المشاريع السكنية",
+      "description": "المجمعات السكنية عالية الجودة وتطويرات الإسكان"
+    }
+  },
+  "projects": {
+    "sectionLabel": "مشاريعنا",
+    "title": "المشاريع المميزة",
+    "description": "استكشف معرض أعمالنا من المشاريع الناجحة في مختلف القطاعات",
+    "viewAllButton": "عرض جميع المشاريع",
+    "noImage": "صورة المشروع",
+    "viewDetails": "عرض تفاصيل المشروع",
+    "pageTitle": "مشاريعنا",
+    "pageDescription": "تصفح محفظة مشاريعنا المنفذة في مختلف القطاعات.",
+    "noProjects": "لم يتم العثور على مشاريع في هذه الفئة.",
+    "allCategories": "الكل",
+    "infrastructure": "البنية التحتية",
+    "industrial": "صناعي",
+    "commercial": "تجاري",
+    "residential": "سكني"
+  },
+  "contact": {
+    "sectionLabel": "تواصل معنا",
+    "title": "دعنا نناقش مشروعك القادم",
+    "description": "تواصل مع مجموعة سوبر آرك لمناقشة متطلبات مشروعك وسيقوم فريقنا بالرد عليك في أقرب وقت.",
+    "form": {
+      "name": "الاسم الكامل",
+      "email": "البريد الإلكتروني",
+      "phone": "رقم الهاتف",
+      "subject": "الموضوع",
+      "message": "الرسالة",
+      "submit": "إرسال الرسالة",
+      "submitting": "جاري الإرسال...",
+      "success": "تم إرسال الرسالة بنجاح! سنتواصل معك قريباً.",
+      "error": "فشل في إرسال الرسالة. يرجى المحاولة مرة أخرى.",
+      "required": "هذا الحقل مطلوب",
+      "invalidEmail": "يرجى إدخال بريد إلكتروني صحيح",
+      "invalidPhone": "يرجى إدخال رقم هاتف صحيح",
+      "minLength": "يجب أن يكون على الأقل {min} أحرف"
+    },
+    "info": {
+      "title": "معلومات الاتصال",
+      "email": "info@superarcgroup.com",
+      "phone": "+971 4 123 4567",
+      "address": "123 شارع الأعمال، دبي، الإمارات العربية المتحدة"
+    }
+  },
+  "companies": {
+    "sectionLabel": "شركاتنا الشريكة",
+    "title": "موثوق بها من قبل الشركات الرائدة",
+    "description": "نفخر بالشراكة مع قادة الصناعة والشركات المبتكرة في مختلف القطاعات، ونقدم معاً نتائج استثنائية.",
+    "viewCompany": "عرض الشركة"
+  },
+  "blog": {
+    "title": "المقالات والرؤى",
+    "description": "أحدث الأخبار والرؤى والمقالات الفنية من مجموعة سوبر آرك.",
+    "noPosts": "لم يتم العثور على مقالات.",
+    "noPostsDescription": "عد لاحقاً لمقالات ورؤى جديدة من فريقنا.",
+    "filterBy": "تصفية حسب الفئة",
+    "readMore": "اقرأ المزيد",
+    "minRead": "دقيقة قراءة",
+    "categories": {
+      "all": "جميع المقالات",
+      "infrastructure": "البنية التحتية",
+      "technology": "التكنولوجيا",
+      "sustainability": "الاستدامة",
+      "industrial": "صناعي",
+      "management": "الإدارة",
+      "quality": "الجودة",
+      "logistics": "الخدمات اللوجستية"
+    }
+  },
+  "footer": {
+    "rights": " 2025 مجموعة سوبر آرك. جميع الحقوق محفوظة.",
+    "tagline": "نبني المستقبل، اليوم",
+    "quickLinks": "روابط سريعة",
+    "services": "الخدمات",
+    "contact": "معلومات الاتصال",
+    "copyright": " 2024 مجموعة سوبر آرك. جميع الحقوق محفوظة."
+  }
+}
