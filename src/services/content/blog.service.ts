@@ -52,24 +52,24 @@ export interface BlogPost {
 }
 
 export interface BlogFormData {
-  title_en: string;
-  title_ar: string;
-  slug: string;
-  excerpt_en: string;
-  excerpt_ar: string;
-  content: string;
-  category_id: number;
-  author_id: number;
+  title: { en: string; ar: string };
+  excerpt: { en: string; ar: string };
+  content: any;
   cover_image_id?: number;
-  tags_en: string[];
-  tags_ar: string[];
-  is_featured: boolean;
+  category_id: number;
+  author_id?: number;
+  reading_time?: number;
+  tags: { en: string[]; ar: string[] };
   status: 'draft' | 'published' | 'archived';
+  is_featured?: boolean;
   seo?: {
-    title?: string;
-    description?: string;
-    keywords?: string[];
+    meta_description?: string;
+    keywords?: string;
+    og_title?: string;
+    og_description?: string;
+    og_image?: string;
   };
+  published_at?: string;
 }
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000/api';

@@ -223,7 +223,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         avatar: relatedPost.author.avatar || ''
       } : { name: '', avatar: '' },
       publishedAt: relatedPost.published_at || '',
-      readingTime: relatedPost.reading_time,
+      readingTime: relatedPost.reading_time || 5,
       tags: (relatedPost as any).tags?.[locale as 'en' | 'ar'] || (relatedPost as any).tags_en || []
     };
   }));

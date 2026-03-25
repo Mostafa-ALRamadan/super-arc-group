@@ -80,7 +80,7 @@ export default function NewBlogPost() {
     setSuccess(null);
     
     try {
-      // Transform BlogForm data to match BlogFormData interface
+      // Transform BlogForm data to match the expected API structure
       const blogData = {
         title: {
           en: data.title?.en || '',
