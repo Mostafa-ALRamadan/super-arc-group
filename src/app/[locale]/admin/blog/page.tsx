@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import AdminLayout from '../../../../../components/admin/layout/AdminLayout';
 import { useTranslations, useLocale } from '../../../../contexts/TranslationContext';
@@ -9,6 +9,7 @@ import LoadingSpinner from '../../../../../components/ui/admin/LoadingSpinner';
 import EmptyState from '../../../../../components/ui/admin/EmptyState';
 import ConfirmDialog from '../../../../../components/ui/admin/ConfirmDialog';
 import Alert from '../../../../../components/ui/admin/Alert';
+import AdminPagination from '../../../../../components/ui/admin/AdminPagination';
 import { useAuthCheck } from '../../../../../src/hooks/useAuthCheck';
 import { useAuth } from '../../../../../src/contexts/AuthContext';
 
@@ -102,6 +103,7 @@ export default function BlogManagement() {
 
   // Load blog posts using service
   const [blogPosts, setBlogPosts] = useState<AdminBlogPost[]>([]);
+  const [allBlogPosts, setAllBlogPosts] = useState<AdminBlogPost[]>([]); // Store all posts for filtering
   const [categories, setCategories] = useState<Array<{id: number; name_en: string; name_ar: string}>>([]);
   const [loading, setLoading] = useState(false); // Start with false, only set true when authenticated
   const [error, setError] = useState<string | null>(null);
@@ -111,6 +113,17 @@ export default function BlogManagement() {
     postId: '',
     postTitle: ''
   });
+  
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalPosts, setTotalPosts] = useState(0);
+  const POSTS_PER_PAGE = 10;
+  
+  // Filter states
+  const [searchTerm, setSearchTerm] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState('');
+  const [statusFilter, setStatusFilter] = useState('');
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -122,9 +135,9 @@ export default function BlogManagement() {
       setError(null);
       try {
         // Fetch blog posts
-        const posts = await blogService.getPosts();
+        const response = await blogService.getAllPosts(1, 1000); // Get all posts for admin
         // Transform the data to match the admin interface
-        const transformedPosts = posts.map(post => {
+        const transformedPosts = response.posts.map(post => {
           return {
           id: post.id.toString(),
           slug: post.slug,
@@ -154,7 +167,8 @@ export default function BlogManagement() {
           updatedAt: post.updated_at || post.published_at || new Date().toISOString()
           };
         });
-        setBlogPosts(transformedPosts);
+        setAllBlogPosts(transformedPosts);
+        setTotalPosts(transformedPosts.length);
 
         const baseUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000/api'}`;
         const categoriesResponse = await fetch(`${baseUrl}/categories/?type=blog`);
@@ -173,24 +187,44 @@ export default function BlogManagement() {
     loadData();
   }, [isAuthenticated, locale]);
 
-  // Filter states
-  const [searchTerm, setSearchTerm] = useState('');
-  const [categoryFilter, setCategoryFilter] = useState('');
-  const [statusFilter, setStatusFilter] = useState('');
+  // Filter blog posts based on search and filters (applied to ALL posts)
+  const filteredBlogPosts = useMemo(() => {
+    return allBlogPosts.filter(post => {
+      const searchMatch = searchTerm === '' || 
+        post.title[locale as 'en' | 'ar'].toLowerCase().includes(searchTerm.toLowerCase()) ||
+        post.slug.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        post.excerpt[locale as 'en' | 'ar'].toLowerCase().includes(searchTerm.toLowerCase()) ||
+        post.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
 
-  // Filter blog posts based on search and filters
-  const filteredBlogPosts = blogPosts.filter(post => {
-    const searchMatch = searchTerm === '' || 
-      post.title[locale as 'en' | 'ar'].toLowerCase().includes(searchTerm.toLowerCase()) ||
-      post.slug.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      post.excerpt[locale as 'en' | 'ar'].toLowerCase().includes(searchTerm.toLowerCase()) ||
-      post.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
+      const categoryMatch = categoryFilter === '' || post.category.id === categoryFilter;
+      const statusMatch = statusFilter === '' || post.status === statusFilter;
 
-    const categoryMatch = categoryFilter === '' || post.category.id === categoryFilter;
-    const statusMatch = statusFilter === '' || post.status === statusFilter;
+      return searchMatch && categoryMatch && statusMatch;
+    });
+  }, [allBlogPosts, searchTerm, categoryFilter, statusFilter, locale]);
 
-    return searchMatch && categoryMatch && statusMatch;
-  });
+  // Apply pagination to FILTERED results
+  const paginatedBlogPosts = useMemo(() => {
+    const startIndex = (currentPage - 1) * POSTS_PER_PAGE;
+    const endIndex = startIndex + POSTS_PER_PAGE;
+    return filteredBlogPosts.slice(startIndex, endIndex);
+  }, [filteredBlogPosts, currentPage]);
+
+  // Update pagination info for filtered results
+  useEffect(() => {
+    const calculatedTotalPages = Math.ceil(filteredBlogPosts.length / POSTS_PER_PAGE);
+    setTotalPages(calculatedTotalPages);
+    
+    // Reset to page 1 if current page is beyond the filtered results
+    if (currentPage > calculatedTotalPages && calculatedTotalPages > 0) {
+      setCurrentPage(1);
+    }
+  }, [filteredBlogPosts.length, currentPage]);
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, categoryFilter, statusFilter]);
 
   const handleEdit = (postSlug: string) => {
     router.push(`/${locale}/admin/blog/edit/${postSlug}`);
@@ -231,6 +265,7 @@ export default function BlogManagement() {
     setSearchTerm('');
     setCategoryFilter('');
     setStatusFilter('');
+    setCurrentPage(1); // Reset to page 1 when clearing filters
   };
 
   const formatDate = (dateString: string) => {
@@ -352,8 +387,8 @@ export default function BlogManagement() {
         <div className="mb-4 text-sm text-muted">
           {(searchTerm || categoryFilter || statusFilter) && (
             locale === 'ar' 
-              ? `عرض ${filteredBlogPosts.length} من ${blogPosts.length} مشاركة`
-              : `Showing ${filteredBlogPosts.length} of ${blogPosts.length} posts`
+              ? `عرض ${filteredBlogPosts.length} من ${allBlogPosts.length} مشاركة`
+              : `Showing ${filteredBlogPosts.length} of ${allBlogPosts.length} posts`
           )}
         </div>
 
@@ -415,7 +450,7 @@ export default function BlogManagement() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {filteredBlogPosts.map((post) => (
+                {paginatedBlogPosts.map((post) => (
                   <tr key={post.id} className="hover:bg-gray-50">
                     <td className={`px-4 sm:px-6 py-4 whitespace-nowrap ${locale === 'ar' ? 'text-right' : 'text-left'}`}>
                       <div>
@@ -456,6 +491,15 @@ export default function BlogManagement() {
                 ))}
               </tbody>
             </table>
+            {/* Admin Pagination */}
+            <AdminPagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+              rowsPerPage={POSTS_PER_PAGE}
+              totalRows={filteredBlogPosts.length}
+              locale={locale as 'en' | 'ar'}
+            />
           </div>
           )}
         </div>

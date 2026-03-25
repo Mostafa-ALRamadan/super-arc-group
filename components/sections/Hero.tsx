@@ -76,6 +76,8 @@ export default function Hero() {
         <div className={`absolute top-20 ${isRTL ? 'left-10' : 'right-10'} w-72 h-72 bg-primary/20 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse`} />
         <div className={`absolute bottom-20 ${isRTL ? 'right-10' : 'left-10'} w-96 h-96 bg-primary-dark/20 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse`} style={{ animationDelay: '2s' }} />
         <div className={`absolute top-1/2 ${isRTL ? 'left-1/2' : 'right-1/2'} transform -translate-y-1/2 ${isRTL ? 'translate-x-1/2' : '-translate-x-1/2'} w-80 h-80 bg-primary/15 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse`} style={{ animationDelay: '4s' }} />
+        <div className={`absolute bottom-10 ${isRTL ? 'left-10' : 'right-10'} w-96 h-96 bg-primary-dark/20 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse max-w-[40vw] max-h-[40vw]`} style={{ animationDelay: '6s' }} />
+        <div className={`absolute top-10 ${isRTL ? 'right-10' : 'left-10'} w-64 h-64 bg-primary/20 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse max-w-[35vw] max-h-[35vw]`} style={{ animationDelay: '1s' }} />
       </div>
 
       <div className="relative z-10 min-h-screen flex items-center">
@@ -177,7 +179,7 @@ export default function Hero() {
                   
                   {/* Decorative Elements */}
                   <div className={`absolute -top-4 ${isRTL ? '-right-4' : '-left-4'} w-8 h-8 bg-primary-dark rounded-full shadow-lg`}></div>
-                  <div className={`absolute -bottom-4 ${isRTL ? '-left-4' : '-right-4'} w-6 h-6 bg-primary rounded-full shadow-lg`}></div>
+                  <div className={`absolute -bottom-2 ${isRTL ? '-left-2' : '-right-2'} w-6 h-6 bg-primary rounded-full shadow-lg`}></div>
                 </div>
               </div>
             </div>

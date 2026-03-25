@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import AdminLayout from '../../../../../components/admin/layout/AdminLayout';
 import { useTranslations } from '../../../../../src/contexts/TranslationContext';
@@ -8,6 +8,7 @@ import { companiesService, type Company } from '../../../../services/entities/co
 import LoadingSpinner from '../../../../../components/ui/admin/LoadingSpinner';
 import ConfirmDialog from '../../../../../components/ui/admin/ConfirmDialog';
 import Alert from '../../../../../components/ui/admin/Alert';
+import AdminPagination from '../../../../../components/ui/admin/AdminPagination';
 import { useAuthCheck } from '../../../../../src/hooks/useAuthCheck';
 import { useAuth } from '../../../../../src/contexts/AuthContext';
 
@@ -52,9 +53,16 @@ export default function CompaniesManagement() {
   const sidebarPosition = locale === 'ar' ? 'right' : 'left';
 
   const [companies, setCompanies] = useState<Company[]>([]);
+  const [allCompanies, setAllCompanies] = useState<Company[]>([]); // Store all companies for filtering
   const [loading, setLoading] = useState(false); // Start with false, only set true when authenticated
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalCompanies, setTotalCompanies] = useState(0);
+  const COMPANIES_PER_PAGE = 10;
 
   // Load companies from API (only when authenticated)
   useEffect(() => {
@@ -66,7 +74,8 @@ export default function CompaniesManagement() {
       try {
         setLoading(true);
         const companiesData = await companiesService.getCompanies();
-        setCompanies(companiesData);
+        setAllCompanies(companiesData);
+        setTotalCompanies(companiesData.length);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load companies');
       } finally {
@@ -85,14 +94,39 @@ export default function CompaniesManagement() {
     companyName: ''
   });
 
-  // Filter companies based on search
-  const filteredCompanies = companies.filter(company => {
-    const searchMatch = searchTerm === '' || 
-      company.name[locale as 'en' | 'ar'].toLowerCase().includes(searchTerm.toLowerCase()) ||
-      company.slug.toLowerCase().includes(searchTerm.toLowerCase());
+  // Filter companies based on search (applied to ALL companies)
+  const filteredCompanies = useMemo(() => {
+    return allCompanies.filter(company => {
+      const searchMatch = searchTerm === '' || 
+        company.name[locale as 'en' | 'ar'].toLowerCase().includes(searchTerm.toLowerCase()) ||
+        company.slug.toLowerCase().includes(searchTerm.toLowerCase());
 
-    return searchMatch;
-  });
+      return searchMatch;
+    });
+  }, [allCompanies, searchTerm, locale]);
+
+  // Apply pagination to FILTERED results
+  const paginatedCompanies = useMemo(() => {
+    const startIndex = (currentPage - 1) * COMPANIES_PER_PAGE;
+    const endIndex = startIndex + COMPANIES_PER_PAGE;
+    return filteredCompanies.slice(startIndex, endIndex);
+  }, [filteredCompanies, currentPage]);
+
+  // Update pagination info for filtered results
+  useEffect(() => {
+    const calculatedTotalPages = Math.ceil(filteredCompanies.length / COMPANIES_PER_PAGE);
+    setTotalPages(calculatedTotalPages);
+    
+    // Reset to page 1 if current page is beyond the filtered results
+    if (currentPage > calculatedTotalPages && calculatedTotalPages > 0) {
+      setCurrentPage(1);
+    }
+  }, [filteredCompanies.length, currentPage]);
+
+  // Reset to page 1 when search changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm]);
 
   const handleEdit = (companySlug: string) => {
     router.push(`/${locale}/admin/companies/edit/${companySlug}`);
@@ -110,7 +144,7 @@ export default function CompaniesManagement() {
     try {
       await companiesService.deleteCompany(deleteConfirm.companySlug);
       // Remove from frontend state after successful deletion
-      setCompanies(prev => prev.filter(company => company.slug !== deleteConfirm.companySlug));
+      setAllCompanies(prev => prev.filter(company => company.slug !== deleteConfirm.companySlug));
       setSuccess(locale === 'ar' ? 'تم حذف الشركة بنجاح' : 'Company deleted successfully');
       
       // Auto-dismiss success notification after 5 seconds
@@ -133,6 +167,7 @@ export default function CompaniesManagement() {
 
   const clearFilters = () => {
     setSearchTerm('');
+    setCurrentPage(1); // Reset to page 1 when clearing filters
   };
 
   // Show loading while checking authentication
@@ -246,7 +281,7 @@ export default function CompaniesManagement() {
                     </td>
                   </tr>
                 ) : (
-                  filteredCompanies.map((company) => (
+                  paginatedCompanies.map((company) => (
                     <tr key={company.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap">
                         {company.image && (
@@ -286,7 +321,17 @@ export default function CompaniesManagement() {
                 )}
               </tbody>
             </table>
-          </div>
+            
+            {/* Admin Pagination */}
+            <AdminPagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+              rowsPerPage={COMPANIES_PER_PAGE}
+              totalRows={filteredCompanies.length}
+              locale={locale}
+            />
+            </div>
           )}
         </div>
 
@@ -294,7 +339,7 @@ export default function CompaniesManagement() {
         {filteredCompanies.length === 0 && (
           <div className="text-center py-8 sm:py-12">
             <div className="text-gray-500 text-lg mb-4">
-              {companies.length === 0 
+              {allCompanies.length === 0 
                 ? (locale === 'ar' ? 'لم يتم العثور على شركات' : 'No companies found')
                 : (locale === 'ar' ? 'لا توجد شركات تطابق بحثك' : 'No companies match your search')
               }

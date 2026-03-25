@@ -77,12 +77,6 @@ export default function About() {
 
   return (
     <section id="about" ref={setElement} className="py-20 bg-gradient-to-br from-bg-light to-white overflow-hidden">
-      {/* Background Pattern */}
-      <div className="absolute inset-0 opacity-5">
-        <div className={`absolute top-10 ${isRTL ? 'right-10' : 'left-10'} w-64 h-64 bg-primary rounded-full`}></div>
-        <div className={`absolute bottom-10 ${isRTL ? 'left-10' : 'right-10'} w-96 h-96 bg-primary-dark rounded-full`}></div>
-      </div>
-
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-16">

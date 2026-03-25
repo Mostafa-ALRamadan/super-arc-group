@@ -6,6 +6,7 @@ import Link from 'next/link';
 import LoadingSpinner from '../../../../components/ui/admin/LoadingSpinner';
 import EmptyState from '../../../../components/ui/admin/EmptyState';
 import Alert from '../../../../components/ui/admin/Alert';
+import Pagination from '../../../../components/ui/public/Pagination';
 
 // Project interface matching API response
 interface Project {
@@ -41,7 +42,6 @@ interface Project {
   location_en: string;
   location_ar: string;
   client: string;
-  completed_at: string;
   created_at: string;
   updated_at: string;
 }
@@ -72,35 +72,38 @@ function ProjectsPageContent() {
   const [categories, setCategories] = useState<Array<{ value: string; label: { en: string; ar: string } }>>([]);
   const [dataLoading, setDataLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [totalPages, setTotalPages] = useState<number>(1);
   const searchParams = useSearchParams();
   const router = useRouter();
-  
+
   // Inline debouncing for search term (same as blog page)
   const debouncedSearchTermRef = useRef<string>(searchTerm);
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState<string>(searchTerm);
-  
+
   // Track previous values to prevent unnecessary updates
   const prevValuesRef = useRef({
     search: '',
-    category: 'all'
+    category: 'all',
+    page: 1
   });
-  
+
   // Initialize prevValuesRef after component mounts
   useEffect(() => {
     prevValuesRef.current = {
       search: searchTerm,
-      category: selectedCategory
+      category: selectedCategory,
+      page: currentPage
     };
   }, []);
-  
+
   // Flag to prevent URL sync from overriding user input
   const isUserInputRef = useRef(false);
 
   useEffect(() => {
     setMounted(true);
     const pathname = window.location.pathname;
-    
+
     // Extract locale from pathname
     if (pathname.startsWith('/ar')) {
       setLocale('ar');
@@ -112,53 +115,81 @@ function ProjectsPageContent() {
   // Sync with URL query params
   useEffect(() => {
     if (!mounted || isUserInputRef.current) return;
-    
     const categoryFromUrl = searchParams.get('category');
     const searchFromUrl = searchParams.get('search');
+    const pageFromUrl = searchParams.get('page');
     const finalCategory = categoryFromUrl || 'all';
     const finalSearch = searchFromUrl || '';
+    const finalPage = pageFromUrl ? parseInt(pageFromUrl) : 1;
     
     if (finalCategory !== selectedCategory) {
       setSelectedCategory(finalCategory);
     }
     if (finalSearch !== searchTerm) {
       setSearchTerm(finalSearch);
+      // Set debounced search term immediately to avoid flash
+      setDebouncedSearchTerm(finalSearch);
     }
-  }, [searchParams, mounted, selectedCategory, searchTerm]);
+    if (finalPage !== currentPage) {
+      setCurrentPage(finalPage);
+    }
+  }, [searchParams, mounted, selectedCategory, searchTerm, currentPage]);
 
   // Load projects and categories from API
   useEffect(() => {
     if (!mounted) return;
-    
     const loadData = async () => {
       try {
         const baseUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000/api'}`;
-        
         // Fetch projects
-        const projectsResponse = await fetch(`${baseUrl}/projects/`);
+        const projectsResponse = await fetch(`${baseUrl}/projects/?page=1&limit=1000`);
         if (!projectsResponse.ok) {
           throw new Error('Failed to fetch projects');
         }
         const projectsData = await projectsResponse.json();
-        setProjects(projectsData.results || projectsData || []);
-        
+        // Handle paginated response - get all projects
+        let allProjects = projectsData.results || projectsData || [];
+
+        // If backend has pagination and we didn't get all projects, fetch remaining pages
+        if (projectsData.next && projectsData.count > allProjects.length) {
+          let currentPage = 2;
+          let currentResult = projectsData;
+
+          while (currentResult.next) {
+            const nextPageUrl = currentResult.next;
+            const pageResponse = await fetch(nextPageUrl);
+
+            if (pageResponse.ok) {
+              const pageResult = await pageResponse.json();
+              const pageProjects = pageResult.results || pageResult.data || pageResult;
+              allProjects = [...allProjects, ...pageProjects];
+              currentResult = pageResult;
+            } else {
+              break;
+            }
+            currentPage++;
+          }
+        }
+
+        setProjects(allProjects);
+
         // Fetch categories
         const categoriesResponse = await fetch(`${baseUrl}/categories/?type=project`);
         if (categoriesResponse.ok) {
           const categoriesData = await categoriesResponse.json();
           const categoriesArray = categoriesData.results || categoriesData || [];
-          
+
           // Ensure projectsData is an array
           const projectsArray = Array.isArray(projectsData) ? projectsData : (projectsData.results || projectsData.data || []);
-          
+
           // Filter categories to only include those that have actual projects
           const categoriesWithProjects = categoriesArray.filter((category: any) => {
-            return projectsArray.some((project: any) => 
+            return allProjects.some((project: any) => 
               project.category?.id === category.id || 
               project.category?.slug === category.slug
             );
           });
-          
+
           // Transform categories for the component
           const transformedCategories = [
             { value: 'all', label: { en: 'All', ar: 'الكل' } },
@@ -169,6 +200,7 @@ function ProjectsPageContent() {
           ];
           setCategories(transformedCategories);
         }
+
       } catch (error) {
         console.error('Error loading data:', error);
         setError(locale === 'ar' ? 'فشل تحميل البيانات' : 'Failed to load data');
@@ -176,13 +208,14 @@ function ProjectsPageContent() {
         setDataLoading(false);
       }
     };
+
     loadData();
   }, [mounted]);
 
   // Debounce search term effect (same as blog page)
   useEffect(() => {
     debouncedSearchTermRef.current = searchTerm;
-    
+
     const handler = setTimeout(() => {
       setDebouncedSearchTerm(searchTerm);
     }, 500);
@@ -195,42 +228,41 @@ function ProjectsPageContent() {
   // Update URL when search term or category changes (debounced)
   useEffect(() => {
     if (!mounted) return;
-    
-    // Only update if values actually changed from previous values
     const searchChanged = prevValuesRef.current.search !== debouncedSearchTerm.trim();
     const categoryChanged = prevValuesRef.current.category !== selectedCategory;
-    
-    if (!searchChanged && !categoryChanged) return;
-    
-    // Set flag to prevent URL sync from overriding user input
+    const pageChanged = prevValuesRef.current.page !== currentPage;
+
+    if (!searchChanged && !categoryChanged && !pageChanged) return;
+
     isUserInputRef.current = true;
-    
-    // Update previous values
+
     prevValuesRef.current = {
       search: debouncedSearchTerm.trim(),
-      category: selectedCategory
+      category: selectedCategory,
+      page: currentPage
     };
-    
+
     const params = new URLSearchParams();
-    
-    // Update search parameter with debounced value
+
     if (debouncedSearchTerm.trim()) {
       params.set('search', debouncedSearchTerm);
     }
-    
-    // Update category parameter
+
     if (selectedCategory !== 'all') {
       params.set('category', selectedCategory);
     }
-    
+
+    if (currentPage > 1) {
+      params.set('page', currentPage.toString());
+    }
+
     const newUrl = `/${locale}/projects${params.toString() ? `?${params.toString()}` : ''}`;
     router.push(newUrl, { scroll: false });
-    
-    // Clear flag after a short delay to allow URL sync to work again
+
     setTimeout(() => {
       isUserInputRef.current = false;
     }, 100);
-  }, [debouncedSearchTerm, selectedCategory, locale, mounted, router]);
+  }, [debouncedSearchTerm, selectedCategory, currentPage, locale, mounted, router]);
 
   if (!mounted) {
     return (
@@ -239,7 +271,6 @@ function ProjectsPageContent() {
       </div>
     );
   }
-
   const t = translations[locale as keyof typeof translations];
 
   // Helper function to get category colors (dynamic hash-based like blog page)
@@ -310,31 +341,50 @@ function ProjectsPageContent() {
     return categoryValue;
   };
 
-  // Apply filters - category filters work instantly, search is debounced (same as blog page)
+  // Apply filters - search works across all projects, category filters work on results (same as blog page)
   let filteredProjects = projects;
-  
-  // Apply category filter (instant)
-  if (selectedCategory !== 'all') {
-    filteredProjects = projects.filter(project => 
-      project.category?.slug === selectedCategory || 
-      project.category?.id === Number(selectedCategory)
-    );
-  }
-  
-  // Then apply search filter using debounced value (500ms delay)
+  // Apply search filter using debounced value (500ms delay) - works across ALL projects
   if (debouncedSearchTerm.trim()) {
     const searchLower = debouncedSearchTerm.toLowerCase();
     filteredProjects = filteredProjects.filter(project => {
       const title = locale === 'ar' ? project.title_ar : project.title_en;
       const location = locale === 'ar' ? project.location_ar : project.location_en;
       const categoryName = locale === 'ar' ? project.category?.name_ar : project.category?.name_en;
-      
+
       return title.toLowerCase().includes(searchLower) ||
              location.toLowerCase().includes(searchLower) ||
              categoryName?.toLowerCase().includes(searchLower) ||
              project.client.toLowerCase().includes(searchLower);
     });
+  } else {
+    // Only apply category filter when NOT searching
+    if (selectedCategory !== 'all') {
+      filteredProjects = filteredProjects.filter(project => 
+        project.category?.slug === selectedCategory || 
+        project.category?.id === Number(selectedCategory)
+      );
+    }
   }
+
+  // Calculate pagination (6 projects per page like blog)
+  const PROJECTS_PER_PAGE = 6;
+  const totalFilteredProjects = filteredProjects.length;
+  const calculatedTotalPages = Math.ceil(totalFilteredProjects / PROJECTS_PER_PAGE);
+
+  // Update totalPages when filters change
+  if (calculatedTotalPages !== totalPages) {
+    setTotalPages(calculatedTotalPages);
+  }
+
+  // Reset to page 1 if current page is beyond the new total pages
+  if (currentPage > calculatedTotalPages && calculatedTotalPages > 0) {
+    setCurrentPage(1);
+  }
+
+  // Get paginated projects
+  const startIndex = (currentPage - 1) * PROJECTS_PER_PAGE;
+  const endIndex = startIndex + PROJECTS_PER_PAGE;
+  const paginatedProjects = filteredProjects.slice(startIndex, endIndex);
 
   const formatNumber = (number: number | string) => {
     // Always return English numbers regardless of locale
@@ -346,7 +396,9 @@ function ProjectsPageContent() {
     handleSearchChange('');
     // Then change category to all
     setSelectedCategory('all');
-    
+    // Reset to page 1
+    setCurrentPage(1);
+
     // Update URL to remove both search and category params
     const params = new URLSearchParams();
     const newUrl = `/${locale}/projects`;
@@ -356,6 +408,7 @@ function ProjectsPageContent() {
   const handleCategoryChange = (category: string) => {
     isUserInputRef.current = true;
     setSelectedCategory(category);
+    setCurrentPage(1); // Reset to page 1 when category changes
     setTimeout(() => {
       isUserInputRef.current = false;
     }, 100);
@@ -364,6 +417,21 @@ function ProjectsPageContent() {
   const handleSearchChange = (search: string) => {
     isUserInputRef.current = true;
     setSearchTerm(search);
+    setCurrentPage(1); // Reset to page 1 when search changes
+    
+    // When searching, switch to 'all' category to show global search behavior
+    if (search.trim()) {
+      setSelectedCategory('all');
+    }
+    
+    setTimeout(() => {
+      isUserInputRef.current = false;
+    }, 100);
+  };
+
+  const handlePageChange = (page: number) => {
+    isUserInputRef.current = true;
+    setCurrentPage(page);
     setTimeout(() => {
       isUserInputRef.current = false;
     }, 100);
@@ -453,14 +521,15 @@ function ProjectsPageContent() {
             onClose={() => setError(null)}
           />
         )}
-        
+
         {dataLoading ? (
           <div className="flex justify-center py-12">
             <LoadingSpinner size="lg" />
           </div>
-        ) : filteredProjects.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
-            {filteredProjects.map((project: Project) => (
+        ) : paginatedProjects.length > 0 ? (
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
+              {paginatedProjects.map((project: Project) => (
               <Link 
                 key={project.id} 
                 href={`/${locale}/projects/${project.slug}`}
@@ -497,8 +566,8 @@ function ProjectsPageContent() {
                     <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${getCategoryColors(project.category?.slug || '').bg} ${getCategoryColors(project.category?.slug || '').text} ${getCategoryColors(project.category?.slug || '').border} transition-all duration-300 group-hover:scale-105 ${getCategoryColors(project.category?.slug || '').hover}`}>
                       {locale === 'ar' ? project.category?.name_ar : project.category?.name_en}
                     </span>
-                    <span key={`year-${project.id}-${locale}`} className="text-sm text-muted transition-colors duration-300 group-hover:text-main">
-                      {formatNumber(new Date(project.completed_at).getFullYear())}
+                    <span className="text-sm text-muted transition-colors duration-300 group-hover:text-main">
+                      {formatNumber(new Date(project.created_at).getFullYear())}
                     </span>
                   </div>
 
@@ -534,6 +603,19 @@ function ProjectsPageContent() {
               </Link>
             ))}
           </div>
+          
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="mt-12 flex justify-center">
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+                locale={locale}
+              />
+            </div>
+          )}
+          </>
         ) : (
           <EmptyState
             title={locale === 'ar' ? 'لا توجد مشاريع' : 'No projects available'}

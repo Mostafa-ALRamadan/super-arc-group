@@ -9,6 +9,7 @@ import { blogService, type BlogPost } from '../../../services/content/blog.servi
 import LoadingSpinner from '../../../../components/ui/admin/LoadingSpinner';
 import EmptyState from '../../../../components/ui/admin/EmptyState';
 import Alert from '../../../../components/ui/admin/Alert';
+import Pagination from '../../../../components/ui/public/Pagination';
 
 const translations = {
   en: {
@@ -36,6 +37,13 @@ function BlogPageContent() {
   const [categories, setCategories] = useState<Array<{ value: string; label: { en: string; ar: string } }>>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pagination, setPagination] = useState({
+    page: 1,
+    limit: 6,
+    total: 0,
+    totalPages: 0
+  });
   
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -49,6 +57,9 @@ function BlogPageContent() {
     search: '',
     category: 'all'
   });
+  
+  // Track if this is initial load to prevent URL updates during sync
+  const isInitialLoadRef = useRef(true);
   
   // Initialize prevValuesRef after component mounts
   useEffect(() => {
@@ -82,57 +93,78 @@ function BlogPageContent() {
     const finalCategory = categoryFromUrl || 'all';
     const finalSearch = searchFromUrl || '';
     
-    if (finalCategory !== selectedCategory) {
+    // Check if either value needs to change
+    const categoryChanged = finalCategory !== selectedCategory;
+    const searchChanged = finalSearch !== searchTerm;
+    
+    if (categoryChanged || searchChanged) {
+      // Set both values atomically to prevent flashing
       setSelectedCategory(finalCategory);
-    }
-    if (finalSearch !== searchTerm) {
       setSearchTerm(finalSearch);
+      setDebouncedSearchTerm(finalSearch); // Set immediately, no debounce delay
+      setCurrentPage(1); // Reset to page 1 when URL params change
+      
+      // Update previous values to prevent URL update on next effect
+      prevValuesRef.current = {
+        search: finalSearch,
+        category: finalCategory
+      };
+    }
+    
+    // Mark initial load as complete after first sync
+    if (isInitialLoadRef.current) {
+      isInitialLoadRef.current = false;
     }
   }, [searchParams, mounted, selectedCategory, searchTerm]);
 
   // Load blog posts and categories
   useEffect(() => {
-    if (!mounted) return;
+    if (!mounted || isInitialLoadRef.current) return; // Don't load during initial sync
     
     const loadData = async () => {
       setIsLoading(true);
       setError(null);
       try {
-        // Use public method to fetch published posts without authentication
-        const allPosts = await blogService.getPublishedPosts();
-        setPosts(allPosts);
-
-        // Extract categories from published posts only
-        const categoryMap = new Map<string, { en: string; ar: string }>();
-        categoryMap.set("all", { en: "All", ar: "الكل" });
+        // Use paginated method to fetch posts with category and search filters
+        const result = await blogService.getPosts(currentPage, 6, selectedCategory, debouncedSearchTerm);
+        setPosts(result.posts);
+        setPagination(result.pagination);
         
-        allPosts.forEach(post => {
-          if (post.category) {
-            const categoryValue = String(post.category?.name?.en || 
-                                     (typeof post.category?.name === 'string' ? post.category?.name : post.category?.name?.en) || 
-                                     post.category?.slug || 
-                                     post.category?.id || '');
-            
-            const getCategoryName = (name: any) => {
-              if (typeof name === 'string') return name;
-              if (name && typeof name === 'object' && 'en' in name && 'ar' in name) return name;
-              return { en: '', ar: '' };
-            };
-            
-            const categoryLabel = getCategoryName(post.category?.name);
-            
-            if (!categoryMap.has(categoryValue)) {
-              categoryMap.set(categoryValue, categoryLabel);
+        // Extract categories from posts only on first load
+        if (categories.length <= 1) {
+          // Load all posts once to get all categories
+          const allPostsResult = await blogService.getPosts(1, 1000, 'all');
+          const categoryMap = new Map<string, { en: string; ar: string }>();
+          categoryMap.set("all", { en: "All", ar: "الكل" });
+          
+          allPostsResult.posts.forEach(post => {
+            if (post.category) {
+              const categoryValue = String(post.category?.name?.en || 
+                                       (typeof post.category?.name === 'string' ? post.category?.name : post.category?.name?.en) || 
+                                       post.category?.slug || 
+                                       post.category?.id || '');
+              
+              const getCategoryName = (name: any) => {
+                if (typeof name === 'string') return name;
+                if (name && typeof name === 'object' && 'en' in name && 'ar' in name) return name;
+                return { en: '', ar: '' };
+              };
+              
+              const categoryLabel = getCategoryName(post.category?.name);
+              
+              if (!categoryMap.has(categoryValue)) {
+                categoryMap.set(categoryValue, categoryLabel);
+              }
             }
-          }
-        });
-        
-        const formattedCategories = Array.from(categoryMap.entries()).map(([value, label]) => ({
-          value,
-          label
-        }));
-        
-        setCategories(formattedCategories);
+          });
+          
+          const formattedCategories = Array.from(categoryMap.entries()).map(([value, label]) => ({
+            value,
+            label
+          }));
+          
+          setCategories(formattedCategories);
+        }
       } catch (err) {
         console.error('Error loading blog posts:', err);
         setError(locale === 'ar' ? 'فشل تحميل المقالات' : 'Failed to load blog posts');
@@ -143,7 +175,7 @@ function BlogPageContent() {
       }
     };
     loadData();
-  }, [mounted]);
+  }, [mounted, currentPage, selectedCategory, debouncedSearchTerm, isInitialLoadRef.current]);
 
   // Debounce search term effect
   useEffect(() => {
@@ -208,6 +240,16 @@ function BlogPageContent() {
 
   const t = translations[locale];
 
+  // Helper function to get localized text
+  const getLocalizedText = (text: { en: string; ar: string } | string | undefined | null) => {
+    if (!text) return '';
+    if (typeof text === 'string') return text;
+    if (typeof text === 'object' && text !== null) {
+      return text[locale] || text.en || text.ar || '';
+    }
+    return '';
+  };
+
   // Helper function to get category colors
   const getCategoryColors = (categoryValue: string) => {
     // Dynamic color assignment based on category name hash
@@ -262,16 +304,11 @@ function BlogPageContent() {
     return colorOptions[colorIndex];
   };
 
-  // Helper functions
-  const getLocalizedText = (text: { en: string; ar: string } | string) => {
-    if (typeof text === 'string') return text;
-    return text[locale as keyof typeof text] || text.en;
-  };
-
-  const getCoverImageAlt = (post: BlogPost) => {
+  const getCoverImageAlt = (post: BlogPost): string => {
     // Try to get alt text from cover_image, fallback to title
     if (post.cover_image?.alt_en || post.cover_image?.alt_ar) {
-      return locale === 'ar' ? (post.cover_image.alt_ar || post.cover_image.alt_en) : (post.cover_image.alt_en || post.cover_image.alt_ar);
+      const alt = locale === 'ar' ? (post.cover_image.alt_ar || post.cover_image.alt_en) : (post.cover_image.alt_en || post.cover_image.alt_ar);
+      return alt || getLocalizedText(post.title);
     }
     return getLocalizedText(post.title);
   };
@@ -289,7 +326,8 @@ function BlogPageContent() {
     handleSearchChange('');
     // Then change category to all
     setSelectedCategory('all');
-    
+    setCurrentPage(1); // Reset to page 1
+
     // Update URL to remove both search and category params
     const params = new URLSearchParams();
     const newUrl = `/${locale}/blog`;
@@ -299,6 +337,7 @@ function BlogPageContent() {
   const handleCategoryChange = (category: string) => {
     isUserInputRef.current = true;
     setSelectedCategory(category);
+    setCurrentPage(1); // Reset to page 1 when changing category
     setTimeout(() => {
       isUserInputRef.current = false;
     }, 100);
@@ -307,99 +346,56 @@ function BlogPageContent() {
   const handleSearchChange = (search: string) => {
     isUserInputRef.current = true;
     setSearchTerm(search);
+    setCurrentPage(1); // Reset to page 1 when searching
     setTimeout(() => {
       isUserInputRef.current = false;
     }, 100);
   };
 
-  // Apply filters - category filters work instantly, search is debounced
-  let filteredPosts = posts;
-  
-  // Separate featured and regular posts
-  const featuredPosts = filteredPosts.filter(post => post.is_featured);
-  const regularPosts = filteredPosts.filter(post => !post.is_featured);
-  
-  // Apply category filter to both featured and regular posts (instant)
-  if (selectedCategory !== 'all') {
-    const filterByCategory = (posts: BlogPost[]) => {
-      return posts.filter(post => {
-        // Get the category value from the post in multiple possible formats
-        const postCategoryValue = String(post.category?.name?.en || 
-                                 post.category?.name || 
-                                 post.category?.slug || 
-                                 post.category?.id || 
-                                 '');
-        
-        // Get the selected category value and also try to find it in the categories array
-        const selectedCategoryObj = categories.find(cat => cat.value === selectedCategory);
-        const selectedCategoryName = String(selectedCategoryObj?.label?.en || selectedCategory || '');
-        
-        // Compare multiple possible values
-        const matches = postCategoryValue === selectedCategory || 
-                       postCategoryValue === selectedCategoryName ||
-                       postCategoryValue.toLowerCase() === String(selectedCategory).toLowerCase() ||
-                       postCategoryValue.toLowerCase() === selectedCategoryName.toLowerCase();
-        
-        return matches;
-      });
-    };
-    
-    filteredPosts = [...filterByCategory(featuredPosts), ...filterByCategory(regularPosts)];
-  } else {
-    filteredPosts = [...featuredPosts, ...regularPosts];
-  }
-  
-  // Then apply search filter using debounced value (500ms delay)
-  if (debouncedSearchTerm.trim()) {
-    const searchLower = debouncedSearchTerm.toLowerCase();
-    filteredPosts = filteredPosts.filter(post => {
-      const title = getLocalizedText(post.title);
-      const excerpt = getLocalizedText(post.excerpt);
-      const category = getCategoryDisplayName(post.category?.name?.en || '');
-      
-      return title.toLowerCase().includes(searchLower) ||
-             excerpt.toLowerCase().includes(searchLower) ||
-             category.toLowerCase().includes(searchLower);
-    });
-  }
+const handlePageChange = (page: number) => {
+  setCurrentPage(page);
+};
 
-  return (
-    <>
-      {/* SEO Meta Tags - In production, these would be handled by next/head or metadata API */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "Blog",
-            "name": locale === 'ar' ? "المدونة - مجموعة سوبر آرك" : "Blog - Super Arc Group",
-            "description": locale === 'ar' 
-              ? "أحدث الأخبار والرؤى والمقالات الفنية من مجموعة سوبر آرك" 
-              : "Latest news, insights, and technical perspectives from Super Arc Group",
-            "url": `https://superarcgroup.com/${locale}/blog`,
-            "inLanguage": locale,
-            "publisher": {
-              "@type": "Organization",
-              "name": "Super Arc Group"
-            }
-          })
-        }}
-      />
-      
-      <div className={`min-h-screen bg-gradient-to-br from-bg-light to-white ${locale === 'ar' ? 'rtl' : 'ltr'}`} dir={locale === 'ar' ? 'rtl' : 'ltr'}>
-        {/* Hero Section */}
-        <div className="relative bg-gradient-to-br from-bg-light via-white to-primary-light overflow-hidden">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-            <div className="text-center">
-              <h1 className="text-4xl sm:text-5xl font-bold text-main mb-6">
-                {t.title}
-              </h1>
-              <p className="text-xl text-muted max-w-3xl mx-auto leading-relaxed">
-                {t.description}
-              </p>
-            </div>
+// Posts are already filtered on backend (category and search)
+const filteredPosts = posts;
+
+return (
+  <>
+    {/* SEO Meta Tags - In production, these would be handled by next/head or metadata API */}
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{
+        __html: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Blog",
+          "name": locale === 'ar' ? "المدونة - مجموعة سوبر آرك" : "Blog - Super Arc Group",
+          "description": locale === 'ar' 
+            ? "أحدث الأخبار والرؤى والمقالات الفنية من مجموعة سوبر آرك" 
+            : "Latest news, insights, and technical perspectives from Super Arc Group",
+          "url": `https://superarcgroup.com/${locale}/blog`,
+          "inLanguage": locale,
+          "publisher": {
+            "@type": "Organization",
+            "name": "Super Arc Group"
+          }
+        })
+      }}
+    />
+    
+    <div className={`min-h-screen bg-gradient-to-br from-bg-light to-white ${locale === 'ar' ? 'rtl' : 'ltr'}`} dir={locale === 'ar' ? 'rtl' : 'ltr'}>
+      {/* Hero Section */}
+      <div className="relative bg-gradient-to-br from-bg-light via-white to-primary-light overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          <div className="text-center">
+            <h1 className="text-4xl sm:text-5xl font-bold text-main mb-6">
+              {t.title}
+            </h1>
+            <p className="text-xl text-muted max-w-3xl mx-auto leading-relaxed">
+              {t.description}
+            </p>
           </div>
         </div>
+      </div>
 
       {/* Filter Section */}
       {!isLoading && (
@@ -604,9 +600,25 @@ function BlogPageContent() {
               icon="📝"
             />
           )}
+          
+          {/* Pagination */}
+          {pagination.totalPages > 1 && (
+            <div className="mt-12 flex justify-center">
+              <Pagination
+                currentPage={pagination.page}
+                totalPages={pagination.totalPages}
+                onPageChange={handlePageChange}
+                locale={locale}
+                showPrevNext={true}
+                maxVisiblePages={5}
+              />
+            </div>
+          )}
         </div>
       </div>
+      
     </>
+
   );
 }
 

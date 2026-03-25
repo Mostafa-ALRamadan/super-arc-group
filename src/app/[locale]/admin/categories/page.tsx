@@ -1,12 +1,13 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import AdminLayout from '../../../../../components/admin/layout/AdminLayout';
 import { useTranslations } from '../../../../../src/contexts/TranslationContext';
 import LoadingSpinner from '../../../../../components/ui/admin/LoadingSpinner';
 import ConfirmDialog from '../../../../../components/ui/admin/ConfirmDialog';
 import Alert from '../../../../../components/ui/admin/Alert';
+import AdminPagination from '../../../../../components/ui/admin/AdminPagination';
 import { categoryService, type Category } from '../../../../services/content/category.service';
 import { useAuthCheck } from '../../../../../src/hooks/useAuthCheck';
 import { useAuth } from '../../../../../src/contexts/AuthContext';
@@ -54,9 +55,16 @@ export default function CategoriesManagement() {
 
   // Load categories from API
   const [categories, setCategories] = useState<Category[]>([]);
+  const [allCategories, setAllCategories] = useState<Category[]>([]); // Store all categories for filtering
   const [loading, setLoading] = useState(false); // Start with false, only set true when authenticated
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalCategories, setTotalCategories] = useState(0);
+  const CATEGORIES_PER_PAGE = 10;
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -68,11 +76,12 @@ export default function CategoriesManagement() {
         setLoading(true);
         setError(null);
         const categoriesData = await categoryService.getCategories();
-        setCategories(categoriesData);
+        setAllCategories(categoriesData);
+        setTotalCategories(categoriesData.length);
       } catch (error) {
         console.error('Failed to load categories:', error);
         setError(error instanceof Error ? error.message : 'Failed to load categories');
-        setCategories([]);
+        setAllCategories([]);
       } finally {
         setLoading(false);
       }
@@ -90,17 +99,42 @@ export default function CategoriesManagement() {
     categoryName: ''
   });
 
-  // Filter categories based on search and type
-  const filteredCategories = categories.filter(category => {
-    const searchMatch = searchTerm === '' || 
-      (category.name_en && category.name_en.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      (category.name_ar && category.name_ar.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      (category.slug && category.slug.toLowerCase().includes(searchTerm.toLowerCase()));
+  // Filter categories based on search and type (applied to ALL categories)
+  const filteredCategories = useMemo(() => {
+    return allCategories.filter(category => {
+      const searchMatch = searchTerm === '' || 
+        (category.name_en && category.name_en.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (category.name_ar && category.name_ar.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (category.slug && category.slug.toLowerCase().includes(searchTerm.toLowerCase()));
 
-    const typeMatch = selectedType === 'all' || category.type === selectedType;
+      const typeMatch = selectedType === 'all' || category.type === selectedType;
 
-    return searchMatch && typeMatch;
-  });
+      return searchMatch && typeMatch;
+    });
+  }, [allCategories, searchTerm, selectedType]);
+
+  // Apply pagination to FILTERED results
+  const paginatedCategories = useMemo(() => {
+    const startIndex = (currentPage - 1) * CATEGORIES_PER_PAGE;
+    const endIndex = startIndex + CATEGORIES_PER_PAGE;
+    return filteredCategories.slice(startIndex, endIndex);
+  }, [filteredCategories, currentPage]);
+
+  // Update pagination info for filtered results
+  useEffect(() => {
+    const calculatedTotalPages = Math.ceil(filteredCategories.length / CATEGORIES_PER_PAGE);
+    setTotalPages(calculatedTotalPages);
+    
+    // Reset to page 1 if current page is beyond the filtered results
+    if (currentPage > calculatedTotalPages && calculatedTotalPages > 0) {
+      setCurrentPage(1);
+    }
+  }, [filteredCategories.length, currentPage]);
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, selectedType]);
 
   const handleEdit = (categoryId: string) => {
     router.push(`/${locale}/admin/categories/edit/${categoryId}`);
@@ -118,7 +152,7 @@ export default function CategoriesManagement() {
     try {
       await categoryService.deleteCategory(deleteConfirm.categoryId);
       // Remove from local state after successful API call
-      setCategories(prev => prev.filter(category => category.id !== deleteConfirm.categoryId));
+      setAllCategories(prev => prev.filter(category => category.id !== deleteConfirm.categoryId));
       setSuccess((locale as 'en' | 'ar') === 'ar' ? 'تم حذف الفئة بنجاح' : 'Category deleted successfully');
       
       // Auto-dismiss success notification after 5 seconds
@@ -140,6 +174,7 @@ export default function CategoriesManagement() {
   const clearFilters = () => {
     setSearchTerm('');
     setSelectedType('all');
+    setCurrentPage(1); // Reset to page 1 when clearing filters
   };
 
   // Show loading while checking authentication
@@ -270,7 +305,7 @@ export default function CategoriesManagement() {
                     </td>
                   </tr>
                 ) : (
-                  filteredCategories.map((category) => (
+                  paginatedCategories.map((category) => (
                     <tr key={category.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm font-medium text-main">
@@ -318,7 +353,17 @@ export default function CategoriesManagement() {
                 )}
               </tbody>
             </table>
-          </div>
+            
+            {/* Admin Pagination */}
+            <AdminPagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+              rowsPerPage={CATEGORIES_PER_PAGE}
+              totalRows={filteredCategories.length}
+              locale={locale}
+            />
+            </div>
           )}
         </div>
 
@@ -326,7 +371,7 @@ export default function CategoriesManagement() {
         {!loading && filteredCategories.length === 0 && (
           <div className="text-center py-8 sm:py-12">
             <div className="text-gray-500 text-lg mb-4">
-              {categories.length === 0 
+              {allCategories.length === 0 
                 ? (locale === 'ar' ? 'لم يتم العثور على فئات' : 'No categories found')
                 : (locale === 'ar' ? 'لا توجد فئات تطابق بحثك' : 'No categories match your search')
               }

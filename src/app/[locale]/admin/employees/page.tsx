@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import AdminLayout from '../../../../../components/admin/layout/AdminLayout';
 import { useTranslations } from '../../../../../src/contexts/TranslationContext';
@@ -9,6 +9,7 @@ import { companiesService, type Company } from '../../../../services/entities/co
 import LoadingSpinner from '../../../../../components/ui/admin/LoadingSpinner';
 import ConfirmDialog from '../../../../../components/ui/admin/ConfirmDialog';
 import Alert from '../../../../../components/ui/admin/Alert';
+import AdminPagination from '../../../../../components/ui/admin/AdminPagination';
 import { useAuthCheck } from '../../../../../src/hooks/useAuthCheck';
 import { useAuth } from '../../../../../src/contexts/AuthContext';
 
@@ -55,10 +56,17 @@ export default function EmployeesManagement() {
 
   // State for employees and companies
   const [employees, setEmployees] = useState<Employee[]>([]);
+  const [allEmployees, setAllEmployees] = useState<Employee[]>([]); // Store all employees for filtering
   const [companies, setCompanies] = useState<Company[]>([]);
   const [loading, setLoading] = useState(false); // Start with false, only set true when authenticated
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalEmployees, setTotalEmployees] = useState(0);
+  const EMPLOYEES_PER_PAGE = 10;
 
   // Filter states
   const [searchTerm, setSearchTerm] = useState('');
@@ -114,7 +122,8 @@ export default function EmployeesManagement() {
           employeeService.getEmployees(),
           companiesService.getCompanies()
         ]);
-        setEmployees(employeesData);
+        setAllEmployees(employeesData);
+        setTotalEmployees(employeesData.length);
         setCompanies(companiesData);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load data');
@@ -126,35 +135,60 @@ export default function EmployeesManagement() {
     fetchData();
   }, [isAuthenticated]);
 
-  // Filter employees based on search and company
-  const filteredEmployees = employees.filter(employee => {
-    const searchMatch = searchTerm === '' || 
-      employee.name[locale as 'en' | 'ar'].toLowerCase().includes(searchTerm.toLowerCase()) ||
-      employee.position[locale as 'en' | 'ar'].toLowerCase().includes(searchTerm.toLowerCase());
+  // Filter employees based on search and company (applied to ALL employees)
+  const filteredEmployees = useMemo(() => {
+    return allEmployees.filter(employee => {
+      const searchMatch = searchTerm === '' || 
+        employee.name[locale as 'en' | 'ar'].toLowerCase().includes(searchTerm.toLowerCase()) ||
+        employee.position[locale as 'en' | 'ar'].toLowerCase().includes(searchTerm.toLowerCase());
 
-    let companyMatch = selectedCompany === '';
-    
-    if (selectedCompany !== '') {
-      // First try to match by company_id
-      if (employee.company_id && employee.company_id.toString() === selectedCompany) {
-        companyMatch = true;
-      } else if (!employee.company_id && employee.company) {
-        // If no company_id, try to match by company name
-        const selectedCompanyObj = companies.find(c => c.id.toString() === selectedCompany);
-        if (selectedCompanyObj) {
-          // Backend returns "English name (Arabic name)" format
-          const englishMatch = employee.company.match(/^([^(]+)\s*\(/);
-          const englishName = englishMatch ? englishMatch[1].trim() : employee.company;
-          
-          companyMatch = selectedCompanyObj.name.en === englishName || 
-                        selectedCompanyObj.name.ar === employee.company ||
-                        `${selectedCompanyObj.name.en} (${selectedCompanyObj.name.ar})` === employee.company;
+      let companyMatch = selectedCompany === '';
+      
+      if (selectedCompany !== '') {
+        // First try to match by company_id
+        if (employee.company_id && employee.company_id.toString() === selectedCompany) {
+          companyMatch = true;
+        } else if (!employee.company_id && employee.company) {
+          // If no company_id, try to match by company name
+          const selectedCompanyObj = companies.find(c => c.id.toString() === selectedCompany);
+          if (selectedCompanyObj) {
+            // Backend returns "English name (Arabic name)" format
+            const englishMatch = employee.company.match(/^([^(]+)\s*\(/);
+            const englishName = englishMatch ? englishMatch[1].trim() : employee.company;
+            
+            companyMatch = selectedCompanyObj.name.en === englishName || 
+                          selectedCompanyObj.name.ar === employee.company ||
+                          `${selectedCompanyObj.name.en} (${selectedCompanyObj.name.ar})` === employee.company;
+          }
         }
       }
-    }
+
+      return searchMatch && companyMatch;
+    });
+  }, [allEmployees, searchTerm, selectedCompany, companies, locale]);
+
+  // Apply pagination to FILTERED results
+  const paginatedEmployees = useMemo(() => {
+    const startIndex = (currentPage - 1) * EMPLOYEES_PER_PAGE;
+    const endIndex = startIndex + EMPLOYEES_PER_PAGE;
+    return filteredEmployees.slice(startIndex, endIndex);
+  }, [filteredEmployees, currentPage]);
+
+  // Update pagination info for filtered results
+  useEffect(() => {
+    const calculatedTotalPages = Math.ceil(filteredEmployees.length / EMPLOYEES_PER_PAGE);
+    setTotalPages(calculatedTotalPages);
     
-    return searchMatch && companyMatch;
-  });
+    // Reset to page 1 if current page is beyond the filtered results
+    if (currentPage > calculatedTotalPages && calculatedTotalPages > 0) {
+      setCurrentPage(1);
+    }
+  }, [filteredEmployees.length, currentPage]);
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, selectedCompany]);
 
   const handleEdit = (employeeId: number) => {
     router.push(`/${locale}/admin/employees/edit/${employeeId}`);
@@ -171,7 +205,8 @@ export default function EmployeesManagement() {
   const handleDeleteConfirm = async () => {
     try {
       await employeeService.deleteEmployee(deleteConfirm.employeeId);
-      setEmployees(prev => prev.filter(employee => employee.id !== parseInt(deleteConfirm.employeeId)));
+      // Remove from frontend state after successful deletion
+      setAllEmployees(prev => prev.filter(employee => employee.id !== parseInt(deleteConfirm.employeeId)));
       setSuccess((locale as 'en' | 'ar') === 'ar' ? 'تم حذف الموظف بنجاح' : 'Employee deleted successfully');
       
       // Auto-dismiss success notification after 5 seconds
@@ -193,6 +228,7 @@ export default function EmployeesManagement() {
   const clearFilters = () => {
     setSearchTerm('');
     setSelectedCompany('');
+    setCurrentPage(1); // Reset to page 1 when clearing filters
   };
 
   // Show loading while checking authentication
@@ -381,7 +417,7 @@ export default function EmployeesManagement() {
                     </td>
                   </tr>
                 ) : (
-                  filteredEmployees.map((employee) => (
+                  paginatedEmployees.map((employee) => (
                     <tr key={employee.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <img
@@ -424,6 +460,16 @@ export default function EmployeesManagement() {
                 )}
               </tbody>
             </table>
+            
+            {/* Admin Pagination */}
+            <AdminPagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+              rowsPerPage={EMPLOYEES_PER_PAGE}
+              totalRows={filteredEmployees.length}
+              locale={locale}
+            />
           </div>
         </div>
 
@@ -431,7 +477,7 @@ export default function EmployeesManagement() {
         {filteredEmployees.length === 0 && (
           <div className="text-center py-8 sm:py-12">
             <div className="text-gray-500 text-lg mb-4">
-              {employees.length === 0 
+              {allEmployees.length === 0 
                 ? (locale === 'ar' ? 'لم يتم العثور على موظفين' : 'No employees found')
                 : (locale === 'ar' ? 'لا توجد موظفين تطابق بحثك' : 'No employees match your search')
               }

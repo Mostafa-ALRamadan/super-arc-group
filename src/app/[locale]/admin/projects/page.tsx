@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import AdminLayout from '../../../../../components/admin/layout/AdminLayout';
 import { useTranslations } from '../../../../../src/contexts/TranslationContext';
@@ -8,6 +8,7 @@ import LoadingSpinner from '../../../../../components/ui/admin/LoadingSpinner';
 import EmptyState from '../../../../../components/ui/admin/EmptyState';
 import ConfirmDialog from '../../../../../components/ui/admin/ConfirmDialog';
 import Alert from '../../../../../components/ui/admin/Alert';
+import AdminPagination from '../../../../../components/ui/admin/AdminPagination';
 import { useAuthCheck } from '../../../../../src/hooks/useAuthCheck';
 import { useAuth } from '../../../../../src/contexts/AuthContext';
 import { fetchWithTokenRefresh } from '../../../../services/auth/auth-fetch';
@@ -93,10 +94,17 @@ export default function ProjectsManagement() {
 
   // State for projects and categories
   const [projects, setProjects] = useState<Project[]>([]);
+  const [allProjects, setAllProjects] = useState<Project[]>([]); // Store all projects for filtering
   const [categories, setCategories] = useState<Array<{id: number; name_en: string; name_ar: string}>>([]);
   const [loading, setLoading] = useState(false); // Start with false, only set true when authenticated
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalProjects, setTotalProjects] = useState(0);
+  const PROJECTS_PER_PAGE = 10;
 
   // Fetch projects and categories from API (only when authenticated)
   useEffect(() => {
@@ -111,13 +119,39 @@ export default function ProjectsManagement() {
       try {
         const baseUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000/api'}`;
         
-        // Fetch projects
-        const projectsResponse = await fetchWithTokenRefresh(`${baseUrl}/projects/`);
+        // Fetch ALL projects for filtering
+        const projectsResponse = await fetchWithTokenRefresh(`${baseUrl}/projects/?page=1&limit=1000`);
         if (!projectsResponse.ok) {
           throw new Error('Failed to fetch projects');
         }
         const projectsData = await projectsResponse.json();
-        setProjects(projectsData.results || projectsData || []);
+        
+        // Handle paginated response - get all projects
+        let allProjectsList = projectsData.results || projectsData || [];
+        
+        // If backend has pagination and we didn't get all projects, fetch remaining pages
+        if (projectsData.next && projectsData.count > allProjectsList.length) {
+          let currentPage = 2;
+          let currentResult = projectsData;
+          
+          while (currentResult.next) {
+            const nextPageUrl = currentResult.next;
+            const pageResponse = await fetchWithTokenRefresh(nextPageUrl);
+            
+            if (pageResponse.ok) {
+              const pageResult = await pageResponse.json();
+              const pageProjects = pageResult.results || pageResult.data || pageResult;
+              allProjectsList = [...allProjectsList, ...pageProjects];
+              currentResult = pageResult;
+            } else {
+              break;
+            }
+            currentPage++;
+          }
+        }
+        
+        setAllProjects(allProjectsList);
+        setTotalProjects(allProjectsList.length);
         
         // Fetch categories for filters
         const categoriesResponse = await fetchWithTokenRefresh(`${baseUrl}/categories/?type=project`);
@@ -146,17 +180,37 @@ export default function ProjectsManagement() {
     projectTitle: ''
   });
 
-  // Filter projects based on search and filters
-  const filteredProjects = projects.filter(project => {
-    const searchMatch = searchTerm === '' || 
-      (locale === 'ar' ? project.title_ar : project.title_en).toLowerCase().includes(searchTerm.toLowerCase()) ||
-      project.client.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (locale === 'ar' ? project.location_ar : project.location_en).toLowerCase().includes(searchTerm.toLowerCase());
+  // Filter projects based on search and filters (applied to ALL projects)
+  const filteredProjects = useMemo(() => {
+    return allProjects.filter(project => {
+      const searchMatch = searchTerm === '' || 
+        (locale === 'ar' ? project.title_ar : project.title_en).toLowerCase().includes(searchTerm.toLowerCase()) ||
+        project.client.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (locale === 'ar' ? project.location_ar : project.location_en).toLowerCase().includes(searchTerm.toLowerCase());
 
-    const categoryMatch = categoryFilter === '' || (project.category && project.category.id === Number(categoryFilter));
+      const categoryMatch = categoryFilter === '' || (project.category && project.category.id === Number(categoryFilter));
 
-    return searchMatch && categoryMatch;
-  });
+      return searchMatch && categoryMatch;
+    });
+  }, [allProjects, searchTerm, categoryFilter, locale]);
+
+  // Apply pagination to FILTERED results
+  const paginatedProjects = useMemo(() => {
+    const startIndex = (currentPage - 1) * PROJECTS_PER_PAGE;
+    const endIndex = startIndex + PROJECTS_PER_PAGE;
+    return filteredProjects.slice(startIndex, endIndex);
+  }, [filteredProjects, currentPage]);
+
+  // Update pagination info for filtered results
+  useEffect(() => {
+    const calculatedTotalPages = Math.ceil(filteredProjects.length / PROJECTS_PER_PAGE);
+    setTotalPages(calculatedTotalPages);
+    
+    // Reset to page 1 if current page is beyond the filtered results
+    if (currentPage > calculatedTotalPages && calculatedTotalPages > 0) {
+      setCurrentPage(1);
+    }
+  }, [filteredProjects.length, currentPage]);
 
   const handleEdit = (projectId: number) => {
     // Find the project to get its slug
@@ -219,7 +273,13 @@ export default function ProjectsManagement() {
   const clearFilters = () => {
     setSearchTerm('');
     setCategoryFilter('');
+    setCurrentPage(1); // Reset to page 1 when clearing filters
   };
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, categoryFilter]);
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -321,8 +381,8 @@ export default function ProjectsManagement() {
         <div className="mb-4 text-sm text-muted">
           {(searchTerm || categoryFilter) && (
             (locale as 'en' | 'ar') === 'ar' 
-              ? `عرض ${filteredProjects.length} من ${projects.length} مشروع`
-              : `Showing ${filteredProjects.length} of ${projects.length} projects`
+              ? `عرض ${filteredProjects.length} من ${allProjects.length} مشروع`
+              : `Showing ${filteredProjects.length} of ${allProjects.length} projects`
           )}
         </div>
 
@@ -379,7 +439,7 @@ export default function ProjectsManagement() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {filteredProjects.map((project) => (
+                {paginatedProjects.map((project) => (
                   <tr key={project.id} className="hover:bg-gray-50">
                     <td className={`px-4 sm:px-6 py-4 whitespace-nowrap ${(locale as 'en' | 'ar') === 'ar' ? 'text-right' : 'text-left'}`}>
                       <div>
@@ -427,6 +487,16 @@ export default function ProjectsManagement() {
                 ))}
               </tbody>
             </table>
+            
+            {/* Admin Pagination */}
+            <AdminPagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+              rowsPerPage={PROJECTS_PER_PAGE}
+              totalRows={filteredProjects.length}
+              locale={locale}
+            />
             </div>
           )}
         </div>

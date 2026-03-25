@@ -172,12 +172,6 @@ export default function AdminAuthPage() {
               </p>
             </div>
           </form>
-
-          <div className="mt-6 p-4 bg-primary-light rounded-lg">
-            <p className="text-sm text-primary text-center">
-              {t('admin.auth.demoNote')}
-            </p>
-          </div>
         </div>
       </div>
     </div>

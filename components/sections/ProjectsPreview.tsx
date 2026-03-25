@@ -89,10 +89,12 @@ export default function ProjectsPreview() {
     const fetchProjects = async () => {
       try {
         const baseUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000/api'}`;
-        const response = await fetch(`${baseUrl}/projects/`);
+        const response = await fetch(`${baseUrl}/projects/?page=1&limit=6`);
         if (response.ok) {
           const data = await response.json();
-          setProjects(data.results || data || []);
+          // Take only first 6 projects
+          const projectsData = data.results || data || [];
+          setProjects(projectsData.slice(0, 6));
         }
       } catch (error) {
         console.error('Error fetching projects:', error);
