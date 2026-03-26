@@ -2,7 +2,6 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { companiesService } from '../../../../services/entities/companies.service';
-import { employeeService } from '../../../../services/entities/employee.service';
 import { linksService } from '../../../../services/entities/links.service';
 import CompanyHero from '../../../../../components/companies/CompanyHero';
 import EmployeesGrid from '../../../../../components/companies/EmployeesGrid';
@@ -84,11 +83,33 @@ export default async function CompanyPage({ params }: CompanyPageProps) {
     notFound();
   }
 
-  // Get employees for this company
-  const employees = company.id ? await employeeService.getEmployeesByCompany(company.id) : [];
+  // Transform employee data to match frontend interface
+  const transformedEmployees = (company.employees || []).map((emp: any) => ({
+    id: emp.id,
+    name: {
+      en: emp.name_en,
+      ar: emp.name_ar
+    },
+    position: {
+      en: emp.position_en,
+      ar: emp.position_ar
+    },
+    image: emp.image ? {
+      id: emp.image.id,
+      url: emp.image.url,
+      alt_en: emp.image.alt_en,
+      alt_ar: emp.image.alt_ar
+    } : undefined,
+    image_id: emp.image?.id,
+    company_id: company.id,
+    company: emp.company,
+    initials: emp.name_en.split(' ').map((n: string) => n[0]).join('').toUpperCase(),
+    createdAt: emp.created_at,
+    updatedAt: emp.updated_at
+  }));
 
   // Get links for this company
-  const links = company.id ? await linksService.getLinksByCompany(company.id) : [];
+  const links = company.links || [];
 
   // Helper function to safely get localized content
   const getLocalizedValue = (obj: any, locale: string): string => {
@@ -126,7 +147,7 @@ export default async function CompanyPage({ params }: CompanyPageProps) {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-              {links.map((link) => (
+              {links.map((link: any) => (
                 <Link
                   key={link.id}
                   href={link.url}
@@ -187,11 +208,11 @@ export default async function CompanyPage({ params }: CompanyPageProps) {
       )}
 
       {/* Employees Section */}
-      {employees && employees.length > 0 && (
+      {transformedEmployees && transformedEmployees.length > 0 && (
         <section className="bg-white py-8 sm:py-12">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <EmployeesGrid 
-              employees={employees} 
+              employees={transformedEmployees} 
               locale={locale as 'en' | 'ar'} 
             />
           </div>

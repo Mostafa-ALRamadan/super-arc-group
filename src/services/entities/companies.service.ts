@@ -1,4 +1,15 @@
 import { fetchWithTokenRefresh, handleAuthError } from '../auth/auth-fetch';
+import { Employee } from './employee.service';
+
+// Company link interface
+interface CompanyLink {
+  id: number;
+  title: string;
+  url: string;
+  company: number;
+  created_at: string;
+  updated_at: string;
+}
 
 export interface Company {
   id: number;
@@ -19,6 +30,9 @@ export interface Company {
     alt_ar: string;
   };
   image_id?: number | null;
+  employees?: Employee[];
+  links?: CompanyLink[];
+  initials?: string;
   createdAt?: string;
   updatedAt?: string;
 }
