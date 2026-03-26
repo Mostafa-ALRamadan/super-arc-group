@@ -74,9 +74,8 @@ export default function ContactForm({ locale = 'en', onSuccess, translations }: 
     setSubmitStatus('idle');
 
     try {
-      // Use baseUrl approach for production flexibility
-      const baseUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000/api'}`;
-      const response = await fetch(`${baseUrl}/contact/`, {
+      // Call our API route instead of backend directly
+      const response = await fetch('/api/contact/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
