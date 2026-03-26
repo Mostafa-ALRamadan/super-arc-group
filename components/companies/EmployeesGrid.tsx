@@ -51,7 +51,7 @@ const EmployeesGrid: React.FC<EmployeesGridProps> = ({ employees, locale }) => {
               <div className="relative w-full h-full rounded-full overflow-hidden border-2 border-gray-200">
                 <img
                   src={employee.image?.url || '/placeholder-avatar.jpg'}
-                  alt={getLocalizedValue(employee.name, locale)}
+                  alt={employee.image ? (locale === 'ar' ? employee.image.alt_ar : employee.image.alt_en) : getLocalizedValue(employee.name, locale)}
                   className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105 rounded-full"
                 />
               </div>

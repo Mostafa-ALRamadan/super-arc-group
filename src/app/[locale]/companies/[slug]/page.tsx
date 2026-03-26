@@ -41,7 +41,7 @@ export async function generateMetadata({ params }: CompanyPageProps): Promise<Me
   const description = getLocalizedValue(company.description, locale);
 
   return {
-    title: `${companyName} | Super Arc Group`,
+    title: companyName,
     description: description,
     openGraph: {
       title: `${companyName} | Super Arc Group`,
@@ -58,7 +58,7 @@ export async function generateMetadata({ params }: CompanyPageProps): Promise<Me
     },
     twitter: {
       card: 'summary_large_image',
-      title: `${companyName} | Super Arc Group`,
+      title: companyName,
       description: description,
       images: company.image ? [company.image.url] : [],
     },
