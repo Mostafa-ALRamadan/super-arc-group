@@ -96,7 +96,9 @@ export default async function CompanyPage({ params }: CompanyPageProps) {
     },
     image: emp.image ? {
       id: emp.image.id,
-      url: emp.image.url,
+      url: emp.image.url.startsWith('http') 
+        ? emp.image.url 
+        : `${process.env.NEXT_PUBLIC_API_BASE_URL?.replace('/api', '') || 'http://localhost:8000'}${emp.image.url}`,
       alt_en: emp.image.alt_en,
       alt_ar: emp.image.alt_ar
     } : undefined,

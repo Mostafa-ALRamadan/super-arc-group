@@ -350,6 +350,9 @@ class CompaniesService {
           alt_ar: company.image.alt_ar
         } : undefined,
         image_id: company.image?.id || null,
+        employees: company.employees || [],
+        links: company.links || [],
+        initials: company.initials,
         createdAt: company.created_at,
         updatedAt: company.updated_at
       };
