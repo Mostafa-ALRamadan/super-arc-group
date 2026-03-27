@@ -28,7 +28,7 @@ export default function StatCard({ number, label, className = '', style }: StatC
       }}
     >
       {/* Glassmorphism card */}
-      <div className={`relative backdrop-blur-xl bg-white/80 rounded-3xl p-8 border border-white/20 shadow-xl transition-all duration-700 ${
+      <div className={`relative backdrop-blur-xl bg-white/80 rounded-3xl p-4 sm:p-4 lg:p-6 xl:p-8 border border-white/20 shadow-xl transition-all duration-700 ${
         isHovered ? 'transform scale-105 shadow-2xl bg-white/90' : ''
       }`}>
         
@@ -45,15 +45,17 @@ export default function StatCard({ number, label, className = '', style }: StatC
         }`}></div>
         
         {/* Content */}
-        <div className="relative z-10 space-y-6">
+        <div className="relative z-10 space-y-4 sm:space-y-6">
           {/* Number with animated background */}
           <div className="relative text-center">
             <div className={`absolute inset-0 bg-gradient-to-br from-primary to-primary-dark rounded-2xl blur-xl transition-all duration-700 ${
               isHovered ? 'opacity-30 scale-110' : 'opacity-20 scale-100'
             }`}></div>
             <div className="relative">
-              <div className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-br from-primary via-primary-dark to-primary leading-none">
-                {number}
+              <div className="min-h-[60px] flex items-center justify-center">
+                <div className="text-3xl sm:text-3xl lg:text-4xl xl:text-[2.5rem] font-black text-transparent bg-clip-text bg-gradient-to-br from-primary via-primary-dark to-primary leading-[1.4] overflow-visible tracking-wide py-2">
+                  {number}
+                </div>
               </div>
               {/* Animated underline */}
               <div className={`h-1 bg-gradient-to-r from-primary to-primary-dark rounded-full transition-all duration-700 mt-2 ${
@@ -73,7 +75,7 @@ export default function StatCard({ number, label, className = '', style }: StatC
           
           {/* Label with hover effect */}
           <div className="relative text-center">
-            <h3 className={`text-xl font-bold text-main leading-relaxed transition-all duration-700 ${
+            <h3 className={`text-base sm:text-base lg:text-lg xl:text-xl font-bold text-main leading-relaxed transition-all duration-700 ${
               isHovered ? 'text-main' : ''
             }`}>
               {label}

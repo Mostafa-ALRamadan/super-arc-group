@@ -99,7 +99,7 @@ export default function About() {
         <div className="flex flex-col items-center">
           {/* Stats Grid */}
           <div className="w-full max-w-4xl">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
               {stats.map((stat, index) => (
                 <StatCard
                   key={index}
