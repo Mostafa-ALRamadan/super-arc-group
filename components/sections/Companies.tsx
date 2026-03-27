@@ -196,7 +196,7 @@ export default function Companies() {
           {/* Carousel Container */}
           <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-bg-light to-bg-light p-8 shadow-2xl border border-gray-200" style={{ opacity: isVisible ? 1 : 0, transform: isVisible ? 'translateY(0)' : 'translateY(40px)', transition: 'all 1s ease-out 0.6s' }}>
             <div className="relative h-96 flex items-center justify-center">
-              {companies.map((company, index) => {
+                {companies.map((company, index) => {
                 const isActive = index === activeIndex;
                 const isPrev = index === (activeIndex - 1 + companies.length) % companies.length;
                 const isNext = index === (activeIndex + 1) % companies.length;
@@ -217,10 +217,8 @@ export default function Companies() {
                     }`}
                     style={{
                       position: 'absolute',
-                      top: 0,
-                      transform: `translateX(${(index - activeIndex) * (screenSize === 'mobile' ? 80 : screenSize === 'tablet' ? 100 : 120) * positionMultiplier}%) ${isActive ? 'scale(1)' : isPrev || isNext ? 'scale(0.75)' : 'scale(0.5)'}`,
-                      left: '50%',
-                      marginLeft: screenSize === 'mobile' ? '-144px' : screenSize === 'tablet' ? '-160px' : '-192px'
+                      top: '50%',
+                      transform: `translate(calc(-50% + ${(index - activeIndex) * (screenSize === 'mobile' ? 80 : screenSize === 'tablet' ? 100 : 120) * positionMultiplier}%), -50%) ${isActive ? 'scale(1)' : isPrev || isNext ? 'scale(0.75)' : 'scale(0.5)'}`,                      left: '50%',
                     }}
                   >
                     <div className={`relative bg-white rounded-2xl transition-all duration-300 ${
