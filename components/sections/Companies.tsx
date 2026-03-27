@@ -291,7 +291,7 @@ export default function Companies() {
             </div>
             
             {/* Progress Indicators */}
-            <div className="flex justify-center mt-6 space-x-2">
+            <div className={`flex justify-center mt-6 ${isRTL ? 'space-x-reverse space-x-2' : 'space-x-2'}`}>
               {companies.map((_, index) => (
                 <button
                   key={index}
