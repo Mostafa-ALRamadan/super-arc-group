@@ -192,7 +192,11 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     let actualImageUrl = '';
     if (relatedPost.cover_image?.url) {
       try {
-        const response = await fetch(relatedPost.cover_image.url);
+        const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL?.replace('/api', '') || 'http://localhost:8000';
+        const fullImageUrl = relatedPost.cover_image.url.startsWith('http') 
+          ? relatedPost.cover_image.url 
+          : `${baseUrl}${relatedPost.cover_image.url}`;
+        const response = await fetch(fullImageUrl);
         const imageData = await response.json();
         actualImageUrl = imageData.url || '';
       } catch (error) {
