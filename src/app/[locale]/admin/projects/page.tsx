@@ -160,7 +160,6 @@ export default function ProjectsManagement() {
           setCategories(categoriesData.results || categoriesData || []);
         }
       } catch (err) {
-        console.error('Error loading data:', err);
         setError(locale === 'ar' ? 'فشل تحميل البيانات' : 'Failed to load data');
       } finally {
         setLoading(false);
@@ -213,12 +212,11 @@ export default function ProjectsManagement() {
   }, [filteredProjects.length, currentPage]);
 
   const handleEdit = (projectId: number) => {
-    // Find the project to get its slug
-    const project = projects.find(p => p.id === projectId);
+    // Find the project to get its slug from allProjects (not projects)
+    const project = allProjects.find(p => p.id === projectId);
     if (project && project.slug) {
       router.push(`/${locale}/admin/projects/edit/${project.slug}`);
     } else {
-      console.error('Project not found or no slug available for ID:', projectId);
       // Fallback to ID if slug is not available
       router.push(`/${locale}/admin/projects/edit/${projectId}`);
     }
@@ -234,10 +232,9 @@ export default function ProjectsManagement() {
 
   const handleDeleteConfirm = async () => {
     try {
-      // Find the project to get its slug for the API call
-      const project = projects.find(p => p.id === parseInt(deleteConfirm.projectId));
+      // Find the project to get its slug for the API call from allProjects
+      const project = allProjects.find(p => p.id === parseInt(deleteConfirm.projectId));
       if (!project || !project.slug) {
-        console.error('Project not found or no slug available for deletion');
         return;
       }
 
@@ -251,7 +248,7 @@ export default function ProjectsManagement() {
       }
 
       // Remove from frontend state after successful deletion
-      setProjects(prev => prev.filter(p => p.id !== parseInt(deleteConfirm.projectId)));
+      setAllProjects(prev => prev.filter(p => p.id !== parseInt(deleteConfirm.projectId)));
       setSuccess((locale as 'en' | 'ar') === 'ar' ? 'تم حذف المشروع بنجاح' : 'Project deleted successfully');
       
       // Auto-dismiss success notification after 5 seconds
@@ -259,7 +256,6 @@ export default function ProjectsManagement() {
         setSuccess(null);
       }, 5000);
     } catch (error) {
-      console.error('Failed to delete project:', error);
       setError((locale as 'en' | 'ar') === 'ar' ? 'فشل في حذف المشروع' : 'Failed to delete project');
     } finally {
       setDeleteConfirm({ isOpen: false, projectId: '', projectTitle: '' });

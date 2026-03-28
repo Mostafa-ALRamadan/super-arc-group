@@ -110,46 +110,59 @@ export default function EditProject({ params }: { params: Promise<{ id: string }
       try {
         const baseUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000/api'}`;
         
-        // First try to fetch by slug, if that fails try by ID
-        let apiUrl = `${baseUrl}/projects/${projectId}/`;
-        let response = await fetchWithTokenRefresh(apiUrl);
-        
-        // If slug fetch fails, try ID
-        if (!response.ok && !isNaN(Number(projectId))) {
-          apiUrl = `${baseUrl}/projects/by-id/${projectId}/`;
-          response = await fetchWithTokenRefresh(apiUrl);
-        }
-        
-        if (response.ok) {
-          const project = await response.json();
-          
-          // Transform API data to match ProjectForm expected structure
-          const transformedData = {
-            ...project,
-            image_id: project.image?.id || project.image_id || null,
-            image_url: project.image?.url || project.image_url || '',
-            category_id: project.category?.id || project.category_id || null,
-          };
-          
-          setInitialData(transformedData);
-        } else if (response.status === 404) {
-          setInitialData(null);
+        // If projectId is a number, fetch all projects and find the one with matching ID
+        if (!isNaN(Number(projectId))) {
+          const response = await fetchWithTokenRefresh(`${baseUrl}/projects/?page=1&limit=1000`);
+          if (response.ok) {
+            const data = await response.json();
+            const allProjects = data.results || data || [];
+            const project = allProjects.find((p: any) => p.id === parseInt(projectId));
+            
+            if (project) {
+              // Transform API data to match ProjectForm expected structure
+              const transformedData = {
+                ...project,
+                image_id: project.image?.id || project.image_id || null,
+                image_url: project.image?.url || project.image_url || '',
+                category_id: project.category?.id || project.category_id || null,
+              };
+              
+              setInitialData(transformedData);
+            } else {
+              setInitialData(null);
+            }
+          } else {
+            throw new Error('Failed to fetch projects');
+          }
         } else {
-          const errorText = await response.text();
-          const errorData = await response.json().catch(() => ({}));
-          const errorMessage = errorData.detail || errorData.message || 'Failed to fetch project';
-          setError(errorMessage);
+          // If projectId is a slug, try direct fetch
+          const apiUrl = `${baseUrl}/projects/${projectId}/`;
+          const response = await fetchWithTokenRefresh(apiUrl);
+          
+          if (response.ok) {
+            const project = await response.json();
+            
+            // Transform API data to match ProjectForm expected structure
+            const transformedData = {
+              ...project,
+              image_id: project.image?.id || project.image_id || null,
+              image_url: project.image?.url || project.image_url || '',
+              category_id: project.category?.id || project.category_id || null,
+            };
+            
+            setInitialData(transformedData);
+          } else if (response.status === 404) {
+            setInitialData(null);
+          } else {
+            const errorText = await response.text();
+            const errorData = await response.json().catch(() => ({}));
+            const errorMessage = errorData.detail || errorData.message || 'Failed to fetch project';
+            setError(errorMessage);
+          }
         }
       } catch (error: any) {
-        console.error('Error fetching project:', error);
-        
-        // Handle authentication errors
-        if (error.message.includes('Authentication failed') || error.message.includes('No access token')) {
-          // The fetchWithTokenRefresh will handle redirect to login
-          return;
-        }
-        
-        setError(locale === 'ar' ? 'فشل تحميل المشروع' : 'Failed to load project');
+        // The fetchWithTokenRefresh will handle redirect to login
+        return;
       } finally {
         setLoading(false);
       }
@@ -161,7 +174,10 @@ export default function EditProject({ params }: { params: Promise<{ id: string }
   const handleSubmit = async (data: any) => {
     try {
       const baseUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000/api'}`;
-      const response = await fetchWithTokenRefresh(`${baseUrl}/projects/${projectId}/`, {
+      
+      // Use the project's slug for the API call, not the ID
+      const projectSlug = initialData?.slug || projectId;
+      const response = await fetchWithTokenRefresh(`${baseUrl}/projects/${projectSlug}/`, {
         method: 'PUT', // or PATCH depending on your API
         headers: {
           'Content-Type': 'application/json',
@@ -188,8 +204,6 @@ export default function EditProject({ params }: { params: Promise<{ id: string }
         setShowToast(true);
       }
     } catch (error: any) {
-      console.error('Error updating project:', error);
-      
       // Handle authentication errors
       if (error.message.includes('Authentication failed') || error.message.includes('No access token')) {
         // The fetchWithTokenRefresh will handle redirect to login
