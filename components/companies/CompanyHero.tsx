@@ -26,7 +26,11 @@ const CompanyHero: React.FC<CompanyHeroProps> = ({ company, locale }) => {
 
   const companyName = getLocalizedValue(company.name, locale);
   const description = getLocalizedValue(company.description, locale);
-  const logo = company.image?.url || '';
+  const logo = company.image?.url 
+    ? (company.image.url.startsWith('http') 
+        ? company.image.url 
+        : `${process.env.NEXT_PUBLIC_API_BASE_URL?.replace('/api', '') || 'http://localhost:8000'}${company.image.url}`)
+    : '';
 
   return (
     <div className="bg-white py-16">
