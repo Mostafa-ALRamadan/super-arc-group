@@ -109,10 +109,16 @@ export default function EditProject({ params }: { params: Promise<{ id: string }
       
       try {
         const baseUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000/api'}`;
-        // Use slug instead of ID for the API endpoint
-        const apiUrl = `${baseUrl}/projects/${projectId}/`;
         
-        const response = await fetchWithTokenRefresh(apiUrl);
+        // First try to fetch by slug, if that fails try by ID
+        let apiUrl = `${baseUrl}/projects/${projectId}/`;
+        let response = await fetchWithTokenRefresh(apiUrl);
+        
+        // If slug fetch fails, try ID
+        if (!response.ok && !isNaN(Number(projectId))) {
+          apiUrl = `${baseUrl}/projects/by-id/${projectId}/`;
+          response = await fetchWithTokenRefresh(apiUrl);
+        }
         
         if (response.ok) {
           const project = await response.json();
