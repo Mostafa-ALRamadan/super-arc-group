@@ -61,10 +61,8 @@ export async function generateMetadata({ params }: ProjectPageProps): Promise<Me
   
   // Fetch project from API
   const baseUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000/api'}`;
-  const timestamp = Date.now(); // Cache-busting parameter
-  const response = await fetch(`${baseUrl}/projects/${slug}/?t=${timestamp}`, {
-    next: { revalidate: 0 }, // Disable cache to get fresh data
-    cache: 'no-store' // Force no caching
+  const response = await fetch(`${baseUrl}/projects/${slug}/`, {
+    next: { revalidate: 3600 } // Cache for 1 hour
   });
   
   if (!response.ok) {
@@ -130,7 +128,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
   // Fetch project from API
   const baseUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000/api'}`;
   const response = await fetch(`${baseUrl}/projects/${slug}/`, {
-    next: { revalidate: 0 } // Disable cache temporarily
+    next: { revalidate: 3600 } // Cache for 1 hour
   });
 
   // Handle 404
