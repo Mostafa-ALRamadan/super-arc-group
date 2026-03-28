@@ -161,14 +161,15 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
           <div className="absolute top-0 left-0 w-full h-full bg-grid-pattern"></div>
         </div>
         
-        {/* Background Image with Lighter Overlay */}
+        {/* Background Image with Darker Overlay */}
         <div className="absolute inset-0">
           <img
             src={project.image?.url || '/images/default-project.jpg'}
             alt={locale === 'ar' ? project.image?.alt_ar || project.title_ar : project.image?.alt_en || project.title_en}
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-br from-black/15 via-black/8 to-black/12"></div>
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent opacity-50"></div>
         </div>
 
         {/* Content Overlay */}

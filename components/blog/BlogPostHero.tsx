@@ -121,8 +121,8 @@ const BlogPostHero: React.FC<BlogPostHeroProps> = ({ post, locale }) => {
               </div>
 
               {/* Title */}
-              <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-white mb-6 leading-tight drop-shadow-2xl animate-fade-in-up animation-delay-200">
-                <span className="block bg-gradient-to-r from-white to-gray-100 bg-clip-text text-transparent">
+              <h1 className={`text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-white mb-8 ${locale === 'ar' ? 'leading-loose' : 'leading-tight'} drop-shadow-2xl animate-fade-in-up animation-delay-200`}>
+                <span className="block bg-gradient-to-r from-white to-gray-100 bg-clip-text text-transparent pb-2">
                   {title}
                 </span>
               </h1>

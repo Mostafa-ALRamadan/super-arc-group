@@ -652,7 +652,7 @@ const BlogForm: React.FC<BlogFormProps> = ({
                 <EditorComponent
                   data={formData.content.en}
                   onChange={(data: OutputData) => handleNestedInputChange('content', 'en', data)}
-                  placeholder={locale === 'ar' ? '' : 'Start writing or type \'/\' for commands...'}
+                  placeholder={locale === 'ar' ? 'ابدأ الكتابة أو اكتب "/" للأوامر...' : 'Start writing or type \'/\' for commands...'}
                   dir="ltr"
                 />
                 {errors.content && (
