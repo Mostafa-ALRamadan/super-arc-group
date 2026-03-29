@@ -80,26 +80,40 @@ export default function ContactSection({ locale = 'en' }: ContactSectionProps) {
   };
 
   return (
-    <section id="contact" ref={setElement} className="py-20 bg-gradient-to-br from-bg-light to-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section ref={setElement} className="py-20 bg-gradient-to-br from-bg-light to-white scroll-mt-32">
+      <div id="contact" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
         {/* Section Header */}
         <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-primary-light to-primary-light text-primary rounded-full text-sm font-semibold mb-8 border border-primary/20 shadow-sm" style={{ opacity: isVisible ? 1 : 0, transform: isVisible ? 'translateY(0)' : 'translateY(40px)', transition: 'all 1s ease-out' }}>
-            <span>{translations.sectionLabel}</span>
-          </div>
-          
-          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black text-main max-w-4xl mx-auto leading-tight mb-10 tracking-tight" style={{ opacity: isVisible ? 1 : 0, transform: isVisible ? 'translateY(0)' : 'translateY(40px)', transition: 'all 1s ease-out 0.2s' }}>
-            <span className="bg-gradient-to-br from-text-main via-text-main to-text-main bg-clip-text text-transparent">
-              {translations.title}
+          <div className="inline-flex items-center gap-3 border-[1px] rounded-full px-4 py-2 backdrop-blur-[16px] mb-2" style={{ borderColor: '#fff3', backgroundColor: '#ffffff1a', opacity: isVisible ? 1 : 0, transform: isVisible ? 'translateY(0)' : 'translateY(40px)', transition: 'all 1s ease-out' }}>
+            <span className="text-sm font-bold text-secondary uppercase tracking-wider">
+              {translations.sectionLabel}
             </span>
-          </h2>
-          
-          <p className="text-xl lg:text-2xl text-muted max-w-3xl mx-auto leading-relaxed font-medium" style={{ opacity: isVisible ? 1 : 0, transform: isVisible ? 'translateY(0)' : 'translateY(40px)', transition: 'all 1s ease-out 0.4s' }}>
+          </div>
+          <h3 
+            className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4 relative"
+            style={{ 
+              opacity: isVisible ? 1 : 0, 
+              transform: isVisible ? 'translateY(0)' : 'translateY(30px)', 
+              transition: 'all 0.8s ease-out 0.2s' 
+            }}
+          >
+            {translations.title}
+            <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 w-24 h-1 bg-secondary rounded-full"></div>
+          </h3>
+          <p 
+            className="text-lg text-gray-700 max-w-4xl mx-auto leading-relaxed mt-8"
+            style={{ 
+              opacity: isVisible ? 1 : 0, 
+              transform: isVisible ? 'translateY(0)' : 'translateY(30px)', 
+              transition: 'all 0.8s ease-out 0.4s' 
+            }}
+          >
             {translations.description}
           </p>
         </div>
-
-        {/* Contact Content */}
+      </div>
+      {/* Contact Content */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
           {/* Contact Info Panel */}
           <div className="space-y-8" style={{ opacity: isVisible ? 1 : 0, transform: isVisible ? 'translateY(0)' : 'translateY(40px)', transition: 'all 1s ease-out 0.8s' }}>
@@ -111,9 +125,9 @@ export default function ContactSection({ locale = 'en' }: ContactSectionProps) {
               <div className="space-y-6">
                 {/* Email */}
                 <div className="flex items-start gap-4">
-                  <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-primary-light to-primary-light rounded-lg flex items-center justify-center">
+                  <div className="flex-shrink-0 w-12 h-12 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#1F5142' }}>
                     <svg
-                      className="w-6 h-6 text-primary"
+                      className="w-6 h-6 text-white"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -142,9 +156,9 @@ export default function ContactSection({ locale = 'en' }: ContactSectionProps) {
 
                 {/* Phone */}
                 <div className="flex items-start gap-4">
-                  <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-primary-light to-primary-light rounded-lg flex items-center justify-center">
+                  <div className="flex-shrink-0 w-12 h-12 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#1F5142' }}>
                     <svg
-                      className="w-6 h-6 text-primary"
+                      className="w-6 h-6 text-white"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -173,9 +187,9 @@ export default function ContactSection({ locale = 'en' }: ContactSectionProps) {
 
                 {/* Address */}
                 <div className="flex items-start gap-4">
-                  <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-primary-light to-primary-light rounded-lg flex items-center justify-center">
+                  <div className="flex-shrink-0 w-12 h-12 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#1F5142' }}>
                     <svg
-                      className="w-6 h-6 text-primary"
+                      className="w-6 h-6 text-white"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -199,26 +213,31 @@ export default function ContactSection({ locale = 'en' }: ContactSectionProps) {
                     <h4 className="text-sm font-semibold text-main mb-1">
                       {isRTL ? 'العنوان' : 'Address'}
                     </h4>
-                    <p className="text-muted leading-relaxed">
-                      <span dir="ltr" className="text-primary" style={{ color: '#1d9460' }}>{translations.info.address}</span>
-                    </p>
+                    <a
+                      href="https://maps.google.com/?q=Super+Arc+Consultant+L.L.C,+Abu+Dhabi,+United+Arab+Emirates"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-primary hover:text-primary-dark font-medium transition-colors"
+                    >
+                      <span dir="ltr">{translations.info.address}</span>
+                    </a>
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Additional Info */}
-            <div className="bg-gradient-to-br from-primary-light to-primary-light rounded-2xl p-8 border border-primary/50">
-              <h4 className="text-lg font-semibold text-main mb-3">
+            <div className="rounded-2xl p-8 border border-primary/50" style={{ backgroundColor: '#1F5142' }}>
+              <h4 className="text-lg font-semibold text-white mb-3">
                 {isRTL ? 'وقت الاستجابة' : 'Response Time'}
               </h4>
-              <p className="text-muted leading-relaxed mb-4">
+              <p className="text-white/90 leading-relaxed mb-4">
                 {isRTL 
                   ? <span>نلتزم بالرد على جميع الاستفسارات في غضون <span dir="ltr">24</span> ساعة عمل. للمسائل العاجلة، يرجى الاتصال بنا مباشرة.</span>
                   : 'We respond to all inquiries within 24 business hours. For urgent matters, please call us directly.'
                 }
               </p>
-              <div className="flex items-center gap-2 text-sm text-primary font-medium">
+              <div className="flex items-center gap-2 text-sm text-white font-medium">
                 <svg
                   className="w-4 h-4"
                   fill="none"

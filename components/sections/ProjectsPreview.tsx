@@ -46,15 +46,15 @@ interface Project {
 
 const translations = {
   en: {
-    sectionLabel: 'Our Projects',
-    title: 'Delivering Complex Projects with Proven Excellence',
-    description: 'Explore a selection of our recent and landmark projects that demonstrate our technical expertise, execution capability, and commitment to international standards.',
+    sectionLabel: 'Portfolio',
+    title: 'Projects Portfolio',
+    description: 'Landmark projects across the Middle East',
     viewAllButton: 'View All Projects'
   },
   ar: {
-    sectionLabel: 'مشاريعنا',
-    title: 'تنفيذ مشاريع معقدة بكفاءة وتميز',
-    description: 'استكشف مجموعة من مشاريعنا الحديثة والرائدة التي تعكس خبرتنا الفنية وقدرتنا التنفيذية والتزامنا بالمعايير الدولية.',
+    sectionLabel: 'معرض الأعمال',
+    title: 'معرض المشاريع',
+    description: 'مشاريع بارزة في جميع أنحاء الشرق الأوسط',
     viewAllButton: 'عرض جميع المشاريع'
   }
 };
@@ -158,28 +158,43 @@ export default function ProjectsPreview() {
   }));
 
   return (
-    <section id="projects" ref={setElement} className="py-20 bg-gradient-to-br from-white to-bg-light">
+    <section ref={setElement} className="py-20 bg-gradient-to-br from-bg-light to-white scroll-mt-32">
       {/* Section Header */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
-        <div className="text-center">
-          <div className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-primary-light to-primary-light text-primary rounded-full text-sm font-semibold mb-8 border border-primary/20 shadow-sm" style={{ opacity: isVisible ? 1 : 0, transform: isVisible ? 'translateY(0)' : 'translateY(40px)', transition: 'all 1s ease-out' }}>
-            <span>{t.sectionLabel}</span>
+      <div id="projects" className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 mb-16">
+        <div className="text-center mb-16">
+          <div className="inline-flex items-center gap-3 border-[1px] rounded-full px-4 py-2 backdrop-blur-[16px] mb-2" style={{ borderColor: '#fff3', backgroundColor: '#ffffff1a', opacity: isVisible ? 1 : 0, transform: isVisible ? 'translateY(0)' : 'translateY(40px)', transition: 'all 1s ease-out' }}>
+            <span className="text-sm font-bold text-secondary uppercase tracking-wider">
+              {t.sectionLabel}
+            </span>
           </div>
           
-          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black text-main max-w-5xl mx-auto leading-tight mb-10 tracking-tight" style={{ opacity: isVisible ? 1 : 0, transform: isVisible ? 'translateY(0)' : 'translateY(40px)', transition: 'all 1s ease-out 0.2s' }}>
-            <span className="bg-gradient-to-br from-text-main via-text-main to-text-main bg-clip-text text-transparent">
-              {t.title}
-            </span>
-          </h2>
+          <h3 
+            className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4 relative"
+            style={{ 
+              opacity: isVisible ? 1 : 0, 
+              transform: isVisible ? 'translateY(0)' : 'translateY(30px)', 
+              transition: 'all 0.8s ease-out 0.2s' 
+            }}
+          >
+            {t.title}
+            <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 w-24 h-1 bg-secondary rounded-full"></div>
+          </h3>
           
-          <p className="text-xl lg:text-2xl text-muted max-w-4xl mx-auto leading-relaxed font-medium" style={{ opacity: isVisible ? 1 : 0, transform: isVisible ? 'translateY(0)' : 'translateY(40px)', transition: 'all 1s ease-out 0.4s' }}>
+          <p 
+            className="text-lg text-gray-700 max-w-4xl mx-auto leading-relaxed mt-8"
+            style={{ 
+              opacity: isVisible ? 1 : 0, 
+              transform: isVisible ? 'translateY(0)' : 'translateY(30px)', 
+              transition: 'all 0.8s ease-out 0.4s' 
+            }}
+          >
             {t.description}
           </p>
         </div>
       </div>
 
       {/* Projects Grid */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
           {transformedProjects.map((project, index) => (
             <ProjectCard
@@ -204,7 +219,7 @@ export default function ProjectsPreview() {
           <Link 
             key={`projects-button-${locale}`}
             href={`/${locale}/projects`}
-            className="inline-flex items-center gap-3 px-8 py-4 bg-primary text-white font-semibold rounded-xl hover:bg-primary-dark transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+            className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-[#DAA424] to-[#E5B84D] text-white font-semibold rounded-xl hover:from-[#B8891F] hover:to-[#DAA424] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
           >
             <span>{t.viewAllButton}</span>
             {locale === 'en' && (

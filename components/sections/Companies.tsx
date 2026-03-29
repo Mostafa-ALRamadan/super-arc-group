@@ -6,14 +6,14 @@ import { useRouter } from 'next/navigation';
 
 const translations = {
   en: {
-    sectionLabel: 'Our Companies',
-    title: 'Integrated Expertise Across Specialized Companies',
+    sectionLabel: 'Super Arc Group',
+    title: 'Our Companies',
     description: 'Super Arc Group operates through specialized subsidiaries that collectively deliver comprehensive engineering, contracting, and development solutions.',
     viewCompany: 'View Company'
   },
   ar: {
-    sectionLabel: 'شركاتنا',
-    title: 'خبرات متكاملة عبر شركات متخصصة',
+    sectionLabel: 'مجموعة سوبر آرك',
+    title: 'شركاتنا',
     description: 'تعمل مجموعة سوبر آرك من خلال شركات متخصصة تتكامل فيما بينها لتقديم حلول هندسية وإنشائية وتطويرية شاملة.',
     viewCompany: 'عرض الشركة'
   }
@@ -138,28 +138,33 @@ export default function Companies() {
   }
 
   return (
-    <section id="companies" className="relative py-24 bg-gradient-to-br from-white via-bg-light to-white">
-      {/* Background pattern */}
-      <div className="absolute inset-0 opacity-3">
-        <div className="absolute top-32 left-20 w-64 h-64 bg-primary rounded-full blur-3xl"></div>
-        <div className="absolute bottom-32 right-20 w-96 h-96 bg-primary-dark rounded-full blur-3xl"></div>
-        <div className="absolute top-1/2 left-1/2 w-80 h-80 bg-primary rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
-      </div>
-
-      {/* Section Header */}
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
-        <div className="text-center">
-          <div className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-primary-light to-primary-light text-primary rounded-full text-sm font-semibold mb-8 border border-primary/50 shadow-sm" style={{ opacity: isVisible ? 1 : 0, transform: isVisible ? 'translateY(0)' : 'translateY(40px)', transition: 'all 1s ease-out' }}>
-            <span>{t.sectionLabel}</span>
-          </div>
-          
-          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black text-main max-w-5xl mx-auto leading-tight mb-10 tracking-tight" style={{ opacity: isVisible ? 1 : 0, transform: isVisible ? 'translateY(0)' : 'translateY(40px)', transition: 'all 1s ease-out 0.2s' }}>
-            <span className="bg-gradient-to-br from-text-main via-text-main to-text-main bg-clip-text text-transparent">
-              {t.title}
+    <section className="relative py-24 bg-gradient-to-br from-white via-bg-light to-white scroll-mt-32">
+      <div id="companies" className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
+        <div className="text-center mb-16">
+          <div className="inline-flex items-center gap-3 border-[1px] rounded-full px-4 py-2 backdrop-blur-[16px] mb-2" style={{ borderColor: '#fff3', backgroundColor: '#ffffff1a', opacity: isVisible ? 1 : 0, transform: isVisible ? 'translateY(0)' : 'translateY(40px)', transition: 'all 1s ease-out' }}>
+            <span className="text-sm font-bold text-secondary uppercase tracking-wider">
+              {t.sectionLabel}
             </span>
-          </h2>
-          
-          <p className="text-xl lg:text-2xl text-muted max-w-4xl mx-auto leading-relaxed font-medium" style={{ opacity: isVisible ? 1 : 0, transform: isVisible ? 'translateY(0)' : 'translateY(40px)', transition: 'all 1s ease-out 0.4s' }}>
+          </div>
+          <h3 
+            className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4 relative"
+            style={{ 
+              opacity: isVisible ? 1 : 0, 
+              transform: isVisible ? 'translateY(0)' : 'translateY(30px)', 
+              transition: 'all 0.8s ease-out 0.2s' 
+            }}
+          >
+            {t.title}
+            <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 w-24 h-1 bg-secondary rounded-full"></div>
+          </h3>
+          <p 
+            className="text-lg text-gray-700 max-w-4xl mx-auto leading-relaxed mt-8"
+            style={{ 
+              opacity: isVisible ? 1 : 0, 
+              transform: isVisible ? 'translateY(0)' : 'translateY(30px)', 
+              transition: 'all 0.8s ease-out 0.4s' 
+            }}
+          >
             {t.description}
           </p>
         </div>
@@ -171,30 +176,30 @@ export default function Companies() {
           {/* Navigation Buttons */}
           <button
             onClick={prevCompany}
-            className={`absolute top-1/2 -translate-y-1/2 z-20 w-14 h-14 bg-gradient-to-br from-primary to-primary-dark/90 backdrop-blur-sm rounded-full shadow-xl flex items-center justify-center hover:from-primary-dark hover:to-primary transition-all duration-300 border border-primary/30 hover:scale-110 hover:shadow-2xl ${
+            className={`absolute top-1/2 -translate-y-1/2 z-20 w-16 h-16 bg-gradient-to-br from-green-800 via-green-700 to-green-800 rounded-full shadow-2xl flex items-center justify-center hover:from-green-600 hover:to-green-500 transition-all duration-300 border-2 border-white/50 hover:scale-110 hover:shadow-3xl hover:border-white/80 ${
               isRTL ? 'right-0 translate-x-4' : 'left-0 -translate-x-4'
             } ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
             style={{ transition: 'all 1s ease-out 0.6s' }}
           >
-            <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={isRTL ? "M9 5l7 7-7 7" : "M15 19l-7-7 7-7"} />
+            <svg className="w-8 h-8 text-white drop-shadow-lg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d={isRTL ? "M9 5l7 7-7 7" : "M15 19l-7-7 7-7"} />
             </svg>
           </button>
           
           <button
             onClick={nextCompany}
-            className={`absolute top-1/2 -translate-y-1/2 z-20 w-14 h-14 bg-gradient-to-br from-primary to-primary-dark/90 backdrop-blur-sm rounded-full shadow-xl flex items-center justify-center hover:from-primary-dark hover:to-primary transition-all duration-300 border border-primary/30 hover:scale-110 hover:shadow-2xl ${
+            className={`absolute top-1/2 -translate-y-1/2 z-20 w-16 h-16 bg-gradient-to-br from-green-800 via-green-700 to-green-800 rounded-full shadow-2xl flex items-center justify-center hover:from-green-600 hover:to-green-500 transition-all duration-300 border-2 border-white/50 hover:scale-110 hover:shadow-3xl hover:border-white/80 ${
               isRTL ? 'left-0 -translate-x-4' : 'right-0 translate-x-4'
             } ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
             style={{ transition: 'all 1s ease-out 0.6s' }}
           >
-            <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={isRTL ? "M15 19l-7-7 7-7" : "M9 5l7 7-7 7"} />
+            <svg className="w-8 h-8 text-white drop-shadow-lg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d={isRTL ? "M15 19l-7-7 7-7" : "M9 5l7 7-7 7"} />
             </svg>
           </button>
 
           {/* Carousel Container */}
-          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-bg-light to-bg-light p-8 shadow-2xl border border-gray-200" style={{ opacity: isVisible ? 1 : 0, transform: isVisible ? 'translateY(0)' : 'translateY(40px)', transition: 'all 1s ease-out 0.6s' }}>
+          <div className="relative overflow-hidden rounded-3xl bg-white/10 backdrop-blur-md p-8 shadow-2xl border border-white/20" style={{ opacity: isVisible ? 1 : 0, transform: isVisible ? 'translateY(0)' : 'translateY(40px)', transition: 'all 1s ease-out 0.6s' }}>
             <div className="relative h-96 flex items-center justify-center">
                 {companies.map((company, index) => {
                 const isActive = index === activeIndex;
@@ -221,19 +226,19 @@ export default function Companies() {
                       transform: `translate(calc(-50% + ${(index - activeIndex) * (screenSize === 'mobile' ? 80 : screenSize === 'tablet' ? 100 : 120) * positionMultiplier}%), -50%) ${isActive ? 'scale(1)' : isPrev || isNext ? 'scale(0.75)' : 'scale(0.5)'}`,                      left: '50%',
                     }}
                   >
-                    <div className={`relative bg-white rounded-2xl transition-all duration-300 ${
+                    <div className={`relative bg-gradient-to-br from-white to-green-900/20 rounded-2xl transition-all duration-300 ${
                       isActive 
-                        ? 'border-2 border-primary shadow-xl ring-2 ring-primary/20 transform scale-102' 
-                        : 'border-2 border-gray-200 hover:border-primary shadow-lg'
+                        ? 'border-2 border-green-800 shadow-xl ring-2 ring-green-900/30 transform scale-105' 
+                        : 'border-2 border-green-700/50 hover:border-green-800 shadow-lg'
                     } p-4 sm:p-6 md:p-8 w-72 sm:w-80 md:w-96`}>
                       <div className="relative z-10">
                         <div className="relative mb-6">
                           <div className={`w-20 h-20 sm:w-24 sm:h-24 md:w-32 md:h-32 mx-auto rounded-2xl flex items-center justify-center transition-all duration-300 ${
                             isActive 
-                              ? 'bg-gradient-to-br from-primary-light to-primary shadow-lg transform scale-105' 
-                              : 'bg-gradient-to-br from-gray-100 to-gray-200'
+                              ? 'bg-gradient-to-br from-green-800 via-green-700 to-green-800 shadow-xl transform scale-105' 
+                              : 'bg-gradient-to-br from-green-700/60 to-green-800/60'
                           }`}>
-                            <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 bg-white rounded-xl shadow-inner flex items-center justify-center overflow-hidden">
+                            <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 bg-gradient-to-br from-white to-green-900/20 rounded-xl shadow-inner flex items-center justify-center overflow-hidden">
                               {company.image && (
                               <img
                                 src={company.image.url}
@@ -248,10 +253,10 @@ export default function Companies() {
                           
                           <div className={`absolute -bottom-2 left-1/2 transform -translate-x-1/2 text-white font-bold px-4 py-2 rounded-full shadow-xl transition-all duration-300 ${
                             isActive 
-                              ? 'bg-gradient-to-r from-primary to-primary-dark transform scale-105' 
-                              : 'bg-gradient-to-r from-gray-400 to-gray-500'
+                              ? 'bg-gradient-to-r from-green-800 via-green-700 to-green-800 transform scale-105 shadow-2xl' 
+                              : 'bg-gradient-to-r from-green-700 to-green-800'
                           }`}>
-                            {company.name.en.split(' ').map(word => word.charAt(0).toUpperCase()).join('').substring(0, 3)}
+                            {company.name.en.split(' ').map((word: string) => word.charAt(0).toUpperCase()).join('').substring(0, 3)}
                           </div>
                         </div>
                         
@@ -264,8 +269,8 @@ export default function Companies() {
                         <div className="flex justify-center">
                           <button className={`inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
                             isActive 
-                              ? 'bg-gradient-to-r from-primary to-primary-dark text-white shadow-xl hover:shadow-2xl transform scale-105' 
-                              : 'bg-gray-200 text-muted hover:bg-gray-300'
+                              ? 'bg-gradient-to-r from-green-800 via-green-700 to-green-800 text-white shadow-xl hover:shadow-2xl transform scale-105' 
+                              : 'bg-gradient-to-r from-green-700/60 to-green-800/60 text-gray-700 hover:from-green-700 hover:to-green-800'
                           }`}>
                             <span>{t.viewCompany}</span>
                             <svg
@@ -298,8 +303,8 @@ export default function Companies() {
                   onClick={() => setActiveIndex(index)}
                   className={`w-2 h-2 rounded-full transition-all duration-300 ${
                     index === activeIndex 
-                      ? 'w-8 bg-gradient-to-r from-primary to-primary-dark shadow-lg' 
-                      : 'bg-gray-300 hover:bg-primary'
+                      ? 'w-8 bg-gradient-to-r from-green-800 via-green-700 to-green-800 shadow-lg' 
+                      : 'bg-gradient-to-r from-green-700 to-green-800 hover:from-green-600 hover:to-green-700'
                   }`}
                 />
               ))}

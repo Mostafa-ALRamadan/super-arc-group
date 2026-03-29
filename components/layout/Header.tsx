@@ -44,6 +44,7 @@ const translations = {
 export default function Header() {
   const [locale, setLocale] = useState<'en' | 'ar'>('en');
   const [mounted, setMounted] = useState(false);
+  const [isAnimated, setIsAnimated] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const headerRef = useRef<HTMLDivElement>(null);
@@ -53,11 +54,19 @@ export default function Header() {
     const pathLocale = window.location.pathname.startsWith('/ar') ? 'ar' : 'en';
     setLocale(pathLocale);
 
+    // Set initial scroll state
+    setIsScrolled(window.scrollY > 50);
+
+    // Trigger header animation after mount
+    const animationTimer = setTimeout(() => {
+      setIsAnimated(true);
+    }, 100);
+
     let ticking = false;
     const handleScroll = () => {
       if (!ticking) {
         requestAnimationFrame(() => {
-          setIsScrolled(window.scrollY > 10);
+          setIsScrolled(window.scrollY > 50);
           ticking = false;
         });
         ticking = true;
@@ -65,7 +74,11 @@ export default function Header() {
     };
     
     window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      clearTimeout(animationTimer);
+    };
   }, []);
 
   const isRTL = locale === 'ar';
@@ -87,55 +100,75 @@ export default function Header() {
 
   return (
     <>
-      {/* Spacer to prevent content jump when header becomes sticky */}
-      <div 
-        style={{ 
-          height: '80px'
-        }}
-      />
       <header
         ref={headerRef}
-        className={`fixed top-0 left-0 right-0 z-50 w-full will-change-transform ${
+        className={`fixed top-0 left-0 right-0 z-50 w-full will-change-transform transition-all duration-200 ease-out ${
           isScrolled
-            ? 'bg-white/60 backdrop-blur-xl shadow-lg py-3'
-            : 'bg-white/80 backdrop-blur-md py-5'
-        } border-b border-neutral-100/50 transition-all duration-200 ease-out`}
+            ? 'bg-white/95 backdrop-blur-xl shadow-lg py-3'
+            : 'bg-transparent py-5'
+        }`}
+        style={{ 
+          opacity: isAnimated ? 1 : 0,
+          transform: isAnimated ? 'translateY(0)' : 'translateY(-20px)',
+          transition: 'all 0.6s ease-out'
+        }}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
             <Link
               href={`/${locale}`}
               className="flex items-center transition-transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-lg"
               aria-label="Super Arc Group - Home"
+              style={{ 
+                opacity: isAnimated ? 1 : 0,
+                transform: isAnimated ? 'translateX(0)' : 'translateX(-30px)',
+                transition: 'all 0.6s ease-out 0.1s'
+              }}
             >
-              <Logo size="xxxl" className="flex-shrink-0" />
+              <Logo size="xxxl" className="flex-shrink-0" showBackground={!isScrolled} />
             </Link>
 
-            <nav className="max-xl:hidden xl:flex items-center gap-1">
+            <nav className="max-xl:hidden xl:flex items-center gap-1" style={{ 
+              opacity: isAnimated ? 1 : 0,
+              transform: isAnimated ? 'translateY(0)' : 'translateY(-20px)',
+              transition: 'all 0.6s ease-out 0.2s'
+            }}>
               {navItems.map((item) => (
                 <Link
                   key={item.href}
                   href={item.isSection ? `/${locale}${item.href}` : item.href}
-                  className="px-4 py-2 text-sm font-semibold text-muted hover:text-primary hover:bg-primary-light rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                  className={`px-4 py-2 text-sm font-semibold rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+                    isScrolled 
+                      ? 'text-muted hover:text-primary hover:bg-primary-light focus:ring-primary' 
+                      : 'text-white hover:text-white/80 hover:bg-white/10 focus:ring-white'
+                  }`}
                 >
                   {item.label}
                 </Link>
               ))}
             </nav>
 
-            <div className="flex items-center gap-4">
-              <LanguageSwitcher />
+            <div className="flex items-center gap-4" style={{ 
+              opacity: isAnimated ? 1 : 0,
+              transform: isAnimated ? 'translateX(0)' : 'translateX(30px)',
+              transition: 'all 0.6s ease-out 0.3s'
+            }}>
+              <LanguageSwitcher textColor={isScrolled ? 'text-muted' : 'text-white'} />
               
               <Link
                 href={`/${locale}#contact`}
-                className="hidden xl:block bg-primary text-white px-6 py-2.5 rounded-xl font-semibold shadow-lg hover:bg-primary-dark transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                className="hidden xl:block bg-secondary text-white px-6 py-2.5 rounded-xl font-semibold shadow-lg hover:bg-secondary-dark hover:shadow-xl hover:scale-105 transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-secondary focus:ring-offset-2"
               >
                 {t.header.cta}
               </Link>
               
               <button
                 onClick={() => setIsMobileMenuOpen(true)}
-                className="xl:hidden p-2 text-muted hover:bg-primary-light rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                className={`xl:hidden p-2 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+                  isScrolled 
+                    ? 'text-muted hover:bg-primary-light focus:ring-primary' 
+                    : 'text-white hover:bg-white/10 focus:ring-white'
+                }`}
                 aria-label="Open menu"
               >
                 <Menu className="w-6 h-6" />
@@ -182,7 +215,7 @@ export default function Header() {
               <Link
                 href={`/${locale}#contact`}
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="w-full bg-primary text-white px-6 py-3 rounded-xl font-bold shadow-lg hover:bg-primary-dark transition-colors text-center block"
+                className="w-full bg-secondary text-white px-6 py-3 rounded-xl font-bold shadow-lg hover:bg-secondary-dark hover:shadow-xl hover:scale-105 transition-all duration-200 ease-out text-center block"
               >
                 {t.header.cta}
               </Link>

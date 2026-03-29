@@ -259,13 +259,13 @@ export default function ContactForm({ locale = 'en', onSuccess, translations }: 
         type="submit"
         disabled={isSubmitting}
         className={`
-          w-full py-4 px-6 bg-primary 
+          w-full py-4 px-6 bg-gradient-to-r from-[#DAA424] to-[#E5B84D]
           text-white font-semibold rounded-lg
-          hover:bg-primary-dark
-          focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2
+          hover:from-[#B8891F] hover:to-[#DAA424]
+          focus:outline-none focus:ring-2 focus:ring-[#DAA424] focus:ring-offset-2
           disabled:opacity-50 disabled:cursor-not-allowed
-          transition-all duration-200 transform hover:-translate-y-0.5
-          ${isSubmitting ? 'cursor-not-allowed' : 'hover:shadow-lg'}
+          transition-all duration-200 transform hover:-translate-y-0.5 shadow-lg hover:shadow-xl
+          ${isSubmitting ? 'cursor-not-allowed' : ''}
         `}
       >
         {isSubmitting ? (

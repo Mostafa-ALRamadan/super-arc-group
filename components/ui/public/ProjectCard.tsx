@@ -117,31 +117,21 @@ export default function ProjectCard({
   };
 
   const t = translations[locale as keyof typeof translations] || translations.en;
+  
+  const isRTL = locale === 'ar';
 
   return (
     <Link href={href}>
       <article
         className={`group relative bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden transition-all duration-300 cursor-pointer ${
-          isHovered ? 'shadow-xl border-primary -translate-y-1' : ''
+          isHovered ? 'shadow-xl border-[#DAA424]/30 -translate-y-1' : ''
         } ${className}`}
         style={style}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
-        {/* Floating Bubbles Background */}
-        <div className={`absolute inset-0 overflow-hidden pointer-events-none transition-opacity duration-500 ${
-          isHovered ? 'opacity-100' : 'opacity-0'
-        }`}>
-          <div className="absolute top-4 left-4 w-8 h-8 bg-primary/20 rounded-full animate-pulse"></div>
-          <div className="absolute top-12 right-6 w-6 h-6 bg-primary-dark/20 rounded-full animate-bounce delay-100"></div>
-          <div className="absolute bottom-8 left-8 w-10 h-10 bg-primary/20 rounded-full animate-pulse delay-200"></div>
-          <div className="absolute bottom-4 right-4 w-7 h-7 bg-primary-dark/20 rounded-full animate-bounce delay-300"></div>
-          <div className="absolute top-1/3 left-1/4 w-5 h-5 bg-primary/20 rounded-full animate-pulse delay-150"></div>
-          <div className="absolute top-2/3 right-1/3 w-9 h-9 bg-primary-dark/20 rounded-full animate-bounce delay-250"></div>
-        </div>
-
         {/* Image Container */}
-        <div className="relative aspect-video overflow-hidden bg-bg-light">
+        <div className="relative aspect-[5/6] overflow-hidden bg-bg-light">
           {image ? (
             <div className="relative w-full h-full">
               <img
@@ -153,10 +143,62 @@ export default function ProjectCard({
                 }}
               />
               
-              {/* Professional Light Sweep Effect */}
-              <div className={`absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent transform -skew-x-12 -translate-x-full transition-transform duration-1000 ${
-                isHovered ? 'translate-x-full' : ''
-              }`} />
+              {/* Category in Top Corner */}
+              <div className={`absolute top-3 ${isRTL ? 'right-3' : 'left-3'}`}>
+                <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border backdrop-blur-sm transition-all duration-200 ${getCategoryColor(category)}`}>
+                  {category}
+                </span>
+              </div>
+
+              {/* Title and Location in Bottom Left Corner */}
+              <div className={`absolute ${isRTL ? 'bottom-3 right-3' : 'bottom-3 left-3'} ${isRTL ? 'left-3' : 'right-3'} text-white transition-all duration-300 ${
+                isHovered ? 'bottom-16' : 'bottom-3'
+              }`}>
+                <div className="bg-black/60 backdrop-blur-sm rounded-lg p-2">
+                  <h3 className={`text-base font-semibold leading-tight transition-all duration-200 drop-shadow-lg ${
+                    isHovered ? 'text-[#DAA424]' : 'text-white'
+                  }`}>
+                    {getLocalizedText(title)}
+                  </h3>
+                  {location && (
+                    <div className="flex items-center gap-1 text-xs text-white/90 drop-shadow-md mt-1">
+                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
+                      {getLocalizedText(location)}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Excerpt - Appears on hover and pushes title up */}
+              <div className={`absolute ${isRTL ? 'bottom-3 right-3' : 'bottom-3 left-3'} ${isRTL ? 'left-3' : 'right-3'} text-white transition-all duration-300 ${
+                isHovered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+              }`}>
+                <div className="bg-black/60 backdrop-blur-sm rounded-lg p-2">
+                  <p className="text-sm leading-relaxed drop-shadow-md line-clamp-2">
+                    {getLocalizedText(description)}
+                  </p>
+                </div>
+              </div>
+
+              {/* Simple Overlay */}
+              <div className={`absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent transition-all duration-300 ${
+                isHovered ? 'opacity-100' : 'opacity-0'
+              }`}>
+                {/* Quick View Icon */}
+                <div className={`absolute top-3 right-3 transition-all duration-300 transform ${
+                  isHovered ? 'translate-y-0 opacity-100 scale-100' : 'translate-y-1 opacity-0 scale-95'
+                }`}>
+                  <div className="w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-sm">
+                    <svg className="w-4 h-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                  </div>
+                </div>
+              </div>
             </div>
           ) : (
             <div className="w-full h-full bg-gradient-to-br from-primary-light to-primary-light flex items-center justify-center">
@@ -170,108 +212,12 @@ export default function ProjectCard({
               </div>
             </div>
           )}
-          
-          {/* Simple Overlay */}
-          <div className={`absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent transition-all duration-300 ${
-            isHovered ? 'opacity-100' : 'opacity-0'
-          }`}>
-            {/* Quick View Icon */}
-            <div className={`absolute top-3 right-3 transition-all duration-300 transform ${
-              isHovered ? 'translate-y-0 opacity-100 scale-100' : 'translate-y-1 opacity-0 scale-95'
-            }`}>
-              <div className="w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-sm">
-                <svg className="w-4 h-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                </svg>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Content Section */}
-        <div className="p-5 space-y-3">
-          {/* Header */}
-          <div className="flex items-center justify-between">
-            <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border transition-all duration-200 ${getCategoryColor(category)}`}>
-              {category}
-            </span>
-            {(location || year) && (
-              <div className="flex items-center gap-2 text-xs text-gray-500">
-                {location && (
-                  <span className="flex items-center gap-1">
-                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
-                    {getLocalizedText(location)}
-                  </span>
-                )}
-                {year && (
-                  <span className="flex items-center gap-1">
-                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
-                    {formatNumber(year)}
-                  </span>
-                )}
-              </div>
-            )}
-          </div>
-
-          {/* Title */}
-          <h3 className={`text-base font-semibold leading-tight transition-all duration-200 ${
-            isHovered ? 'text-primary' : 'text-main'
-          }`}>
-            {getLocalizedText(title)}
-          </h3>
-          
-          {/* Description */}
-          <p className="text-muted leading-relaxed text-sm line-clamp-2">
-            {getLocalizedText(description)}
-          </p>
-
-          {/* Hover Action */}
-          <div className={`flex items-center justify-between pt-2 transition-all duration-300 ${
-            isHovered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-1'
-          }`}>
-            <span className="text-sm font-medium text-primary">{t.viewDetails}</span>
-            <svg className="w-4 h-4 text-primary transition-transform duration-200 group-hover:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-            </svg>
-          </div>
         </div>
 
         {/* Bottom Accent Line */}
-        <div className={`absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-primary to-primary-dark transition-all duration-300 ${
+        <div className={`absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-[#DAA424] to-[#E5B84D] transition-all duration-300 ${
           isHovered ? 'opacity-100' : 'opacity-0'
         }`}></div>
-
-        {/* Professional Light Sweep Animation Style */}
-        <style jsx>{`
-          @keyframes light-sweep {
-            0% { 
-              transform: translateX(-50%) translateY(-50%) rotate(15deg);
-            }
-            50% { 
-              transform: translateX(0%) translateY(0%) rotate(15deg);
-            }
-            100% { 
-              transform: translateX(50%) translateY(50%) rotate(15deg);
-            }
-          }
-          
-          @keyframes subtle-glow {
-            0%, 100% { 
-              opacity: 0.3;
-              transform: scale(1);
-            }
-            50% { 
-              opacity: 0.6;
-              transform: scale(1.1);
-            }
-          }
-        `}</style>
       </article>
     </Link>
   );
