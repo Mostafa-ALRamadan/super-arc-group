@@ -122,7 +122,7 @@ export default function About() {
   return (
     <section 
       ref={setElement}
-      className="py-20 bg-gray-50 scroll-mt-20"
+      className="py-20 pt-40 bg-gray-50 scroll-mt-20"
     > 
       <div id="about" className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}

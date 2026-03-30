@@ -7,8 +7,7 @@ import { useScrollAnimation } from '../../src/hooks/useScrollAnimation';
 
 const translations = {
   en: {
-    title: "Regional Expertise. International Standards. Global Vision.",
-    subtitle: "Building Tomorrow's Infrastructure Today",
+    title: "Regional Expertise. International Standards. Global Vision",
     description: "Super Arc Group is a regional engineering powerhouse delivering world-class consultancy, deep foundations, drilling, property development, and contracting services across the Middle East.",
     primaryCta: "Explore Our Services",
     secondaryCta: "Contact Us",
@@ -20,12 +19,11 @@ const translations = {
     waterOilWells: "Water & Oil Wells",
   },
   ar: {
-    title: "خبرات إقليمية. معايير دولية. رؤية عالمية.",
-    subtitle: "بناء بنية الغد اليوم",
+    title: "خبرات إقليمية. معايير دولية. رؤية عالمية",
     description: "مجموعة سوبر آرك هي قوة هندسية إقليمية تقدم استشارات عالمية المستوى، وأساسات عميقة، وحفر، وتطوير عقارات، وخدمات مقاولات في جميع أنحاء الشرق الأوسط.",
     primaryCta: "استكشف خدماتنا",
     secondaryCta: "تواصل معنا",
-    superArcConsultants: "مستشارو سوبر آرك",
+    superArcConsultants: "سوبر آرك للاستشارات الهندسية",
     engineeringConsultancy: "الاستشارات الهندسية",
     saecFoundations: "SAEC للأساسات",
     deepFoundations: "الأساسات العميقة والركائز",
@@ -105,23 +103,10 @@ export default function Hero() {
 
       <div className="relative z-10 lg:min-h-screen flex items-center py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-32 lg:py-0">
-          {/* Small Tag */}
-          <div className="text-center mb-4">
-            <div className="inline-flex items-center gap-3 border-[1px] rounded-full px-4 py-2 backdrop-blur-[16px]" style={{ borderColor: '#fff3', backgroundColor: '#ffffff1a', opacity: isVisible ? 1 : 0, transform: isVisible ? 'translateY(0)' : 'translateY(40px)', transition: 'all 1s ease-out' }}>
-              {/* Golden dot */}
-              <div className="w-2 h-2 bg-secondary rounded-full" style={{
-                  animation: 'pulse-gold 2s cubic-bezier(0.4, 0, 0.6, 1) infinite'
-                }}></div>
-              <span className="text-xs font-medium text-white uppercase tracking-wider">
-                {t.title}
-              </span>
-            </div>
-          </div>
-
           <div className="text-center space-y-12">
             {/* Main Heading */}
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight" style={{ opacity: isVisible ? 1 : 0, transform: isVisible ? 'translateY(0)' : 'translateY(40px)', transition: 'all 1s ease-out 0.2s' }}>
-              {t.subtitle}
+              {t.title}
             </h1>
 
             {/* Description */}
@@ -154,7 +139,7 @@ export default function Hero() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-24" style={{ opacity: isVisible ? 1 : 0, transform: isVisible ? 'translateY(0)' : 'translateY(40px)', transition: 'all 1s ease-out 0.8s' }}>
               
               {/* Super Arc Consultants Card */}
-              <div className="border-[1px] rounded-lg p-6 backdrop-blur-[16px] transition-all duration-300 hover:scale-105" style={{ borderColor: '#fff3', backgroundColor: '#ffffff1a' }}>
+              <a href="https://superarc.net" target="_blank" rel="noopener noreferrer" className="border-[1px] rounded-lg p-6 backdrop-blur-[16px] transition-all duration-300 hover:scale-105 block" style={{ borderColor: '#fff3', backgroundColor: '#ffffff1a' }}>
                 <div className="text-center">
                   <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                     <Building2 className="w-10 h-10 text-secondary" />
@@ -162,10 +147,10 @@ export default function Hero() {
                   <h3 className="text-xl font-bold text-white mb-2">{t.superArcConsultants}</h3>
                   <p className="text-white">{t.engineeringConsultancy}</p>
                 </div>
-              </div>
+              </a>
 
               {/* SAEC Foundations Card */}
-              <div className="border-[1px] rounded-lg p-6 backdrop-blur-[16px] transition-all duration-300 hover:scale-105" style={{ borderColor: '#fff3', backgroundColor: '#ffffff1a' }}>
+              <a href="https://saecuae.com/" target="_blank" rel="noopener noreferrer" className="border-[1px] rounded-lg p-6 backdrop-blur-[16px] transition-all duration-300 hover:scale-105 block" style={{ borderColor: '#fff3', backgroundColor: '#ffffff1a' }}>
                 <div className="text-center">
                   <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                     <HardHat className="w-10 h-10 text-secondary" />
@@ -173,10 +158,10 @@ export default function Hero() {
                   <h3 className="text-xl font-bold text-white mb-2">{t.saecFoundations}</h3>
                   <p className="text-white">{t.deepFoundations}</p>
                 </div>
-              </div>
+              </a>
 
               {/* Al Shallal Drilling Card */}
-              <div className="border-[1px] rounded-lg p-6 backdrop-blur-[16px] transition-all duration-300 hover:scale-105" style={{ borderColor: '#fff3', backgroundColor: '#ffffff1a' }}>
+              <a href="https://alshallal.net/" target="_blank" rel="noopener noreferrer" className="border-[1px] rounded-lg p-6 backdrop-blur-[16px] transition-all duration-300 hover:scale-105 block" style={{ borderColor: '#fff3', backgroundColor: '#ffffff1a' }}>
                 <div className="text-center">
                   <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                     <Drill className="w-10 h-10 text-secondary" />
@@ -184,26 +169,13 @@ export default function Hero() {
                   <h3 className="text-xl font-bold text-white mb-2">{t.alShallalDrilling}</h3>
                   <p className="text-white">{t.waterOilWells}</p>
                 </div>
-              </div>
+              </a>
 
             </div>
           </div>
         </div>
       </div>
     </section>
-
-    <style jsx>{`
-      @keyframes pulse-gold {
-        0%, 100% {
-          opacity: 1;
-          transform: scale(1);
-        }
-        50% {
-          opacity: 0.5;
-          transform: scale(1.2);
-        }
-      }
-    `}</style>
     </>
   );
 }

@@ -382,15 +382,17 @@ return (
       }}
     />
     
-    <div className={`min-h-screen bg-gradient-to-br from-bg-light to-white ${locale === 'ar' ? 'rtl' : 'ltr'}`} dir={locale === 'ar' ? 'rtl' : 'ltr'}>
+    <div className={`min-h-screen bg-gradient-to-br from-bg-light to-white pt-32 ${locale === 'ar' ? 'rtl' : 'ltr'}`} dir={locale === 'ar' ? 'rtl' : 'ltr'}>
       {/* Hero Section */}
       <div className="relative bg-gradient-to-br from-bg-light via-white to-primary-light overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          <div className="text-center">
-            <h1 className="text-4xl sm:text-5xl font-bold text-main mb-6">
-              {t.title}
+          <div className="text-center max-w-4xl mx-auto">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-main leading-tight mb-6">
+              <span className="bg-gradient-to-br from-text-main via-text-main to-text-main bg-clip-text text-transparent">
+                {t.title}
+              </span>
             </h1>
-            <p className="text-xl text-muted max-w-3xl mx-auto leading-relaxed">
+            <p className="text-xl lg:text-2xl text-muted leading-relaxed font-medium">
               {t.description}
             </p>
           </div>

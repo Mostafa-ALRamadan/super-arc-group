@@ -21,12 +21,12 @@ export default function Logo({ size = 'md', className = '', priority = false, va
 
   const { width, height } = sizeMap[size];
 
-  // Background styling for transparent header
-  const backgroundClass = showBackground ? 'bg-white/90 backdrop-blur-sm rounded-lg p-2' : '';
+  // Background styling for transparent header - always render but change opacity
+  const backgroundClass = showBackground ? 'bg-white' : 'bg-transparent';
 
   return (
     <div className={`relative ${className}`}>
-      <div className={`inline-flex items-center justify-center ${backgroundClass}`}>
+      <div className={`inline-flex items-center justify-center rounded-lg p-2 transition-all duration-200 ease-out ${backgroundClass}`}>
         {/* Use SVG logo if available, otherwise fallback to PNG */}
         <img
           src="/logo.svg"

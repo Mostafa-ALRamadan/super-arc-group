@@ -1,13 +1,13 @@
 import { Metadata } from 'next';
 
 interface TermsOfServicePageProps {
-  params: {
+  params: Promise<{
     locale: string;
-  };
+  }>;
 }
 
 export async function generateMetadata({ params }: TermsOfServicePageProps): Promise<Metadata> {
-  const { locale } = params;
+  const { locale } = await params;
   
   const title = locale === 'ar' 
     ? 'شروط الخدمة | مجموعة سوبر آرك' 
@@ -126,7 +126,7 @@ export default async function TermsOfServicePage({ params }: TermsOfServicePageP
   const t = content[actualLocale as keyof typeof content] || content.en;
 
   return (
-    <div className="min-h-screen bg-bg-light">
+    <div className="min-h-screen bg-bg-light pt-32">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="bg-white rounded-lg shadow-sm p-8">
           {/* Header */}

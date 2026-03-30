@@ -150,9 +150,9 @@ export default function ProjectCard({
                 </span>
               </div>
 
-              {/* Title and Location in Bottom Left Corner */}
+              {/* Title and Location in Bottom Left Corner - Moves up on hover to make room for excerpt */}
               <div className={`absolute ${isRTL ? 'bottom-3 right-3' : 'bottom-3 left-3'} ${isRTL ? 'left-3' : 'right-3'} text-white transition-all duration-300 ${
-                isHovered ? 'bottom-16' : 'bottom-3'
+                isHovered ? 'bottom-[60px]' : 'bottom-3'
               }`}>
                 <div className="bg-black/60 backdrop-blur-sm rounded-lg p-2">
                   <h3 className={`text-base font-semibold leading-tight transition-all duration-200 drop-shadow-lg ${
@@ -172,9 +172,9 @@ export default function ProjectCard({
                 </div>
               </div>
 
-              {/* Excerpt - Appears on hover and pushes title up */}
-              <div className={`absolute ${isRTL ? 'bottom-3 right-3' : 'bottom-3 left-3'} ${isRTL ? 'left-3' : 'right-3'} text-white transition-all duration-300 ${
-                isHovered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+              {/* Excerpt - Appears below title on hover */}
+              <div className={`absolute ${isRTL ? 'right-3' : 'left-3'} ${isRTL ? 'left-3' : 'right-3'} bottom-3 text-white transition-all duration-300 ${
+                isHovered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'
               }`}>
                 <div className="bg-black/60 backdrop-blur-sm rounded-lg p-2">
                   <p className="text-sm leading-relaxed drop-shadow-md line-clamp-2">

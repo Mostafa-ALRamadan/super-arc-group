@@ -10,11 +10,14 @@ const translations = {
   en: {
     navigation: {
       home: 'Home',
-      about: 'About',
+      whoWeAre: 'Who We Are',
+      aboutUs: 'About Us',
       companies: 'Companies',
+      leadership: 'Leadership',
       services: 'Services',
       projects: 'Projects',
       blog: 'Blog',
+      clients: 'Our Clients',
       contact: 'Contact',
     },
     header: {
@@ -26,11 +29,14 @@ const translations = {
   ar: {
     navigation: {
       home: 'الرئيسية',
-      about: 'من نحن',
+      whoWeAre: 'من نحن',
+      aboutUs: 'عن الشركة',
       companies: 'الشركات',
+      leadership: 'القيادة',
       services: 'الخدمات',
       projects: 'المشاريع',
       blog: 'المدونة',
+      clients: 'عملاؤنا',
       contact: 'اتصل بنا',
     },
     header: {
@@ -47,7 +53,9 @@ export default function Header() {
   const [isAnimated, setIsAnimated] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isWhoWeAreDropdownOpen, setIsWhoWeAreDropdownOpen] = useState(false);
   const headerRef = useRef<HTMLDivElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -89,13 +97,17 @@ export default function Header() {
   }
 
   const navItems = [
-    { href: '#home', label: t.navigation.home, isSection: true },
-    { href: '#about', label: t.navigation.about, isSection: true },
-    { href: '#companies', label: t.navigation.companies, isSection: true },
-    { href: '#services', label: t.navigation.services, isSection: true },
-    { href: '#projects', label: t.navigation.projects, isSection: true },
+    { href: `/${locale}/services`, label: t.navigation.services },
+    { href: `/${locale}/projects`, label: t.navigation.projects },
     { href: `/${locale}/blog`, label: t.navigation.blog },
-    { href: '#contact', label: t.navigation.contact, isSection: true },
+    { href: `/${locale}/clients`, label: t.navigation.clients },
+    { href: `/${locale}/contact`, label: t.navigation.contact },
+  ];
+
+  const whoWeAreItems = [
+    { href: `/${locale}/who-we-are#about`, label: t.navigation.aboutUs },
+    { href: `/${locale}/who-we-are#companies`, label: t.navigation.companies },
+    { href: `/${locale}/who-we-are#leadership`, label: t.navigation.leadership },
   ];
 
   return (
@@ -105,7 +117,7 @@ export default function Header() {
         className={`fixed top-0 left-0 right-0 z-50 w-full will-change-transform transition-all duration-200 ease-out ${
           isScrolled
             ? 'bg-white/95 backdrop-blur-xl shadow-lg py-3'
-            : 'bg-transparent py-5'
+            : 'bg-gradient-to-r from-gray-900/60 via-gray-800/50 to-gray-900/60 backdrop-blur-sm py-5'
         }`}
         style={{ 
           opacity: isAnimated ? 1 : 0,
@@ -133,10 +145,61 @@ export default function Header() {
               transform: isAnimated ? 'translateY(0)' : 'translateY(-20px)',
               transition: 'all 0.6s ease-out 0.2s'
             }}>
+              {/* Home Link */}
+              <Link
+                href={`/${locale}`}
+                className={`px-4 py-2 text-sm font-semibold rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+                  isScrolled 
+                    ? 'text-muted hover:text-primary hover:bg-primary-light focus:ring-primary' 
+                    : 'text-white hover:text-white/80 hover:bg-white/10 focus:ring-white'
+                }`}
+              >
+                {t.navigation.home}
+              </Link>
+
+              {/* Who We Are Dropdown */}
+              <div 
+                className="relative group"
+                onMouseEnter={() => setIsWhoWeAreDropdownOpen(true)}
+                onMouseLeave={() => setIsWhoWeAreDropdownOpen(false)}
+              >
+                <Link
+                  href={`/${locale}/who-we-are`}
+                  className={`px-4 py-2 text-sm font-semibold rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 flex items-center gap-1 ${
+                    isScrolled 
+                      ? 'text-muted hover:text-primary hover:bg-primary-light focus:ring-primary' 
+                      : 'text-white hover:text-white/80 hover:bg-white/10 focus:ring-white'
+                  }`}
+                >
+                  {t.navigation.whoWeAre}
+                  <svg className="w-4 h-4 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </Link>
+                
+                {/* Dropdown Menu */}
+                <div 
+                  className={`absolute top-full left-0 mt-2 w-48 bg-white rounded-lg shadow-xl border border-gray-100 overflow-hidden transition-all duration-150 opacity-0 invisible group-hover:opacity-100 group-hover:visible ${
+                    isWhoWeAreDropdownOpen ? 'opacity-100 visible' : ''
+                  }`}
+                >
+                  {whoWeAreItems.map((item) => (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      className="block px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-primary transition-colors"
+                    >
+                      {item.label}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+
+              {/* Rest of Navigation Items */}
               {navItems.map((item) => (
                 <Link
                   key={item.href}
-                  href={item.isSection ? `/${locale}${item.href}` : item.href}
+                  href={item.href}
                   className={`px-4 py-2 text-sm font-semibold rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 ${
                     isScrolled 
                       ? 'text-muted hover:text-primary hover:bg-primary-light focus:ring-primary' 
@@ -154,14 +217,14 @@ export default function Header() {
               transition: 'all 0.6s ease-out 0.3s'
             }}>
               <LanguageSwitcher textColor={isScrolled ? 'text-muted' : 'text-white'} />
-              
+
               <Link
-                href={`/${locale}#contact`}
+                href={`/${locale}/contact`}
                 className="hidden xl:block bg-secondary text-white px-6 py-2.5 rounded-xl font-semibold shadow-lg hover:bg-secondary-dark hover:shadow-xl hover:scale-105 transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-secondary focus:ring-offset-2"
               >
                 {t.header.cta}
               </Link>
-              
+
               <button
                 onClick={() => setIsMobileMenuOpen(true)}
                 className={`xl:hidden p-2 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 ${
@@ -203,7 +266,7 @@ export default function Header() {
               {navItems.map((item) => (
                 <Link
                   key={item.href}
-                  href={item.isSection ? `/${locale}${item.href}` : item.href}
+                  href={item.href}
                   className="px-4 py-3 text-base font-bold text-muted hover:text-primary hover:bg-primary-light rounded-xl transition-all"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
@@ -213,7 +276,7 @@ export default function Header() {
             </nav>
             <div className="p-6 border-t border-gray-200 bg-gray-50">
               <Link
-                href={`/${locale}#contact`}
+                href={`/${locale}/contact`}
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="w-full bg-secondary text-white px-6 py-3 rounded-xl font-bold shadow-lg hover:bg-secondary-dark hover:shadow-xl hover:scale-105 transition-all duration-200 ease-out text-center block"
               >
