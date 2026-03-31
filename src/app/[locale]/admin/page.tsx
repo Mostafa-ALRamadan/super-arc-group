@@ -14,6 +14,8 @@ interface DashboardStats {
   total_projects: number;
   total_employees: number;
   total_companies: number;
+  total_members: number;
+  total_clients: number;
 }
 
 export default function AdminDashboard() {
@@ -93,6 +95,22 @@ export default function AdminDashboard() {
       color: 'from-orange-500 to-orange-600',
       bgColor: 'from-orange-50 to-orange-100',
       iconBg: 'bg-orange-500'
+    },
+    {
+      title: locale === 'ar' ? 'أعضاء القيادة' : 'Leadership Members',
+      value: stats?.total_members.toString() || '0',
+      icon: '⭐',
+      color: 'from-pink-500 to-pink-600',
+      bgColor: 'from-pink-50 to-pink-100',
+      iconBg: 'bg-pink-500'
+    },
+    {
+      title: locale === 'ar' ? 'العملاء' : 'Clients',
+      value: stats?.total_clients.toString() || '0',
+      icon: '🤝',
+      color: 'from-teal-500 to-teal-600',
+      bgColor: 'from-teal-50 to-teal-100',
+      iconBg: 'bg-teal-500'
     }
   ];
 
@@ -178,7 +196,7 @@ export default function AdminDashboard() {
         </div>
 
         <div className="flex justify-center mb-8">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl w-full">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6 max-w-7xl w-full">
             {statsConfig.map((stat, index) => (
               <div
                 key={index}
@@ -285,6 +303,42 @@ export default function AdminDashboard() {
                           {locale === 'ar' ? 'إضافة شركة' : 'Add Company'}
                         </div>
                         <div className="text-xs opacity-90 mt-1">{locale === 'ar' ? 'إضافة منظمة جديدة' : 'Add new organization'}</div>
+                      </div>
+                      <svg className="w-5 h-5 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </div>
+                  </button>
+
+                  <button 
+                    onClick={() => router.push(`/${locale}/admin/leadership/new`)}
+                    className="w-full bg-gradient-to-r from-pink-500 to-pink-600 text-white rounded-lg p-4 text-left hover:from-pink-600 hover:to-pink-700 transition-all duration-200 group"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className={locale === 'ar' ? 'text-right' : ''}>
+                        <div className="font-semibold flex items-center">
+                          <span className={`text-xl ${locale === 'ar' ? 'ml-3' : 'mr-3'}`}>⭐</span>
+                          {locale === 'ar' ? 'إضافة عضو قيادي' : 'Add Leadership Member'}
+                        </div>
+                        <div className="text-xs opacity-90 mt-1">{locale === 'ar' ? 'إضافة عضو جديد للقيادة' : 'Add new leadership member'}</div>
+                      </div>
+                      <svg className="w-5 h-5 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </div>
+                  </button>
+
+                  <button 
+                    onClick={() => router.push(`/${locale}/admin/clients/new`)}
+                    className="w-full bg-gradient-to-r from-teal-500 to-teal-600 text-white rounded-lg p-4 text-left hover:from-teal-600 hover:to-teal-700 transition-all duration-200 group"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className={locale === 'ar' ? 'text-right' : ''}>
+                        <div className="font-semibold flex items-center">
+                          <span className={`text-xl ${locale === 'ar' ? 'ml-3' : 'mr-3'}`}>🤝</span>
+                          {locale === 'ar' ? 'إضافة عميل' : 'Add Client'}
+                        </div>
+                        <div className="text-xs opacity-90 mt-1">{locale === 'ar' ? 'إضافة عميل جديد' : 'Add new client'}</div>
                       </div>
                       <svg className="w-5 h-5 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
