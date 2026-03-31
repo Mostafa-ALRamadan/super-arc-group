@@ -117,8 +117,7 @@ export default function Hero() {
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center" style={{ opacity: isVisible ? 1 : 0, transform: isVisible ? 'translateY(0)' : 'translateY(40px)', transition: 'all 1s ease-out 0.6s' }}>
               <Link
-                href="#services"
-                onClick={(e) => handleSmoothScroll(e, 'services')}
+                href={`/${locale}/services`}
                 className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-secondary text-white font-semibold rounded-lg shadow-lg hover:bg-secondary-dark transition-all duration-300 hover:shadow-xl hover:scale-105 focus:outline-none focus:ring-2 focus:ring-secondary focus:ring-offset-2"
               >
                 {t.primaryCta}
@@ -126,8 +125,7 @@ export default function Hero() {
               </Link>
               
               <Link
-                href="#contact"
-                onClick={(e) => handleSmoothScroll(e, 'contact')}
+                href={`/${locale}/contact`}
                 className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-primary text-white font-semibold rounded-lg shadow-lg hover:bg-primary-dark transition-all duration-300 hover:shadow-xl hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
               >
                 {t.secondaryCta}

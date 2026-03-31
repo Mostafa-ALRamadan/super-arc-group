@@ -23,6 +23,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ isOpen, onClose, position =
     { name: t('admin.sidebar.projects'), href: `/${locale}/admin/projects`, icon: '🏗️' },
     { name: t('admin.sidebar.companies'), href: `/${locale}/admin/companies`, icon: '🏢' },
     { name: t('admin.sidebar.employees'), href: `/${locale}/admin/employees`, icon: '👥' },
+    { name: t('admin.sidebar.leadership'), href: `/${locale}/admin/leadership`, icon: '👔' },
     { name: t('admin.sidebar.categories'), href: `/${locale}/admin/categories`, icon: '🏷️' },
     { name: t('admin.settings.title'), href: `/${locale}/admin/settings`, icon: '⚙️' }
   ];

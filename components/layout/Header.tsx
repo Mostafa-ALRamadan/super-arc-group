@@ -263,6 +263,37 @@ export default function Header() {
               </button>
             </div>
             <nav className="flex-1 overflow-y-auto p-6 flex flex-col gap-1">
+              {/* Home Link */}
+              <Link
+                href={`/${locale}`}
+                className="px-4 py-3 text-base font-bold text-muted hover:text-primary hover:bg-primary-light rounded-xl transition-all"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                {t.navigation.home}
+              </Link>
+
+              {/* Who We Are Link */}
+              <Link
+                href={`/${locale}/who-we-are`}
+                className="px-4 py-3 text-base font-bold text-muted hover:text-primary hover:bg-primary-light rounded-xl transition-all"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                {t.navigation.whoWeAre}
+              </Link>
+
+              {/* Who We Are Subsections */}
+              {whoWeAreItems.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className="px-6 py-3 text-base font-medium text-muted hover:text-primary hover:bg-primary-light rounded-xl transition-all"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  {item.label}
+                </Link>
+              ))}
+
+              {/* Rest of Navigation Items */}
               {navItems.map((item) => (
                 <Link
                   key={item.href}

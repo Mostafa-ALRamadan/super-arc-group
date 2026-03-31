@@ -43,9 +43,10 @@ export default function ContactSection({ locale = 'en' }: ContactSectionProps) {
     },
     info: {
       title: 'معلومات الاتصال',
-      email: 'info@superarcgroup.com',
-      phone: '+971 4 123 4567',
-      address: '123 شارع الأعمال، دبي، الإمارات العربية المتحدة',
+      email: 'info@superarc.net',
+      phone: '+971 547 2020 14',
+      phone2: '+963 947 964 829',
+      address: 'Hama, Syria',
     },
   } : {
     sectionLabel: 'Contact Us',
@@ -68,9 +69,10 @@ export default function ContactSection({ locale = 'en' }: ContactSectionProps) {
     },
     info: {
       title: 'Contact Information',
-      email: 'info@superarcgroup.com',
-      phone: '+971 4 123 4567',
-      address: '123 Business Ave, Dubai, UAE',
+      email: 'info@superarc.net',
+      phone: '+971 547 2020 14',
+      phone2: '+963 947 964 829',
+      address: 'Hama, Syria',
     },
   };
 
@@ -173,7 +175,7 @@ export default function ContactSection({ locale = 'en' }: ContactSectionProps) {
                     </svg>
                   </div>
                   <div>
-                    <h4 className="text-sm font-semibold text-main mb-1">
+                    <h4 className="text-sm font-semibold text-main mb-2">
                       {isRTL ? 'رقم الهاتف' : 'Phone'}
                     </h4>
                     <a
@@ -181,6 +183,13 @@ export default function ContactSection({ locale = 'en' }: ContactSectionProps) {
                       className="text-primary hover:text-primary-dark font-medium transition-colors"
                     >
                       <span dir="ltr">{translations.info.phone}</span>
+                    </a>
+                    <br />
+                    <a
+                      href={`tel:${translations.info.phone2}`}
+                      className="text-primary hover:text-primary-dark font-medium transition-colors"
+                    >
+                      <span dir="ltr">{translations.info.phone2}</span>
                     </a>
                   </div>
                 </div>

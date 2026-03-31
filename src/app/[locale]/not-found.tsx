@@ -20,10 +20,12 @@ export default async function NotFoundPage({ params }: NotFoundPageProps) {
       helpfulLinks: 'Helpful Links',
       links: [
         { label: 'Home', href: '' },
-        { label: 'About Us', href: '/#about' },
+        { label: 'Who We Are', href: '/who-we-are' },
+        { label: 'Services', href: '/services' },
         { label: 'Projects', href: '/projects' },
         { label: 'Blog', href: '/blog' },
-        { label: 'Contact', href: '/#contact' }
+        { label: 'Our Clients', href: '/clients' },
+        { label: 'Contact', href: '/contact' }
       ]
     },
     ar: {
@@ -34,10 +36,12 @@ export default async function NotFoundPage({ params }: NotFoundPageProps) {
       helpfulLinks: 'روابط مفيدة',
       links: [
         { label: 'الرئيسية', href: '' },
-        { label: 'من نحن', href: '/#about' },
+        { label: 'من نحن', href: '/who-we-are' },
+        { label: 'الخدمات', href: '/services' },
         { label: 'المشاريع', href: '/projects' },
         { label: 'المدونة', href: '/blog' },
-        { label: 'اتصل بنا', href: '/#contact' }
+        { label: 'عملاؤنا', href: '/clients' },
+        { label: 'اتصل بنا', href: '/contact' }
       ]
     }
   };
@@ -99,7 +103,7 @@ export default async function NotFoundPage({ params }: NotFoundPageProps) {
             {t.links.map((link, index) => (
               <Link
                 key={index}
-                href={`/${locale}${link.href}`}
+                href={link.href.startsWith('#') ? `/${locale}${link.href}` : `/${locale}${link.href}`}
                 className="text-primary hover:text-primary-dark transition-colors duration-200 text-sm font-medium"
               >
                 {link.label}
@@ -117,11 +121,37 @@ export default async function NotFoundPage({ params }: NotFoundPageProps) {
             }
           </p>
           <a 
-            href="mailto:info@superarcgroup.com" 
+            href="mailto:info@superarc.net" 
             className="text-primary hover:text-primary-dark transition-colors duration-200 text-sm font-medium mt-2 inline-block"
           >
-            info@superarcgroup.com
+            info@superarc.net
           </a>
+          <p className="text-text-muted text-sm mt-2">
+            {locale === 'en' 
+              ? (
+                <>
+                  <a href="tel:+971 547 2020 14" className="text-primary hover:text-primary-dark transition-colors duration-200 text-sm font-medium">
+                    +971 547 2020 14
+                  </a>
+                  <br />
+                  <a href="tel:+963 947 964 829" className="text-primary hover:text-primary-dark transition-colors duration-200 text-sm font-medium">
+                    +963 947 964 829
+                  </a>
+                </>
+              )
+              : (
+                <>
+                  <a href="tel:+971 547 2020 14" className="text-primary hover:text-primary-dark transition-colors duration-200 text-sm font-medium">
+                    +971 547 2020 14
+                  </a>
+                  <br />
+                  <a href="tel:+963 947 964 829" className="text-primary hover:text-primary-dark transition-colors duration-200 text-sm font-medium">
+                    +963 947 964 829
+                  </a>
+                </>
+              )
+            }
+          </p>
         </div>
       </div>
     </div>
