@@ -1,4 +1,7 @@
-import { Metadata } from 'next';
+'use client';
+
+import { useState, useEffect } from 'react';
+import { useScrollAnimation } from '../../../hooks/useScrollAnimation';
 
 interface ClientsPageProps {
   params: Promise<{
@@ -6,48 +9,37 @@ interface ClientsPageProps {
   }>;
 }
 
-export async function generateMetadata({ params }: ClientsPageProps): Promise<Metadata> {
-  const { locale } = await params;
-  
-  return {
-    title: locale === 'ar' ? 'عملاؤنا | مجموعة سوبر آرك' : 'Our Clients | Super Arc Group',
-    description: locale === 'ar' 
-      ? 'نفتخر بالعمل مع شركات رائدة في مختلف القطاعات'
-      : 'We are proud to work with leading companies across various sectors',
-  };
-}
-
-export default async function ClientsPage({ params }: ClientsPageProps) {
-  const { locale } = await params;
+function ClientsPageContent({ locale }: { locale: string }) {
+  const { isVisible, setElement } = useScrollAnimation(0.1);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-bg-light to-white pt-32">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <div ref={setElement} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 scroll-mt-32">
         {/* Header Section */}
         <div className="text-center max-w-4xl mx-auto mb-16">
-          <div className="inline-flex items-center gap-3 border-[1px] rounded-full px-4 py-2 backdrop-blur-[16px] mb-6" style={{ borderColor: '#fff3', backgroundColor: '#ffffff1a' }}>
+          <div className="inline-flex items-center gap-3 border-[1px] rounded-full px-4 py-2 backdrop-blur-[16px] mb-6" style={{ borderColor: '#fff3', backgroundColor: '#ffffff1a', opacity: isVisible ? 1 : 0, transform: isVisible ? 'translateY(0)' : 'translateY(40px)', transition: 'all 1s ease-out' }}>
             <span className="text-sm font-bold text-secondary uppercase tracking-wider">
               {locale === 'ar' ? 'عملاؤنا' : 'Our Clients'}
             </span>
           </div>
           
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-main leading-tight mb-6 relative">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-main leading-tight mb-6 relative" style={{ opacity: isVisible ? 1 : 0, transform: isVisible ? 'translateY(0)' : 'translateY(30px)', transition: 'all 0.8s ease-out 0.2s' }}>
             <span className="bg-gradient-to-br from-text-main via-text-main to-text-main bg-clip-text text-transparent">
-              {locale === 'ar' ? 'شركاء النجاح' : 'Partners in Success'}
+              {locale === 'ar' ? 'موثوق بهم من قبل رواد الصناعة' : 'Trusted by Industry Leaders'}
             </span>
             <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 w-24 h-1 bg-secondary rounded-full"></div>
           </h1>
           
-          <p className="text-xl lg:text-2xl text-muted leading-relaxed font-medium">
+          <p className="text-xl lg:text-2xl text-muted leading-relaxed font-medium" style={{ opacity: isVisible ? 1 : 0, transform: isVisible ? 'translateY(0)' : 'translateY(30px)', transition: 'all 0.8s ease-out 0.4s' }}>
             {locale === 'ar' 
-              ? 'نفتخر بالعمل مع شركات رائدة في مختلف القطاعات، مساهمين في تحقيق أهدافهم وتطلعاتهم'
-              : 'We are proud to work with leading companies across various sectors, contributing to their success and growth'
+              ? 'لقد نجحنا في تسليم مشاريع لجهات حكومية ومطورين رائدين وشركات هندسية عالمية عبر المنطقة'
+              : 'We have successfully delivered projects for government entities, leading developers, and global engineering firms across the region.'
             }
           </p>
         </div>
 
         {/* Clients Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-8 lg:gap-10">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-8 lg:gap-10" style={{ opacity: isVisible ? 1 : 0, transform: isVisible ? 'translateY(0)' : 'translateY(30px)', transition: 'all 0.8s ease-out 0.6s' }}>
           {/* Generate 105 client slots (7 columns x 15 rows) */}
           {Array.from({ length: 105 }, (_, index) => (
             <div
@@ -106,4 +98,10 @@ export default async function ClientsPage({ params }: ClientsPageProps) {
       </div>
     </div>
   );
+}
+
+export default async function ClientsPage({ params }: ClientsPageProps) {
+  const { locale } = await params;
+
+  return <ClientsPageContent locale={locale} />;
 }

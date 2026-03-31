@@ -128,7 +128,7 @@ export default async function CompanyPage({ params }: CompanyPageProps) {
   const companyName = getLocalizedValue(company.name, locale);
 
   return (
-    <div className={`min-h-screen bg-white ${isRTL ? 'rtl' : 'ltr'}`} dir={isRTL ? 'rtl' : 'ltr'}>
+    <div className={`min-h-screen bg-white ${isRTL ? 'rtl' : 'ltr'} pt-20`} dir={isRTL ? 'rtl' : 'ltr'}>
       {/* Company Hero */}
       <CompanyHero company={company} locale={locale as 'en' | 'ar'} />
 

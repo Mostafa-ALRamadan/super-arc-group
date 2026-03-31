@@ -10,17 +10,18 @@ import LoadingSpinner from '../../../../components/ui/admin/LoadingSpinner';
 import EmptyState from '../../../../components/ui/admin/EmptyState';
 import Alert from '../../../../components/ui/admin/Alert';
 import Pagination from '../../../../components/ui/public/Pagination';
+import { useScrollAnimation } from '../../../hooks/useScrollAnimation';
 
 const translations = {
   en: {
-    title: "Our Blog",
+    title: "Insights & Updates",
     description: "Latest insights, news, and technical perspectives from our team.",
     searchPlaceholder: "Search articles...",
     noPosts: "No articles found for this category.",
     readTime: "min read"
   },
   ar: {
-    title: "مدونتنا",
+    title: "رؤى وتحديثات",
     description: "أحدث الرؤى والأخبار والوجهات التقنية من فريقنا.",
     searchPlaceholder: "ابحث في المقالات...",
     noPosts: "لم يتم العثور على مقالات لهذه الفئة.",
@@ -44,7 +45,7 @@ function BlogPageContent() {
     total: 0,
     totalPages: 0
   });
-  
+  const { isVisible, setElement } = useScrollAnimation(0.1);
   const searchParams = useSearchParams();
   const router = useRouter();
   
@@ -378,25 +379,33 @@ return (
             "@type": "Organization",
             "name": "Super Arc Group"
           }
-        })
+    
+    })
       }}
     />
     
     <div className={`min-h-screen bg-gradient-to-br from-bg-light to-white pt-32 ${locale === 'ar' ? 'rtl' : 'ltr'}`} dir={locale === 'ar' ? 'rtl' : 'ltr'}>
-      {/* Hero Section */}
-      <div className="relative bg-gradient-to-br from-bg-light via-white to-primary-light overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          <div className="text-center max-w-4xl mx-auto">
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-main leading-tight mb-6">
-              <span className="bg-gradient-to-br from-text-main via-text-main to-text-main bg-clip-text text-transparent">
-                {t.title}
-              </span>
-            </h1>
-            <p className="text-xl lg:text-2xl text-muted leading-relaxed font-medium">
-              {t.description}
-            </p>
-          </div>
+      {/* Page Header */}
+      <div ref={setElement} className="text-center max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 scroll-mt-32">
+        {/* Small Tag */}
+        <div className="inline-flex items-center gap-3 border-[1px] rounded-full px-4 py-2 backdrop-blur-[16px] mb-6" style={{ borderColor: '#fff3', backgroundColor: '#ffffff1a', opacity: isVisible ? 1 : 0, transform: isVisible ? 'translateY(0)' : 'translateY(40px)', transition: 'all 1s ease-out' }}>
+          <span className="text-sm font-bold text-secondary uppercase tracking-wider">
+            {locale === 'ar' ? 'المدونة' : 'Blog'}
+          </span>
         </div>
+        
+        {/* Main Heading */}
+        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-main leading-tight mb-6 relative" style={{ opacity: isVisible ? 1 : 0, transform: isVisible ? 'translateY(0)' : 'translateY(30px)', transition: 'all 0.8s ease-out 0.2s' }}>
+          <span className="bg-gradient-to-br from-text-main via-text-main to-text-main bg-clip-text text-transparent">
+            {t.title}
+          </span>
+          <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 w-24 h-1 bg-secondary rounded-full"></div>
+        </h1>
+        
+        {/* Description */}
+        <p className="text-xl lg:text-2xl text-muted leading-relaxed font-medium" style={{ opacity: isVisible ? 1 : 0, transform: isVisible ? 'translateY(0)' : 'translateY(30px)', transition: 'all 0.8s ease-out 0.4s' }}>
+          {t.description}
+        </p>
       </div>
 
       {/* Filter Section */}

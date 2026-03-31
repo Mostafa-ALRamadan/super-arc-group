@@ -2,54 +2,42 @@ import { fetchWithTokenRefresh, handleAuthError } from '../auth/auth-fetch';
 
 export interface Leadership {
   id: number;
-  name: {
-    en: string;
-    ar: string;
-  };
-  position: {
-    en: string;
-    ar: string;
-  };
-  description: {
-    en: string;
-    ar: string;
-  };
+  name_en: string;
+  name_ar: string;
+  position_en: string;
+  position_ar: string;
+  description_en: string;
+  description_ar: string;
+  image_id: number | null;
   image?: {
     id: number;
     url: string;
     alt_en: string;
     alt_ar: string;
   };
-  image_id?: number | null;
   initials: string;
   createdAt?: string;
   updatedAt?: string;
 }
 
 export interface LeadershipFormData {
-  name: {
-    en: string;
-    ar: string;
-  };
-  position: {
-    en: string;
-    ar: string;
-  };
-  description: {
-    en: string;
-    ar: string;
-  };
+  name_en: string;
+  name_ar: string;
+  position_en: string;
+  position_ar: string;
+  description_en: string;
+  description_ar: string;
+  image_id?: number | null;
   image?: {
     id: number;
     url: string;
     alt_en: string;
     alt_ar: string;
-  };
-  image_id?: number | null;
+  } | null;
 }
 
 class LeadershipService {
-  private baseUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000/api'}/leadership`;
+  private baseUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000/api'}/members`;
 
   /**
    * Check if backend is available
@@ -63,7 +51,7 @@ class LeadershipService {
         },
       });
       return response.ok;
-    } catch {
+    } catch (error) {
       return false;
     }
   }
@@ -72,19 +60,36 @@ class LeadershipService {
    * Get all leadership members
    */
   async getAll(): Promise<Leadership[]> {
-    // Check if backend is available
-    const isAvailable = await this.isBackendAvailable();
-    if (!isAvailable) {
-      console.warn('Backend is not available yet. Returning empty leadership list.');
-      return [];
-    }
-
     try {
-      const response = await fetchWithTokenRefresh(this.baseUrl);
+      const response = await fetchWithTokenRefresh(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000/api'}/members/`);
+      
       if (!response.ok) {
+        const errorText = await response.text();
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      return await response.json();
+      
+      const apiResponse = await response.json();
+      
+      // Extract the actual members array from the paginated response
+      const members = apiResponse.results || apiResponse; // Handle both paginated and non-paginated responses
+      
+      // Transform each member to frontend format
+      const transformedMembers = members.map((member: any) => ({
+        id: member.id,
+        name_en: member.name_en,
+        name_ar: member.name_ar,
+        position_en: member.position_en,
+        position_ar: member.position_ar,
+        description_en: member.description_en,
+        description_ar: member.description_ar,
+        image_id: member.image?.id || null,
+        image: member.image,
+        initials: member.initials || (member.name_en || '').split(' ').map((n: string) => n[0]).join('').toUpperCase(),
+        createdAt: member.created_at,
+        updatedAt: member.updated_at,
+      }));
+      
+      return transformedMembers;
     } catch (error) {
       console.error('Error fetching leadership members:', error);
       // Return empty array instead of throwing to prevent page crashes
@@ -96,19 +101,27 @@ class LeadershipService {
    * Get leadership member by ID
    */
   async getById(id: number): Promise<Leadership> {
-    // Check if backend is available
-    const isAvailable = await this.isBackendAvailable();
-    if (!isAvailable) {
-      console.warn('Backend is not available yet. Cannot fetch leadership member.');
-      throw new Error('Backend is not available yet. Please contact the development team to set up the backend API.');
-    }
-
     try {
       const response = await fetchWithTokenRefresh(`${this.baseUrl}/${id}`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      return await response.json();
+      const member = await response.json();
+      // Transform member to frontend format
+      return {
+        id: member.id,
+        name_en: member.name_en,
+        name_ar: member.name_ar,
+        position_en: member.position_en,
+        position_ar: member.position_ar,
+        description_en: member.description_en,
+        description_ar: member.description_ar,
+        image_id: member.image_id,
+        image: member.image,
+        initials: member.initials || (member.name_en || '').split(' ').map((n: string) => n[0]).join('').toUpperCase(),
+        createdAt: member.created_at,
+        updatedAt: member.updated_at,
+      };
     } catch (error) {
       console.error('Error fetching leadership member:', error);
       throw error;
@@ -120,7 +133,7 @@ class LeadershipService {
    */
   async create(data: LeadershipFormData): Promise<Leadership> {
     try {
-      const response = await fetchWithTokenRefresh(this.baseUrl, {
+      const response = await fetchWithTokenRefresh(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000/api'}/members/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -129,11 +142,49 @@ class LeadershipService {
       });
       
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
+        const errorText = await response.text();
+        let errorData;
+        try {
+          errorData = JSON.parse(errorText);
+        } catch {
+          errorData = { message: errorText };
+        }
         throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
       }
       
-      return await response.json();
+      const apiResponse = await response.json();
+      
+      // Handle both paginated responses and direct member responses
+      let member;
+      if (apiResponse.results && Array.isArray(apiResponse.results)) {
+        // Paginated response - get the first (and only) result
+        member = apiResponse.results[0];
+      } else {
+        // Direct member response
+        member = apiResponse;
+      }
+      
+      if (!member || !member.id) {
+        throw new Error('No valid member data returned from API');
+      }
+      
+      // Transform member to frontend format
+      const transformedMember = {
+        id: member.id,
+        name_en: member.name_en,
+        name_ar: member.name_ar,
+        position_en: member.position_en,
+        position_ar: member.position_ar,
+        description_en: member.description_en,
+        description_ar: member.description_ar,
+        image_id: member.image?.id || null,
+        image: member.image,
+        initials: member.initials || (member.name_en || '').split(' ').map((n: string) => n[0]).join('').toUpperCase(),
+        createdAt: member.created_at,
+        updatedAt: member.updated_at,
+      };
+      
+      return transformedMember;
     } catch (error) {
       console.error('Error creating leadership member:', error);
       handleAuthError(error);
@@ -159,7 +210,25 @@ class LeadershipService {
         throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
       }
       
-      return await response.json();
+      const member = await response.json();
+      
+      // Transform member to frontend format
+      const transformedMember = {
+        id: member.id,
+        name_en: member.name_en,
+        name_ar: member.name_ar,
+        position_en: member.position_en,
+        position_ar: member.position_ar,
+        description_en: member.description_en,
+        description_ar: member.description_ar,
+        image_id: member.image?.id || null,
+        image: member.image,
+        initials: member.initials || (member.name_en || '').split(' ').map((n: string) => n[0]).join('').toUpperCase(),
+        createdAt: member.created_at,
+        updatedAt: member.updated_at,
+      };
+      
+      return transformedMember;
     } catch (error) {
       console.error('Error updating leadership member:', error);
       handleAuthError(error);
@@ -193,19 +262,26 @@ class LeadershipService {
   async uploadImage(file: File): Promise<{ id: number; url: string }> {
     try {
       const formData = new FormData();
-      formData.append('image', file);
+      formData.append('url', file);
       
-      const response = await fetchWithTokenRefresh(`${this.baseUrl}/upload-image`, {
+      // Use the same /images/ endpoint that ImageUpload component expects
+      const response = await fetchWithTokenRefresh(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000/api'}/images/`, {
         method: 'POST',
         body: formData,
       });
       
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+        const errorText = await response.text();
+        throw new Error(`Upload failed: ${response.status} - ${errorText}`);
       }
       
-      return await response.json();
+      const result = await response.json();
+      
+      // Return the expected format
+      return {
+        url: result.url,
+        id: result.id
+      };
     } catch (error) {
       console.error('Error uploading image:', error);
       handleAuthError(error);

@@ -7,6 +7,7 @@ import LoadingSpinner from '../../../../components/ui/admin/LoadingSpinner';
 import EmptyState from '../../../../components/ui/admin/EmptyState';
 import Alert from '../../../../components/ui/admin/Alert';
 import Pagination from '../../../../components/ui/public/Pagination';
+import { useScrollAnimation } from '../../../hooks/useScrollAnimation';
 
 // Project interface matching API response
 interface Project {
@@ -48,14 +49,14 @@ interface Project {
 
 const translations = {
   en: {
-    title: "Our Projects",
+    title: "Our Portfolio",
     description: "Browse our portfolio of executed projects across multiple sectors.",
     searchPlaceholder: "Search projects...",
     noProjects: "No projects found for this category.",
     allCategories: "All"
   },
   ar: {
-    title: "مشاريعنا",
+    title: "معرض أعمالنا",
     description: "تصفح محفظة مشاريعنا المنفذة في مختلف القطاعات.",
     searchPlaceholder: "البحث في المشاريع...",
     noProjects: "لم يتم العثور على مشاريع في هذه الفئة.",
@@ -74,6 +75,7 @@ function ProjectsPageContent() {
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
+  const { isVisible, setElement } = useScrollAnimation(0.1);
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -440,19 +442,26 @@ function ProjectsPageContent() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-bg-light to-white pt-32">
       {/* Page Header */}
-      <div className="relative bg-gradient-to-br from-bg-light via-white to-primary-light overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          <div className="text-center max-w-4xl mx-auto">
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-main leading-tight mb-6">
-              <span className="bg-gradient-to-br from-text-main via-text-main to-text-main bg-clip-text text-transparent">
-                {t.title}
-              </span>
-            </h1>
-            <p className="text-xl lg:text-2xl text-muted leading-relaxed font-medium">
-              {t.description}
-            </p>
-          </div>
+      <div ref={setElement} className="text-center max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 scroll-mt-32">
+        {/* Small Tag */}
+        <div className="inline-flex items-center gap-3 border-[1px] rounded-full px-4 py-2 backdrop-blur-[16px] mb-6" style={{ borderColor: '#fff3', backgroundColor: '#ffffff1a', opacity: isVisible ? 1 : 0, transform: isVisible ? 'translateY(0)' : 'translateY(40px)', transition: 'all 1s ease-out' }}>
+          <span className="text-sm font-bold text-secondary uppercase tracking-wider">
+            {locale === 'ar' ? 'مشاريعنا' : 'Our Projects'}
+          </span>
         </div>
+        
+        {/* Main Heading */}
+        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-main leading-tight mb-6 relative" style={{ opacity: isVisible ? 1 : 0, transform: isVisible ? 'translateY(0)' : 'translateY(30px)', transition: 'all 0.8s ease-out 0.2s' }}>
+          <span className="bg-gradient-to-br from-text-main via-text-main to-text-main bg-clip-text text-transparent">
+            {t.title}
+          </span>
+          <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 w-24 h-1 bg-secondary rounded-full"></div>
+        </h1>
+        
+        {/* Description */}
+        <p className="text-xl lg:text-2xl text-muted leading-relaxed font-medium" style={{ opacity: isVisible ? 1 : 0, transform: isVisible ? 'translateY(0)' : 'translateY(30px)', transition: 'all 0.8s ease-out 0.4s' }}>
+          {t.description}
+        </p>
       </div>
 
       {/* Filter Section */}

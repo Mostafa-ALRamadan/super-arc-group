@@ -4,7 +4,7 @@ export interface Category {
   id: string;
   name_en: string;
   name_ar: string;
-  type: 'project' | 'blog';
+  type: 'project' | 'blog' | 'client';
   slug: string;
   created_at: string;
   updated_at: string;
@@ -15,7 +15,7 @@ export interface CategoryFormData {
     en: string;
     ar: string;
   };
-  type: 'project' | 'blog';
+  type: 'project' | 'blog' | 'client';
 }
 
 // Transform API response to frontend format

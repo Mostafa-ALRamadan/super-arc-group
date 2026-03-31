@@ -66,7 +66,9 @@ export default function LeadershipManagement() {
   
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(10);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalLeadership, setTotalLeadership] = useState(0);
+  const LEADERSHIP_PER_PAGE = 10;
   
   // Fetch leadership members
   const fetchLeadership = async () => {
@@ -74,13 +76,7 @@ export default function LeadershipManagement() {
       setLoading(true);
       const data = await leadershipService.getAll();
       setLeadership(data);
-      
-      // Check if backend is available by checking if we got empty array but no error
-      if (data.length === 0) {
-        setError('Backend API is not available yet. Please contact the development team to set up the leadership management endpoints.');
-      } else {
-        setError(null);
-      }
+      setError(null); // Clear any previous errors
     } catch (err) {
       console.error('Error fetching leadership members:', err);
       setError(err instanceof Error ? err.message : 'Failed to fetch leadership members');
@@ -99,23 +95,40 @@ export default function LeadershipManagement() {
   const handleDelete = async (id: number) => {
     try {
       await leadershipService.delete(id);
-      setSuccess('Leadership member deleted successfully');
-      fetchLeadership();
+      // Remove from frontend state after successful deletion
+      setLeadership(prev => prev.filter(member => member.id !== id));
+      setSuccess((locale as 'en' | 'ar') === 'ar' ? 'تم حذف العضو القيادي بنجاح' : 'Leadership member deleted successfully');
+      
+      // Auto-dismiss success notification after 5 seconds
+      setTimeout(() => {
+        setSuccess(null);
+      }, 5000);
+      
       setDeleteDialog({ isOpen: false, id: null, name: '' });
     } catch (err) {
-      console.error('Error deleting leadership member:', err);
-      setError(err instanceof Error ? err.message : 'Failed to delete leadership member');
+      console.error('Failed to delete leadership member:', err);
+      setError((locale as 'en' | 'ar') === 'ar' ? 'فشل في حذف العضو القيادي' : 'Failed to delete leadership member');
     }
   };
   
   // Pagination
   const paginatedLeadership = useMemo(() => {
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
+    const startIndex = (currentPage - 1) * LEADERSHIP_PER_PAGE;
+    const endIndex = startIndex + LEADERSHIP_PER_PAGE;
     return leadership.slice(startIndex, endIndex);
-  }, [leadership, currentPage, itemsPerPage]);
-  
-  const totalPages = Math.ceil(leadership.length / itemsPerPage);
+  }, [leadership, currentPage]);
+
+  // Update pagination info
+  useEffect(() => {
+    const calculatedTotalPages = Math.ceil(leadership.length / LEADERSHIP_PER_PAGE);
+    setTotalPages(calculatedTotalPages);
+    setTotalLeadership(leadership.length);
+    
+    // Reset to page 1 if current page is beyond the results
+    if (currentPage > calculatedTotalPages && calculatedTotalPages > 0) {
+      setCurrentPage(1);
+    }
+  }, [leadership.length, currentPage]);
   
   if (!isAuthenticated) {
     return (
@@ -216,7 +229,7 @@ export default function LeadershipManagement() {
                               <img
                                 className="h-10 w-10 rounded-full object-cover"
                                 src={member.image.url}
-                                alt={member.image.alt_en || member.name.en}
+                                alt={member.image.alt_en || member[`name_${locale}`]}
                               />
                             ) : (
                               <div className="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center">
@@ -228,29 +241,24 @@ export default function LeadershipManagement() {
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm font-medium text-gray-900">
-                            {member.name.en}
-                          </div>
-                          <div className="text-sm text-gray-500">
-                            {member.name.ar}
+                          <div className="text-sm font-medium text-main">
+                            {member[`name_${locale}`]}
                           </div>
                         </td>
-                        <td className="px-6 py-4">
-                          <div className="text-sm text-gray-900">{member.position.en}</div>
-                          <div className="text-sm text-gray-500">{member.position.ar}</div>
-                        </td>
-                        <td className="px-6 py-4">
-                          <div className="text-sm text-gray-900 max-w-xs truncate">
-                            {member.description.en}
-                          </div>
-                          <div className="text-sm text-gray-500 max-w-xs truncate">
-                            {member.description.ar}
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm text-muted">
+                            {member[`position_${locale}`]}
                           </div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm text-muted max-w-xs truncate">
+                            {member[`description_${locale}`]}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                           <button
                             onClick={() => router.push(`/${locale}/admin/leadership/edit/${member.id}`)}
-                            className="text-blue-600 hover:text-blue-900 mr-4"
+                            className={`text-indigo-600 hover:text-indigo-900 ${locale === 'ar' ? 'ml-4' : 'mr-4'}`}
                           >
                             {locale === 'ar' ? 'تعديل' : 'Edit'}
                           </button>
@@ -258,7 +266,7 @@ export default function LeadershipManagement() {
                             onClick={() => setDeleteDialog({
                               isOpen: true,
                               id: member.id,
-                              name: member.name.en
+                              name: member[`name_${locale}`]
                             })}
                             className="text-red-600 hover:text-red-900"
                           >
@@ -272,15 +280,14 @@ export default function LeadershipManagement() {
               </div>
 
               {/* Admin Pagination */}
-              {totalPages > 1 && (
-                <div className="px-6 py-4 border-t">
-                  <AdminPagination
-                    currentPage={currentPage}
-                    totalPages={totalPages}
-                    onPageChange={setCurrentPage}
-                  />
-                </div>
-              )}
+              <AdminPagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+                rowsPerPage={LEADERSHIP_PER_PAGE}
+                totalRows={leadership.length}
+                locale={locale}
+              />
             </>
           )}
         </div>

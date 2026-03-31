@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslations } from '../../../src/contexts/TranslationContext';
 import { type LeadershipFormData } from '../../../src/services/entities/leadership.service';
 import ImageUpload from '../shared/ImageUpload';
@@ -17,37 +17,43 @@ const LeadershipForm: React.FC<LeadershipFormProps> = ({ initialData, onSubmit, 
   const isRTL = locale === 'ar';
 
   const [formData, setFormData] = useState<LeadershipFormData>({
-    name: {
-      en: '',
-      ar: ''
-    },
-    position: {
-      en: '',
-      ar: ''
-    },
-    description: {
-      en: '',
-      ar: ''
-    },
+    name_en: '',
+    name_ar: '',
+    position_en: '',
+    position_ar: '',
+    description_en: '',
+    description_ar: '',
     image_id: null,
     ...initialData
   });
 
+  // Update formData when initialData changes (for edit mode)
+  useEffect(() => {
+    if (initialData && Object.keys(initialData).length > 0) {
+      setFormData(prev => ({
+        ...prev,
+        ...initialData
+      }));
+      
+      // Set imageUrl if there's an existing image
+      if (initialData.image && initialData.image.url) {
+        setImageUrl(initialData.image.url);
+      }
+    }
+  }, [initialData]);
+
   const [errors, setErrors] = useState<Partial<Record<keyof LeadershipFormData, string>>>({});
   const [imageUrl, setImageUrl] = useState<string>('');
 
-  const handleNestedInputChange = (parent: string, child: string, value: string) => {
+  const handleInputChange = (field: keyof LeadershipFormData, value: string) => {
     setFormData((prev: LeadershipFormData) => ({
       ...prev,
-      [parent]: {
-        ...(prev[parent as keyof LeadershipFormData] as Record<string, any>),
-        [child]: value
-      }
+      [field]: value
     }));
     
     // Clear error for this field when user starts typing
-    if (errors[parent as keyof LeadershipFormData]) {
-      setErrors(prev => ({ ...prev, [parent]: undefined }));
+    if (errors[field]) {
+      setErrors(prev => ({ ...prev, [field]: undefined }));
     }
   };
 
@@ -64,16 +70,22 @@ const LeadershipForm: React.FC<LeadershipFormProps> = ({ initialData, onSubmit, 
   const validateForm = (): boolean => {
     const newErrors: Partial<Record<keyof LeadershipFormData, string>> = {};
 
-    if (!formData.name.en.trim()) {
-      newErrors.name = locale === 'ar' ? 'الاسم بالإنجليزية مطلوب' : 'English name is required';
-    } else if (!formData.name.ar.trim()) {
-      newErrors.name = locale === 'ar' ? 'الاسم بالعربية مطلوب' : 'Arabic name is required';
+    if (!formData.name_en.trim()) {
+      newErrors.name_en = locale === 'ar' ? 'الاسم بالإنجليزية مطلوب' : 'English name is required';
+    } else if (!formData.name_ar.trim()) {
+      newErrors.name_ar = locale === 'ar' ? 'الاسم بالعربية مطلوب' : 'Arabic name is required';
     }
 
-    if (!formData.position.en.trim()) {
-      newErrors.position = locale === 'ar' ? 'المنصب بالإنجليزية مطلوب' : 'English position is required';
-    } else if (!formData.position.ar.trim()) {
-      newErrors.position = locale === 'ar' ? 'المنصب بالعربية مطلوب' : 'Arabic position is required';
+    if (!formData.position_en.trim()) {
+      newErrors.position_en = locale === 'ar' ? 'المنصب بالإنجليزية مطلوب' : 'English position is required';
+    } else if (!formData.position_ar.trim()) {
+      newErrors.position_ar = locale === 'ar' ? 'المنصب بالعربية مطلوب' : 'Arabic position is required';
+    }
+
+    if (!formData.description_en.trim()) {
+      newErrors.description_en = locale === 'ar' ? 'الوصف بالإنجليزية مطلوب' : 'English description is required';
+    } else if (!formData.description_ar.trim()) {
+      newErrors.description_ar = locale === 'ar' ? 'الوصف بالعربية مطلوب' : 'Arabic description is required';
     }
 
     setErrors(newErrors);
@@ -108,13 +120,13 @@ const LeadershipForm: React.FC<LeadershipFormProps> = ({ initialData, onSubmit, 
               </label>
               <input
                 type="text"
-                value={formData.name.en}
-                onChange={(e) => handleNestedInputChange('name', 'en', e.target.value)}
+                value={formData.name_en}
+                onChange={(e) => handleInputChange('name_en', e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
                 placeholder={locale === 'ar' ? 'Enter name in English' : 'Enter name in English'}
               />
-              {errors.name && (
-                <p className="mt-1 text-sm text-red-600">{errors.name}</p>
+              {errors.name_en && (
+                <p className="mt-1 text-sm text-red-600">{errors.name_en}</p>
               )}
             </div>
           </div>
@@ -134,14 +146,14 @@ const LeadershipForm: React.FC<LeadershipFormProps> = ({ initialData, onSubmit, 
               </label>
               <input
                 type="text"
-                value={formData.name.ar}
-                onChange={(e) => handleNestedInputChange('name', 'ar', e.target.value)}
+                value={formData.name_ar}
+                onChange={(e) => handleInputChange('name_ar', e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
                 placeholder={locale === 'ar' ? 'أدخل الاسم بالعربية' : 'Enter name in Arabic'}
                 dir="rtl"
               />
-              {errors.name && (
-                <p className="mt-1 text-sm text-red-600">{errors.name}</p>
+              {errors.name_ar && (
+                <p className="mt-1 text-sm text-red-600">{errors.name_ar}</p>
               )}
             </div>
           </div>
@@ -159,8 +171,8 @@ const LeadershipForm: React.FC<LeadershipFormProps> = ({ initialData, onSubmit, 
           value={imageUrl}
           onChange={handleImageChange}
           placeholder="https://example.com/photo.jpg"
-          companyName={formData.name.en}
-          companyNameAr={formData.name.ar}
+          companyName={formData.name_en}
+          companyNameAr={formData.name_ar}
           imageType="photo"
           imageId={formData.image_id || undefined}
         />
@@ -188,13 +200,13 @@ const LeadershipForm: React.FC<LeadershipFormProps> = ({ initialData, onSubmit, 
               </label>
               <input
                 type="text"
-                value={formData.position.en}
-                onChange={(e) => handleNestedInputChange('position', 'en', e.target.value)}
+                value={formData.position_en}
+                onChange={(e) => handleInputChange('position_en', e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
                 placeholder={locale === 'ar' ? 'Enter position in English' : 'Enter position in English'}
               />
-              {errors.position && (
-                <p className="mt-1 text-sm text-red-600">{errors.position}</p>
+              {errors.position_en && (
+                <p className="mt-1 text-sm text-red-600">{errors.position_en}</p>
               )}
             </div>
           </div>
@@ -214,14 +226,14 @@ const LeadershipForm: React.FC<LeadershipFormProps> = ({ initialData, onSubmit, 
               </label>
               <input
                 type="text"
-                value={formData.position.ar}
-                onChange={(e) => handleNestedInputChange('position', 'ar', e.target.value)}
+                value={formData.position_ar}
+                onChange={(e) => handleInputChange('position_ar', e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
                 placeholder={locale === 'ar' ? 'أدخل المنصب بالعربية' : 'Enter position in Arabic'}
                 dir="rtl"
               />
-              {errors.position && (
-                <p className="mt-1 text-sm text-red-600">{errors.position}</p>
+              {errors.position_ar && (
+                <p className="mt-1 text-sm text-red-600">{errors.position_ar}</p>
               )}
             </div>
           </div>
@@ -243,12 +255,15 @@ const LeadershipForm: React.FC<LeadershipFormProps> = ({ initialData, onSubmit, 
                 {locale === 'ar' ? 'الوصف (بالإنجليزية)' : 'Description (English)'}
               </label>
               <textarea
-                value={formData.description.en}
-                onChange={(e) => handleNestedInputChange('description', 'en', e.target.value)}
+                value={formData.description_en}
+                onChange={(e) => handleInputChange('description_en', e.target.value)}
                 rows={4}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
                 placeholder={locale === 'ar' ? 'Enter description in English' : 'Enter description in English'}
               />
+              {errors.description_en && (
+                <p className="mt-1 text-sm text-red-600">{errors.description_en}</p>
+              )}
             </div>
           </div>
         </div>
@@ -266,13 +281,16 @@ const LeadershipForm: React.FC<LeadershipFormProps> = ({ initialData, onSubmit, 
                 {locale === 'ar' ? 'الوصف (بالعربية)' : 'Description (Arabic)'}
               </label>
               <textarea
-                value={formData.description.ar}
-                onChange={(e) => handleNestedInputChange('description', 'ar', e.target.value)}
+                value={formData.description_ar}
+                onChange={(e) => handleInputChange('description_ar', e.target.value)}
                 rows={4}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
                 placeholder={locale === 'ar' ? 'أدخل الوصف بالعربية' : 'Enter description in Arabic'}
                 dir="rtl"
               />
+              {errors.description_ar && (
+                <p className="mt-1 text-sm text-red-600">{errors.description_ar}</p>
+              )}
             </div>
           </div>
         </div>

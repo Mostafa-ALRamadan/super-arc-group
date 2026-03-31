@@ -92,7 +92,7 @@ export default function CategoriesManagement() {
 
   // Filter states
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedType, setSelectedType] = useState<'all' | 'project' | 'blog'>('all');
+  const [selectedType, setSelectedType] = useState<'all' | 'project' | 'blog' | 'client'>('all');
   const [deleteConfirm, setDeleteConfirm] = useState<{ isOpen: boolean; categoryId: string; categoryName: string }>({
     isOpen: false,
     categoryId: '',
@@ -214,12 +214,13 @@ export default function CategoriesManagement() {
             />
             <select
               value={selectedType}
-              onChange={(e) => setSelectedType(e.target.value as 'all' | 'project' | 'blog')}
+              onChange={(e) => setSelectedType(e.target.value as 'all' | 'project' | 'blog' | 'client')}
               className={`px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary ${locale === 'ar' ? 'text-right' : 'text-left'}`}
             >
               <option value="all">{locale === 'ar' ? 'جميع الأنواع' : 'All Types'}</option>
               <option value="project">{locale === 'ar' ? 'المشاريع' : 'Projects'}</option>
               <option value="blog">{locale === 'ar' ? 'المدونة' : 'Blog'}</option>
+              <option value="client">{locale === 'ar' ? 'العملاء' : 'Clients'}</option>
             </select>
           </div>
           <button
@@ -326,11 +327,15 @@ export default function CategoriesManagement() {
                         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                           category.type === 'project' 
                             ? 'bg-blue-100 text-blue-800' 
-                            : 'bg-green-100 text-green-800'
+                            : category.type === 'blog'
+                            ? 'bg-green-100 text-green-800'
+                            : 'bg-orange-100 text-orange-800'
                         }`}>
                           {category.type === 'project' 
                             ? (locale === 'ar' ? 'مشروع' : 'Project')
-                            : (locale === 'ar' ? 'مدونة' : 'Blog')
+                            : category.type === 'blog'
+                            ? (locale === 'ar' ? 'مدونة' : 'Blog')
+                            : (locale === 'ar' ? 'عميل' : 'Client')
                           }
                         </span>
                       </td>

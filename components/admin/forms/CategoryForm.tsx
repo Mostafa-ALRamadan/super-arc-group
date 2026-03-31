@@ -142,16 +142,17 @@ const CategoryForm: React.FC<CategoryFormProps> = ({ initialData, onSubmit, onCa
             </label>
             <select
               value={formData.type}
-              onChange={(e) => handleInputChange('type', e.target.value as 'project' | 'blog')}
+              onChange={(e) => handleInputChange('type', e.target.value as 'project' | 'blog' | 'client')}
               className={`w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary ${isRTL ? 'text-right' : 'text-left'}`}
             >
               <option value="project">{locale === 'ar' ? 'مشروع' : 'Project'}</option>
               <option value="blog">{locale === 'ar' ? 'مدونة' : 'Blog'}</option>
+              <option value="client">{locale === 'ar' ? 'عميل' : 'Client'}</option>
             </select>
             <p className="mt-1 text-sm text-gray-500">
               {locale === 'ar' 
-                ? 'حدد ما إذا كانت هذه الفئة للمشاريع أو للمدونة' 
-                : 'Specify whether this category is for projects or blog posts'
+                ? 'حدد ما إذا كانت هذه الفئة للمشاريع أو للمدونة أو للعملاء' 
+                : 'Specify whether this category is for projects, blog posts, or clients'
               }
             </p>
           </div>
