@@ -44,6 +44,7 @@ export default function Leadership() {
   const { isVisible, setElement } = useScrollAnimation(0.1);
   const [leadership, setLeadership] = useState<Leadership[]>([]);
   const [loading, setLoading] = useState(true);
+  const [flippedCards, setFlippedCards] = useState<Set<number>>(new Set());
 
   useEffect(() => {
     const pathname = window.location.pathname;
@@ -76,6 +77,20 @@ export default function Leadership() {
 
   const t = translations[locale];
   const isRTL = locale === 'ar';
+
+  const handleCardClick = (memberId: number) => {
+    setFlippedCards(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(memberId)) {
+        newSet.delete(memberId);
+      } else {
+        newSet.add(memberId);
+      }
+      return newSet;
+    });
+  };
+
+  const isCardFlipped = (memberId: number) => flippedCards.has(memberId);
 
   return (
     <section 
@@ -145,10 +160,22 @@ export default function Leadership() {
                 }}
               >
                 <div
-                  className="absolute inset-0 transition-transform duration-700 hover:rotate-y-180"
+                  className="absolute inset-0 transition-transform duration-700"
                   style={{
-                    transformStyle: 'preserve-3d'
+                    transformStyle: 'preserve-3d',
+                    transform: isCardFlipped(member.id) ? 'rotateY(180deg)' : 'rotateY(0deg)'
                   }}
+                  onMouseEnter={(e) => {
+                    const target = e.currentTarget;
+                    target.style.transform = 'rotateY(180deg)';
+                  }}
+                  onMouseLeave={(e) => {
+                    const target = e.currentTarget;
+                    if (!isCardFlipped(member.id)) {
+                      target.style.transform = 'rotateY(0deg)';
+                    }
+                  }}
+                  onClick={() => handleCardClick(member.id)}
                 >
                   {/* Front Side */}
                   <div 
