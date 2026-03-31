@@ -62,7 +62,7 @@ export default function Leadership() {
     const fetchLeadership = async () => {
       try {
         setLoading(true);
-        const data = await leadershipService.getAll();
+        const data = await leadershipService.getAllPublic();
         setLeadership(data);
       } catch (err) {
         console.error('Error fetching leadership:', err);
@@ -145,17 +145,9 @@ export default function Leadership() {
                 }}
               >
                 <div
-                  className="absolute inset-0 transition-transform duration-700"
+                  className="absolute inset-0 transition-transform duration-700 hover:rotate-y-180"
                   style={{
                     transformStyle: 'preserve-3d'
-                  }}
-                  onMouseEnter={(e) => {
-                    const target = e.currentTarget;
-                    target.style.transform = 'rotateY(180deg)';
-                  }}
-                  onMouseLeave={(e) => {
-                    const target = e.currentTarget;
-                    target.style.transform = 'rotateY(0deg)';
                   }}
                 >
                   {/* Front Side */}

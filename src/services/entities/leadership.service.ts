@@ -57,7 +57,47 @@ class LeadershipService {
   }
 
   /**
-   * Get all leadership members
+   * Get all leadership members - PUBLIC method for frontend
+   */
+  async getAllPublic(): Promise<Leadership[]> {
+    try {
+      const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000/api';
+      const response = await fetch(`${API_BASE_URL}/members/`);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const apiResponse = await response.json();
+      
+      // Extract the actual members array from the paginated response
+      const members = apiResponse.results || apiResponse;
+      
+      // Transform each member to frontend format
+      const transformedMembers = members.map((member: any) => ({
+        id: member.id,
+        name_en: member.name_en,
+        name_ar: member.name_ar,
+        position_en: member.position_en,
+        position_ar: member.position_ar,
+        description_en: member.description_en,
+        description_ar: member.description_ar,
+        image_id: member.image?.id || null,
+        image: member.image,
+        initials: member.initials || (member.name_en || '').split(' ').map((n: string) => n[0]).join('').toUpperCase(),
+        createdAt: member.created_at,
+        updatedAt: member.updated_at,
+      }));
+      
+      return transformedMembers;
+    } catch (error) {
+      console.error('Error fetching leadership members:', error);
+      return [];
+    }
+  }
+
+  /**
+   * Get all leadership members - ADMIN method with auth
    */
   async getAll(): Promise<Leadership[]> {
     try {
