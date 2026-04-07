@@ -29,7 +29,7 @@
       "pleaseWait": "Please wait...",
       "invalidCredentials": "Invalid username or password",
       "forgotPassword": "Forgot your password? Contact your administrator.",
-      "demoNote": "Demo: Use any email/password to access"
+      "rateLimit": "Too many failed login attempts. Try again in {minutes} minutes."
     },
     "settings": {
       "title": "Settings",

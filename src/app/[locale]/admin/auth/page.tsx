@@ -74,7 +74,24 @@ export default function AdminAuthPage() {
       // Redirect to admin dashboard
       router.push(`/${locale}/admin`);
     } catch (error) {
-      setError(t('admin.auth.invalidCredentials'));
+      // Display the error message from the backend with localization
+      let errorMessage = error instanceof Error ? error.message : t('admin.auth.invalidCredentials');
+      
+      // Check for rate limit error pattern and localize it
+      const rateLimitMatch = errorMessage.match(/Too many failed login attempts.*?(\d+)\s*minutes?/i);
+      if (rateLimitMatch) {
+        const minutes = rateLimitMatch[1];
+        errorMessage = t('admin.auth.rateLimit').replace('{minutes}', minutes);
+      }
+      // Check for invalid credentials and localize it
+      else if (errorMessage.toLowerCase().includes('invalid') && 
+               (errorMessage.toLowerCase().includes('credentials') || 
+                errorMessage.toLowerCase().includes('username') || 
+                errorMessage.toLowerCase().includes('password'))) {
+        errorMessage = t('admin.auth.invalidCredentials');
+      }
+      
+      setError(errorMessage);
       console.error('Login error:', error);
     }
   };

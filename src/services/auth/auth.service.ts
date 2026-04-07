@@ -37,26 +37,26 @@ class AuthService {
 
       if (!response.ok) {
         const errorText = await response.text();
-        let userFriendlyMessage = 'Invalid username or password';
+        let errorMessage = 'Invalid username or password';
         
-        // Parse error details for more specific messages
         try {
           const errorData = JSON.parse(errorText);
+          // Use the backend's error message if provided
           if (errorData.detail) {
-            if (errorData.detail.includes('No active account')) {
-              userFriendlyMessage = 'Invalid username or password';
-            } else if (errorData.detail.includes('credentials')) {
-              userFriendlyMessage = 'Invalid username or password';
-            } else {
-              userFriendlyMessage = 'Login failed. Please try again.';
-            }
+            errorMessage = errorData.detail;
+          } else if (errorData.message) {
+            errorMessage = errorData.message;
+          } else if (errorData.error) {
+            errorMessage = errorData.error;
           }
         } catch {
-          // If JSON parsing fails, use generic message
-          userFriendlyMessage = 'Invalid username or password';
+          // If JSON parsing fails, use the raw error text if available
+          if (errorText && errorText.trim()) {
+            errorMessage = errorText;
+          }
         }
         
-        throw new Error(userFriendlyMessage);
+        throw new Error(errorMessage);
       }
 
       const data: TokenResponse = await response.json();
