@@ -8,7 +8,7 @@ import { useScrollAnimation } from '../../src/hooks/useScrollAnimation';
 const translations = {
   en: {
     title: "Regional Expertise. International Standards. Global Vision",
-    description: "Super Arc Group is a regional engineering powerhouse delivering world-class consultancy, deep foundations, drilling, property development, and contracting services across the Middle East.",
+    description: "Super Arc Group is a trusted regional engineering and investment partner delivering engineering consultancy, specialized contracting, deep foundations, drilling, and real estate development services aligned with international standards and sustainable growth objectives.",
     primaryCta: "Explore Our Services",
     secondaryCta: "Contact Us",
     superArcConsultants: "Super Arc Consultants",
@@ -20,7 +20,7 @@ const translations = {
   },
   ar: {
     title: "خبرات إقليمية. معايير دولية. رؤية عالمية",
-    description: "مجموعة سوبر آرك هي قوة هندسية إقليمية تقدم استشارات عالمية المستوى، وأساسات عميقة، وحفر، وتطوير عقارات، وخدمات مقاولات في جميع أنحاء الشرق الأوسط.",
+    description: "مجموعة سوبر آرك شريكك الإقليمي الموثوق في الاستشارات الهندسية، المقاولات المتخصصة، الأساسات العميقة، الحفر، والتطوير العقاري، بخبرات تمتد من المعايير الدولية إلى متطلبات إعادة الإعمار والتنمية المستدامة.",
     primaryCta: "استكشف خدماتنا",
     secondaryCta: "تواصل معنا",
     superArcConsultants: "سوبر آرك للاستشارات الهندسية",

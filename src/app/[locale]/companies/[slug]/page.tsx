@@ -226,7 +226,7 @@ export default async function CompanyPage({ params }: CompanyPageProps) {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="text-center">
             <Link 
-              href={`/${locale}/#companies`}
+              href={`/${locale}/who-we-are#companies`}
               className="inline-block bg-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary-dark transition-colors"
             >
               {locale === 'en' ? 'Back to Companies' : 'العودة إلى الشركات'}

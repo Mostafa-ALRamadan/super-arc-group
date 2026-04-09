@@ -4,121 +4,164 @@ import { useState, useEffect } from 'react';
 import ServiceCard from '../ui/public/ServiceCard';
 import { useScrollAnimation } from '../../src/hooks/useScrollAnimation';
 import {
-  Building,
   DraftingCompass,
+  Building,
   ClipboardList,
   HardHat,
   Wrench,
-  Zap,
   Truck,
-  Settings,
-  Home,
-  Users,
-  Lightbulb,
-  Factory,
+  Drill,
+  Zap,
+  Shield,
+  Activity,
+  Construction,
+  Trees,
   Building2,
-  House
+  Hammer,
+  Home,
+  DollarSign,
+  FileText,
+  Users
 } from 'lucide-react';
 
-// CMS-ready service data structure
+export default function Services() {
+  const [locale, setLocale] = useState<'en' | 'ar'>('en');
+  const [mounted, setMounted] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);
+  const { isVisible, setElement } = useScrollAnimation(0.1);
 const servicesData = [
   {
-    icon: Building,
-    title: 'General Contracting',
-    description: 'Comprehensive construction services covering all aspects of building projects from foundation to completion.',
-    titleAr: 'المقاولات العامة',
-    descriptionAr: 'خدمات بناء شاملة تغطي جميع جوانب المشاريع من الأساس إلى التسليم النهائي.'
+    icon: DraftingCompass,
+    title: 'Engineering Consultancy',
+    description: 'Providing integrated engineering solutions including studies, design, and supervision to deliver projects to the highest standards.',
+    titleAr: 'الاستشارات الهندسية',
+    descriptionAr: 'تقديم حلول هندسية متكاملة تشمل الدراسات والتصاميم والإشراف لضمان تنفيذ المشاريع بأعلى المعايير.'
   },
   {
-    icon: DraftingCompass,
-    title: 'Design & Build',
-    description: 'Integrated design and construction solutions that streamline project delivery and ensure design intent.',
-    titleAr: 'التصميم والبناء',
-    descriptionAr: 'حلول تصميم وبناء متكاملة تبسط تسليم المشاريع وتضمن تحقيق الرؤية التصميمية.'
+    icon: Building,
+    title: 'Architectural, Structural & Geotechnical Design',
+    description: 'Delivering integrated architectural, structural, and geotechnical designs that ensure safety, efficiency, and project suitability.',
+    titleAr: 'التصميم المعماري والإنشائي والجيوتكنيكي',
+    descriptionAr: 'إعداد تصاميم هندسية متكاملة تضمن الكفاءة الإنشائية والوظيفية والملاءمة الجيوتقنية للمشاريع.'
+  },
+  {
+    icon: FileText,
+    title: 'Technical Studies & Detailed Design',
+    description: 'Preparing technical studies and detailed execution drawings to support decision-making and precise implementation.',
+    titleAr: 'الدراسات الفنية والتصاميم التفصيلية',
+    descriptionAr: 'إعداد الدراسات الفنية والمخططات التنفيذية التفصيلية لدعم اتخاذ القرار والتنفيذ الدقيق.'
   },
   {
     icon: ClipboardList,
-    title: 'Project Management',
-    description: 'Professional project oversight ensuring timely delivery, quality control, and budget management.',
-    titleAr: 'إدارة المشاريع',
-    descriptionAr: 'إشراف احترافي على المشاريع يضمن التسليم في الوقت المحدد والجودة وإدارة الميزانية.'
-  },
-  {
-    icon: HardHat,
-    title: 'Civil Engineering',
-    description: 'Expert civil engineering services including infrastructure development and structural solutions.',
-    titleAr: 'الهندسة المدنية',
-    descriptionAr: 'خدمات هندسة مدنية متخصصة تشمل تطوير البنية التحتية والحلول الإنشائية.'
-  },
-  {
-    icon: Wrench,
-    title: 'Mechanical Engineering',
-    description: 'Specialized mechanical systems design, installation, and maintenance for industrial facilities.',
-    titleAr: 'الهندسة الميكانيكية',
-    descriptionAr: 'تصميم وتركيب وصيانة الأنظمة الميكانيكية المتخصصة للمنشآت الصناعية.'
-  },
-  {
-    icon: Zap,
-    title: 'Electrical Engineering',
-    description: 'Complete electrical systems design, installation, and maintenance for commercial and industrial projects.',
-    titleAr: 'الهندسة الكهربائية',
-    descriptionAr: 'تصميم وتركيب وصيانة أنظمة كهربائية متكاملة للمشاريع التجارية والصناعية.'
-  },
-  {
-    icon: Truck,
-    title: 'Infrastructure Works',
-    description: 'Large-scale infrastructure development including roads, utilities, and public works projects.',
-    titleAr: 'أعمال البنية التحتية',
-    descriptionAr: 'توير البنية التحتية على نطاق واسع يشمل الطرق والمرافق ومشاريع الأشغال العامة.'
-  },
-  {
-    icon: Settings,
-    title: 'MEP Works',
-    description: 'Mechanical, Electrical, and Plumbing services providing integrated building systems solutions.',
-    titleAr: 'أعمال MEP',
-    descriptionAr: 'خدمات ميكانيكية وكهربائية وسباكة توفر حلول أنظمة المباني المتكاملة.'
-  },
-  {
-    icon: Home,
-    title: 'Renovation & Maintenance',
-    description: 'Professional renovation and maintenance services to preserve and enhance existing structures.',
-    titleAr: 'التجديد والصيانة',
-    descriptionAr: 'خدمات تجديد وصيانة احترافية للحفاظ على المباني القائمة وتحسينها.'
+    title: 'Engineering Supervision',
+    description: 'Supervising site execution to ensure quality, compliance, and adherence to project schedules.',
+    titleAr: 'الإشراف الهندسي',
+    descriptionAr: 'متابعة تنفيذ الأعمال ميدانياً لضمان الجودة والالتزام بالمواصفات والجداول الزمنية.'
   },
   {
     icon: Users,
-    title: 'Construction Management',
-    description: 'Expert construction oversight coordinating all project stakeholders and resources efficiently.',
-    titleAr: 'إدارة البناء',
-    descriptionAr: 'إشراف بناء خبير ينسق جميع أصحاب المصلحة وموارد المشروع بكفاءة.'
+    title: 'Project & Construction Management',
+    description: 'Managing all project phases from planning to handover while controlling cost, time, and quality.',
+    titleAr: 'إدارة المشاريع وإدارة التنفيذ',
+    descriptionAr: 'إدارة جميع مراحل المشروع من التخطيط حتى التسليم مع ضبط التكلفة والوقت والجودة.'
   },
   {
-    icon: Lightbulb,
-    title: 'Technical Consulting',
-    description: 'Specialized technical consulting providing expert guidance for complex engineering challenges.',
-    titleAr: 'الاستشارات الفنية',
-    descriptionAr: 'استشارات فنية متخصصة تقدم إرشادات خبراء للتحديات الهندسية المعقدة.'
+    icon: Truck,
+    title: 'Roads, Utilities & Infrastructure Development',
+    description: 'Delivering roads, utilities, and infrastructure projects that support sustainable growth and future needs.',
+    titleAr: 'تطوير الطرق والمرافق والبنية التحتية',
+    descriptionAr: 'تنفيذ مشاريع الطرق والمرافق والبنية التحتية بما يدعم التنمية المستدامة والاحتياجات المستقبلية.'
   },
   {
-    icon: Factory,
-    title: 'Industrial Projects',
-    description: 'Specialized construction and engineering services for industrial facilities and manufacturing plants.',
-    titleAr: 'المشاريع الصناعية',
-    descriptionAr: 'خدمات بناء وهندسة متخصصة للمنشآت الصناعية ومصانع التصنيع.'
+    icon: Building,
+    title: 'General Contracting & Civil Construction',
+    description: 'Executing civil and construction works efficiently in line with the highest safety and quality standards.',
+    titleAr: 'المقاولات العامة والإنشاءات المدنية',
+    descriptionAr: 'تنفيذ الأعمال المدنية والإنشائية بكفاءة عالية وفق أعلى معايير السلامة والجودة.'
+  },
+  {
+    icon: Drill,
+    title: 'Deep Foundations, Piling & Micropiles',
+    description: 'Providing specialized deep foundation solutions to ensure structural stability in all soil conditions.',
+    titleAr: 'الأساسات العميقة والخوازيق والمايكرو بايل',
+    descriptionAr: 'تقديم حلول متخصصة للأساسات العميقة لضمان استقرار المنشآت في مختلف ظروف التربة.'
+  },
+  {
+    icon: Hammer,
+    title: 'Ground Support, Excavation & Earthworks',
+    description: 'Delivering excavation, soil support, and earthworks with full structural and safety compliance.',
+    titleAr: 'دعم التربة وأعمال الحفر والردميات',
+    descriptionAr: 'تنفيذ أعمال الحفر والتدعيم والردميات وفق متطلبات السلامة والاستقرار الإنشائي.'
+  },
+  {
+    icon: Activity,
+    title: 'Water Well Drilling & Testing',
+    description: 'Providing water well drilling and testing services to secure reliable and sustainable water sources.',
+    titleAr: 'حفر واختبار آبار المياه',
+    descriptionAr: 'تنفيذ خدمات حفر واختبار آبار المياه لضمان مصادر مائية موثوقة ومستدامة.'
+  },
+  {
+    icon: Zap,
+    title: 'Oil & Gas Field Services',
+    description: 'Delivering specialized services that support drilling, production, and maintenance in oil and gas fields.',
+    titleAr: 'خدمات حقول النفط والغاز',
+    descriptionAr: 'تقديم خدمات متخصصة لدعم عمليات الحفر والإنتاج والصيانة في حقول النفط والغاز.'
+  },
+  {
+    icon: Wrench,
+    title: 'Well Maintenance, Cleaning & Cementing',
+    description: 'Performing well maintenance, cleaning, and cementing to improve performance and extend well life.',
+    titleAr: 'صيانة وتنظيف وإسمنتة الآبار',
+    descriptionAr: 'تنفيذ خدمات صيانة وتنظيف وإسمنتة الآبار لرفع الكفاءة التشغيلية وإطالة عمرها.'
+  },
+  {
+    icon: Shield,
+    title: 'Cathodic Protection & Deep Earthing Systems',
+    description: 'Designing and implementing advanced protection and earthing systems for critical assets and infrastructure.',
+    titleAr: 'الحماية الكاثودية وأنظمة التأريض العميق',
+    descriptionAr: 'تصميم وتنفيذ أنظمة حماية وتأريض متقدمة لحماية الأصول والبنية التحتية الحيوية.'
+  },
+  {
+    icon: Construction,
+    title: 'Surface Well Testing & Production Equipment',
+    description: 'Operating surface well testing and production equipment to ensure optimal operational performance.',
+    titleAr: 'اختبار الآبار السطحية ومعدات الإنتاج',
+    descriptionAr: 'تشغيل وإدارة معدات الاختبار والإنتاج السطحي لضمان الأداء التشغيلي الأمثل.'
+  },
+  {
+    icon: Truck,
+    title: 'Heavy Equipment Fleet & Specialized Field Execution',
+    description: 'Providing heavy equipment and specialized field execution services for large and complex projects.',
+    titleAr: 'أسطول المعدات الثقيلة والتنفيذ الميداني التخصصي',
+    descriptionAr: 'توفير معدات ثقيلة وخدمات تنفيذ ميداني متخصصة لدعم المشاريع الكبيرة والمعقدة.'
+  },
+  {
+    icon: Trees,
+    title: 'Agricultural Project Development',
+    description: 'Developing integrated agricultural projects that support food security and sustainable investment.',
+    titleAr: 'تطوير المشاريع الزراعية',
+    descriptionAr: 'تطوير مشاريع زراعية متكاملة تدعم الأمن الغذائي والاستثمار المستدام.'
   },
   {
     icon: Building2,
-    title: 'Commercial Projects',
-    description: 'Commercial construction services delivering retail, office, and business facilities.',
-    titleAr: 'المشاريع التجارية',
-    descriptionAr: 'خدمات بناء تجاري توفر مرافق البيع بالتجزئة والمكاتب والمنشآت التجارية.'
+    title: 'Educational Facility Development',
+    description: 'Designing and delivering modern educational facilities that support advanced learning environments.',
+    titleAr: 'تطوير المرافق التعليمية',
+    descriptionAr: 'تصميم وتنفيذ مرافق تعليمية حديثة تدعم بيئات التعلم المتطورة.'
   },
   {
-    icon: House,
-    title: 'Residential Projects',
-    description: 'Residential construction expertise creating quality housing developments and living spaces.',
-    titleAr: 'المشاريع السكنية',
-    descriptionAr: 'خبرة بناء سكني تخلق تطورات سكنية عالية الجودة ومساحات معيشية.'
+    icon: Home,
+    title: 'Reconstruction & Urban Regeneration',
+    description: 'Delivering reconstruction and urban regeneration projects that support communities and future growth.',
+    titleAr: 'إعادة الإعمار والتطوير الحضري',
+    descriptionAr: 'تنفيذ مشاريع إعادة الإعمار والتطوير الحضري لدعم المجتمعات والنمو المستقبلي.'
+  },
+  {
+    icon: DollarSign,
+    title: 'Real Estate Development & Investment',
+    description: 'Developing high-value real estate investments across residential, commercial, and mixed-use sectors.',
+    titleAr: 'التطوير والاستثمار العقاري',
+    descriptionAr: 'تطوير مشاريع عقارية ذات قيمة استثمارية عالية تشمل السكني والتجاري ومتعدد الاستخدامات'
   }
 ];
 
@@ -134,11 +177,6 @@ const translations = {
     description: 'تقدم مجموعة سوبر آرك مجموعة واسعة من الخدمات الهندسية والإنشائية المتكاملة المصممة لتلبية متطلبات المشاريع المعقدة في مختلف القطاعات.'
   }
 };
-
-export default function Services() {
-  const [locale, setLocale] = useState<'en' | 'ar'>('en');
-  const [mounted, setMounted] = useState(false);
-  const { isVisible, setElement } = useScrollAnimation(0.1);
 
   const isRTL = locale === 'ar';
   const t = translations[locale];
@@ -199,21 +237,66 @@ export default function Services() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 lg:gap-8">
           {servicesData.map((service, index) => (
+            <div 
+            key={index}
+            onClick={() => setShowPopup(true)}
+            className="h-full cursor-pointer"
+            style={{ opacity: isVisible ? 1 : 0, transform: isVisible ? 'translateY(0)' : 'translateY(40px)', transition: 'all 1s ease-out 0.6s' }}
+          >
             <ServiceCard
-              key={index}
               icon={service.icon}
               title={isRTL ? service.titleAr : service.title}
               description={isRTL ? service.descriptionAr : service.description}
               disabled={false}
-              className={`h-full ${
-                // Center the last two cards side-by-side in the final row on XL screens
-                index === 12 ? 'xl:col-start-2' : ''
-              }`}
-              style={{ opacity: isVisible ? 1 : 0, transform: isVisible ? 'translateY(0)' : 'translateY(40px)', transition: 'all 1s ease-out 0.6s' }}
+              className="h-full"
             />
+          </div>
           ))}
         </div>
       </div>
+
+      {/* Popup Modal */}
+      {showPopup && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+          onClick={() => setShowPopup(false)}
+        >
+          <div 
+            className="bg-white rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 className={`text-xl font-bold mb-4 text-center ${isRTL ? 'text-right' : 'text-left'}`}>
+              {isRTL ? 'اختر خيارك' : 'Choose Your Option'}
+            </h3>
+            <p className={`text-gray-700 mb-6 text-center ${isRTL ? 'text-right' : 'text-left'}`}>
+              {isRTL 
+                ? 'استكشف أعمالنا في هذا المجال أو تواصل معنا لمناقشة مشروعك'
+                : 'Explore our work in this field or contact us to discuss your project'
+              }
+            </p>
+            <div className="flex gap-4 justify-center">
+              <button
+                onClick={() => window.location.href = isRTL ? '/ar/projects' : '/en/projects'}
+                className="px-6 py-3 bg-[#DAA424] text-white rounded-lg hover:bg-[#B8941F] transition-colors duration-200 font-medium"
+              >
+                {isRTL ? 'عرض مشاريعنا' : 'View Our Projects'}
+              </button>
+              <button
+                onClick={() => window.location.href = isRTL ? '/ar/contact' : '/en/contact'}
+                className="px-6 py-3 bg-gray-800 text-white rounded-lg hover:bg-gray-900 transition-colors duration-200 font-medium"
+              >
+                {isRTL ? 'اتصل بنا' : 'Contact Us'}
+              </button>
+            </div>
+            <button
+              onClick={() => setShowPopup(false)}
+              className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 text-2xl"
+            >
+              ×
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* On-The-Ground Execution Section - Different Style */}
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-20">
