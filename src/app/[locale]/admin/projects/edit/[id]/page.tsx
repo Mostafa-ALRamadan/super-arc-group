@@ -198,7 +198,11 @@ export default function EditProject({ params }: { params: Promise<{ id: string }
         }, 2000);
       } else {
         const errorData = await response.json().catch(() => ({}));
-        const errorMessage = errorData.detail || errorData.message || 'Failed to update project';
+        let errorMessage = errorData.message || errorData.error || errorData.detail || `Failed to update project (${response.status})`;
+        if (errorData.title_en) errorMessage = `English title: ${errorData.title_en}`;
+        if (errorData.title_ar) errorMessage = `Arabic title: ${errorData.title_ar}`;
+        if (errorData.slug) errorMessage = `Slug: ${errorData.slug}`;
+        if (errorData.category_id) errorMessage = `Category: ${errorData.category_id}`;
         setError((locale as 'en' | 'ar') === 'ar' ? `فشل تحديث المشروع: ${errorMessage}` : `Failed to update project: ${errorMessage}`);
         setToastType('error');
         setShowToast(true);

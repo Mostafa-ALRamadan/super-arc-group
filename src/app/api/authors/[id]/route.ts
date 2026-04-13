@@ -102,7 +102,14 @@ export async function PUT(
         errorData = { error: errorText };
       }
       
-      throw new Error(`Backend error: ${response.status} - ${errorData.error || errorText}`);
+      // Extract meaningful error message
+      let errorMessage = errorData.message || errorData.error || errorData.detail || `Failed to update author (${response.status})`;
+      if (errorData.name_en) errorMessage = `English name: ${errorData.name_en}`;
+      if (errorData.name_ar) errorMessage = `Arabic name: ${errorData.name_ar}`;
+      if (errorData.bio_en) errorMessage = `English bio: ${errorData.bio_en}`;
+      if (errorData.bio_ar) errorMessage = `Arabic bio: ${errorData.bio_ar}`;
+      
+      throw new Error(errorMessage);
     }
 
     const data = await response.json();

@@ -7,6 +7,7 @@ import ProjectForm from '../../../../../../components/admin/forms/ProjectForm';
 import { useTranslations } from '../../../../../../src/contexts/TranslationContext';
 import { fetchWithTokenRefresh } from '../../../../../services/auth/auth-fetch';
 import Toast from '../../../../../../components/ui/admin/Toast';
+import { translateError } from '@/lib/errorMessages';
 
 interface ProjectFormData {
   slug: string;
@@ -108,14 +109,17 @@ export default function NewProject() {
         }, 2000);
       } else {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || 'Failed to create project');
+        let errorMessage = errorData.message || errorData.error || errorData.detail || `Failed to create project (${response.status})`;
+        if (errorData.title_en) errorMessage = `English title: ${errorData.title_en}`;
+        if (errorData.title_ar) errorMessage = `Arabic title: ${errorData.title_ar}`;
+        if (errorData.slug) errorMessage = `Slug: ${errorData.slug}`;
+        if (errorData.category_id) errorMessage = `Category: ${errorData.category_id}`;
+        throw new Error(errorMessage);
       }
     } catch (error) {
       // Show error message
-      const errorMessage = (locale as 'en' | 'ar') === 'ar' 
-        ? `فشل في إنشاء المشروع: ${error instanceof Error ? error.message : 'خطأ غير معروف'}` 
-        : `Failed to create project: ${error instanceof Error ? error.message : 'Unknown error'}`;
-      setError(errorMessage);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to create project';
+      setError(translateError(errorMessage, locale));
       setToastType('error');
       setShowToast(true);
     }

@@ -11,6 +11,7 @@ import Alert from '../../../../../components/ui/admin/Alert';
 import AdminPagination from '../../../../../components/ui/admin/AdminPagination';
 import { useAuthCheck } from '../../../../../src/hooks/useAuthCheck';
 import { useAuth } from '../../../../../src/contexts/AuthContext';
+import { translateError } from '@/lib/errorMessages';
 
 export default function LeadershipManagement() {
   // Check authentication on component mount
@@ -107,7 +108,8 @@ export default function LeadershipManagement() {
       setDeleteDialog({ isOpen: false, id: null, name: '' });
     } catch (err) {
       console.error('Failed to delete leadership member:', err);
-      setError((locale as 'en' | 'ar') === 'ar' ? 'فشل في حذف العضو القيادي' : 'Failed to delete leadership member');
+      const errorMessage = err instanceof Error ? err.message : 'Failed to delete leadership member';
+      setError(translateError(errorMessage, locale));
     }
   };
   

@@ -12,6 +12,7 @@ import Alert from '../../../../../components/ui/admin/Alert';
 import AdminPagination from '../../../../../components/ui/admin/AdminPagination';
 import { useAuthCheck } from '../../../../../src/hooks/useAuthCheck';
 import { useAuth } from '../../../../../src/contexts/AuthContext';
+import { translateError } from '@/lib/errorMessages';
 
 // Helper function to generate slug from title
 const generateSlugFromTitle = (title: string): string => {
@@ -249,9 +250,10 @@ export default function BlogManagement() {
       setTimeout(() => {
         setSuccess(null);
       }, 5000);
-    } catch (error) {
-      console.error('Error deleting post:', error);
-      setError(locale === 'ar' ? 'فشل حذف المقال' : 'Failed to delete post');
+    } catch (err) {
+      console.error('Error deleting post:', err);
+      const errorMessage = err instanceof Error ? err.message : 'Failed to delete post';
+      setError(translateError(errorMessage, locale));
     } finally {
       setDeleteConfirm({ isOpen: false, postId: '', postTitle: '' });
     }

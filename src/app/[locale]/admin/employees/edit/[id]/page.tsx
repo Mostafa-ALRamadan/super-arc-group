@@ -4,8 +4,11 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import AdminLayout from '../../../../../../../components/admin/layout/AdminLayout';
 import EmployeeForm from '../../../../../../../components/admin/forms/EmployeeForm';
-import { useTranslations } from '../../../../../../contexts/TranslationContext';
 import { employeeService, type EmployeeFormData } from '../../../../../../services/entities/employee.service';
+import { useTranslations } from '../../../../../../../src/contexts/TranslationContext';
+import { useAuth } from '../../../../../../../src/contexts/AuthContext';
+import { useAuthCheck } from '../../../../../../../src/hooks/useAuthCheck';
+import { translateError } from '@/lib/errorMessages';
 import Toast from '../../../../../../../components/ui/admin/Toast';
 import { companiesService } from '../../../../../../services/entities/companies.service';
 import LoadingSpinner from '../../../../../../../components/ui/admin/LoadingSpinner';
@@ -84,7 +87,8 @@ export default function EditEmployee({ params }: { params: Promise<{ id: string 
           setInitialData(null);
         }
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load employee');
+        const errorMessage = err instanceof Error ? err.message : 'Failed to load employee';
+        setError(translateError(errorMessage, locale));
       } finally {
         setLoading(false);
       }
@@ -107,12 +111,9 @@ export default function EditEmployee({ params }: { params: Promise<{ id: string 
       setTimeout(() => {
         router.push(`/${locale}/admin/employees`);
       }, 2000);
-    } catch (error) {
-      // Show error message
-      const errorMessage = (locale as 'en' | 'ar') === 'ar' 
-        ? `فشل في تحديث الموظف: ${error instanceof Error ? error.message : 'خطأ غير معروف'}` 
-        : `Failed to update employee: ${error instanceof Error ? error.message : 'Unknown error'}`;
-      setError(errorMessage);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to update employee';
+      setError(translateError(errorMessage, locale));
       setToastType('error');
       setShowToast(true);
     }

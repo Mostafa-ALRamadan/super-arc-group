@@ -9,6 +9,7 @@ import { companiesService, type CompanyFormData } from '../../../../../../servic
 import { type Link, type LinkFormData } from '../../../../../../services/entities/links.service';
 import LoadingSpinner from '../../../../../../../components/ui/admin/LoadingSpinner';
 import Toast from '../../../../../../../components/ui/admin/Toast';
+import { translateError } from '@/lib/errorMessages';
 
 export default function EditCompany({ params }: { params: Promise<{ id: string }> }) {
   const unwrappedParams = React.use(params);
@@ -83,10 +84,10 @@ export default function EditCompany({ params }: { params: Promise<{ id: string }
           setInitialLinks(links);
           
         } else {
-          setError((locale as 'en' | 'ar') === 'ar' ? 'الشركة غير موجودة' : 'Company not found');
+          setError(translateError('Company not found', locale));
         }
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load company');
+        setError(translateError(err instanceof Error ? err.message : 'Failed to load company', locale));
       } finally {
         setLoading(false);
       }
@@ -208,10 +209,8 @@ export default function EditCompany({ params }: { params: Promise<{ id: string }
       }, 2000);
     } catch (error) {
       // Show error message
-      const errorMessage = (locale as 'en' | 'ar') === 'ar' 
-        ? `فشل في تحديث الشركة: ${error instanceof Error ? error.message : 'خطأ غير معروف'}` 
-        : `Failed to update company: ${error instanceof Error ? error.message : 'Unknown error'}`;
-      setError(errorMessage);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to update company';
+      setError(translateError(errorMessage, locale));
       setToastType('error');
       setShowToast(true);
     }

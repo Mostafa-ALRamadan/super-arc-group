@@ -10,6 +10,7 @@ import { type LinkFormData } from '../../../../../services/entities/links.servic
 import { companiesService } from '../../../../../services/entities/companies.service';
 import { fetchWithTokenRefresh } from '../../../../../services/auth/auth-fetch';
 import Toast from '../../../../../../components/ui/admin/Toast';
+import { translateError } from '@/lib/errorMessages';
 
 export default function NewCompany() {
   const { locale } = useTranslations() as { locale: 'en' | 'ar' };
@@ -90,11 +91,9 @@ export default function NewCompany() {
         router.push(`/${locale}/admin/companies`);
       }, 2000);
     } catch (error) {
-      // Show error message
-      const errorMessage = (locale as 'en' | 'ar') === 'ar' 
-        ? `فشل في إنشاء الشركة: ${error instanceof Error ? error.message : 'خطأ غير معروف'}` 
-        : `Failed to create company: ${error instanceof Error ? error.message : 'Unknown error'}`;
-      setError(errorMessage);
+      // Show error message as Toast
+      const errorMessage = error instanceof Error ? error.message : 'Failed to create company';
+      setError(translateError(errorMessage, locale));
       setToastType('error');
       setShowToast(true);
     }
@@ -115,7 +114,7 @@ export default function NewCompany() {
       title={(locale as 'en' | 'ar') === 'ar' ? 'إنشاء شركة جديدة' : 'Create New Company'} 
       sidebarPosition={sidebarPosition}
     >
-      {/* Toast Notification */}
+      {/* Toast Notification for both success and error */}
       <Toast
         message={success || error || ''}
         type={toastType}

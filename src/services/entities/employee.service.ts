@@ -47,42 +47,52 @@ class EmployeeService {
   private baseUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000/api'}/employees`;
 
   /**
-   * Get all employees
+   * Get all employees (fetches all pages from Django backend)
    */
   async getEmployees(): Promise<Employee[]> {
     try {
       // Check if we're on client side
       const isClient = typeof window !== 'undefined';
       
-      let response: Response;
+      const allEmployees: any[] = [];
+      let nextUrl: string | null = this.baseUrl;
       
-      if (isClient) {
-        // Client-side: use automatic token refresh
-        response = await fetchWithTokenRefresh(this.baseUrl, {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-      } else {
-        // Server-side: use absolute URL (for SSR compatibility)
-        response = await fetch(`${this.baseUrl}`);
+      // Fetch all pages until there's no next page
+      while (nextUrl) {
+        let response: Response;
+        
+        if (isClient) {
+          // Client-side: use automatic token refresh
+          response = await fetchWithTokenRefresh(nextUrl, {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          });
+        } else {
+          // Server-side: use absolute URL (for SSR compatibility)
+          response = await fetch(nextUrl);
+        }
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch employees');
+        }
+        
+        const result = await response.json();
+        
+        // Django backend returns paginated response with results array
+        const employeesArray = result.results || result.data || [];
+        allEmployees.push(...employeesArray);
+        
+        // Check if there's a next page
+        nextUrl = result.next || null;
       }
       
-      if (!response.ok) {
-        throw new Error('Failed to fetch employees');
-      }
-      
-      const result = await response.json();
-      
-      // Django backend returns paginated response with results array
-      const employeesArray = result.results || result.data || result;
-      
-      if (!Array.isArray(employeesArray)) {
+      if (!Array.isArray(allEmployees)) {
         throw new Error('Invalid response from server');
       }
       
       // Transform Django backend format to frontend format
-      const transformedEmployees = employeesArray.map((employee: any) => ({
+      const transformedEmployees = allEmployees.map((employee: any) => ({
         id: employee.id,
         name: {
           en: employee.name_en,
@@ -231,7 +241,14 @@ class EmployeeService {
       }
       
       if (!response.ok) {
-        throw new Error('Failed to create employee');
+        const errorData = await response.json().catch(() => ({}));
+        let errorMessage = errorData.message || errorData.error || errorData.detail || `Failed to create employee (${response.status})`;
+        if (errorData.name_en) errorMessage = `English name: ${errorData.name_en}`;
+        if (errorData.name_ar) errorMessage = `Arabic name: ${errorData.name_ar}`;
+        if (errorData.position_en) errorMessage = `English position: ${errorData.position_en}`;
+        if (errorData.position_ar) errorMessage = `Arabic position: ${errorData.position_ar}`;
+        if (errorData.company_id) errorMessage = `Company: ${errorData.company_id}`;
+        throw new Error(errorMessage);
       }
       
       const result = await response.json();
@@ -313,7 +330,14 @@ class EmployeeService {
       }
       
       if (!response.ok) {
-        throw new Error('Failed to update employee');
+        const errorData = await response.json().catch(() => ({}));
+        let errorMessage = errorData.message || errorData.error || errorData.detail || `Failed to update employee (${response.status})`;
+        if (errorData.name_en) errorMessage = `English name: ${errorData.name_en}`;
+        if (errorData.name_ar) errorMessage = `Arabic name: ${errorData.name_ar}`;
+        if (errorData.position_en) errorMessage = `English position: ${errorData.position_en}`;
+        if (errorData.position_ar) errorMessage = `Arabic position: ${errorData.position_ar}`;
+        if (errorData.company_id) errorMessage = `Company: ${errorData.company_id}`;
+        throw new Error(errorMessage);
       }
       
       const result = await response.json();
@@ -433,7 +457,12 @@ class EmployeeService {
       }
       
       if (!response.ok) {
-        throw new Error('Failed to delete employee');
+        const errorData = await response.json().catch(() => ({}));
+        if (response.status === 404) {
+          throw new Error('Employee not found');
+        }
+        const errorMessage = errorData.message || errorData.error || errorData.detail || `Failed to delete employee (${response.status})`;
+        throw new Error(errorMessage);
       }
       
       // Django DELETE returns 204 No Content or success message directly

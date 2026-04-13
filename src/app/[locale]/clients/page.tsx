@@ -52,22 +52,36 @@ function ClientsPageContent({ locale }: { locale: string }) {
       try {
         const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000/api';
         
-        // Fetch clients
-        const clientsResponse = await fetch(`${API_BASE_URL}/clients/`);
-        if (!clientsResponse.ok) throw new Error('Failed to fetch clients');
-        const clientsData = await clientsResponse.json();
-        const clientsArray = clientsData.results || clientsData.data || clientsData;
-        setClients(clientsArray);
+        // Fetch all clients (handle pagination)
+        const allClients: Client[] = [];
+        let clientsNextUrl: string | null = `${API_BASE_URL}/clients/`;
         
-        // Fetch categories
-        const categoriesResponse = await fetch(`${API_BASE_URL}/categories/`);
-        if (!categoriesResponse.ok) throw new Error('Failed to fetch categories');
-        const categoriesData = await categoriesResponse.json();
-        const categoriesArray = categoriesData.results || categoriesData.data || categoriesData;
+        while (clientsNextUrl) {
+          const clientsResponse: Response = await fetch(clientsNextUrl);
+          if (!clientsResponse.ok) throw new Error('Failed to fetch clients');
+          const clientsData: { results?: Client[]; data?: Client[]; next?: string | null } = await clientsResponse.json();
+          const clientsArray = clientsData.results || clientsData.data || [];
+          allClients.push(...clientsArray);
+          clientsNextUrl = clientsData.next || null;
+        }
+        setClients(allClients);
+        
+        // Fetch all categories (handle pagination)
+        const allCategories: Category[] = [];
+        let categoriesNextUrl: string | null = `${API_BASE_URL}/categories/`;
+        
+        while (categoriesNextUrl) {
+          const categoriesResponse: Response = await fetch(categoriesNextUrl);
+          if (!categoriesResponse.ok) throw new Error('Failed to fetch categories');
+          const categoriesData: { results?: Category[]; data?: Category[]; next?: string | null } = await categoriesResponse.json();
+          const categoriesArray = categoriesData.results || categoriesData.data || [];
+          allCategories.push(...categoriesArray);
+          categoriesNextUrl = categoriesData.next || null;
+        }
         
         // Filter categories to only include those with clients
-        const clientCategoryIds = new Set(clientsArray.map((c: Client) => c.category?.id).filter(Boolean));
-        const filteredCategories = categoriesArray.filter((cat: Category) => 
+        const clientCategoryIds = new Set(allClients.map((c: Client) => c.category?.id).filter(Boolean));
+        const filteredCategories = allCategories.filter((cat: Category) => 
           cat.type === 'client' && clientCategoryIds.has(cat.id)
         );
         setCategories(filteredCategories);

@@ -9,6 +9,7 @@ import { clientService, type Client, type ClientFormData } from '../../../../../
 import { useTranslations } from '../../../../../../../src/contexts/TranslationContext';
 import { useAuth } from '../../../../../../../src/contexts/AuthContext';
 import { useAuthCheck } from '../../../../../../../src/hooks/useAuthCheck';
+import { translateError } from '@/lib/errorMessages';
 import LoadingSpinner from '../../../../../../../components/ui/admin/LoadingSpinner';
 
 interface EditClientPageProps {
@@ -94,10 +95,8 @@ export default function EditClient({ params }: EditClientPageProps) {
         image: client.image
       });
     } catch (err) {
-      const errorMessage = locale === 'ar' 
-        ? 'فشل في جلب بيانات العميل'
-        : 'Failed to fetch client data';
-      setError(errorMessage);
+      const errorMessage = err instanceof Error ? err.message : 'Failed to fetch client data';
+      setError(translateError(errorMessage, locale));
       setToastType('error');
       setShowToast(true);
     } finally {
@@ -146,10 +145,8 @@ export default function EditClient({ params }: EditClientPageProps) {
       }, 2000);
     } catch (error) {
       // Show error message
-      const errorMessage = locale === 'ar' 
-        ? `فشل في تحديث العميل: ${error instanceof Error ? error.message : 'خطأ غير معروف'}` 
-        : `Failed to update client: ${error instanceof Error ? error.message : 'Unknown error'}`;
-      setError(errorMessage);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to update client';
+      setError(translateError(errorMessage, locale));
       setToastType('error');
       setShowToast(true);
     }

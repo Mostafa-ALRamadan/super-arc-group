@@ -4,8 +4,9 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import AdminLayout from '../../../../../../components/admin/layout/AdminLayout';
 import EmployeeForm from '../../../../../../components/admin/forms/EmployeeForm';
-import { useTranslations } from '../../../../../contexts/TranslationContext';
-import { employeeService, EmployeeFormData } from '../../../../../services/entities/employee.service';
+import { employeeService, type EmployeeFormData } from '../../../../../services/entities/employee.service';
+import { useTranslations } from '../../../../../../src/contexts/TranslationContext';
+import { translateError } from '@/lib/errorMessages';
 import Toast from '../../../../../../components/ui/admin/Toast';
 
 export default function NewEmployee() {
@@ -68,10 +69,8 @@ export default function NewEmployee() {
       }, 2000);
     } catch (error) {
       // Show error message
-      const errorMessage = (locale as 'en' | 'ar') === 'ar' 
-        ? `فشل في إنشاء الموظف: ${error instanceof Error ? error.message : 'خطأ غير معروف'}` 
-        : `Failed to create employee: ${error instanceof Error ? error.message : 'Unknown error'}`;
-      setError(errorMessage);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to create employee';
+      setError(translateError(errorMessage, locale));
       setToastType('error');
       setShowToast(true);
     } finally {

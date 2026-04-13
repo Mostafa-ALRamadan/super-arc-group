@@ -40,33 +40,44 @@ class CategoryService {
   private baseUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000/api'}/categories`;
 
   /**
-   * Get all categories
+   * Get all categories (fetches all pages from Django backend)
    */
   async getCategories(): Promise<Category[]> {
     try {
-      const response = await fetchWithTokenRefresh(this.baseUrl);
+      const allCategories: any[] = [];
+      let nextUrl: string | null = this.baseUrl;
       
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Failed to fetch categories: ${response.status} ${response.statusText} - ${errorText}`);
+      // Fetch all pages until there's no next page
+      while (nextUrl) {
+        const response = await fetchWithTokenRefresh(nextUrl);
+        
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(`Failed to fetch categories: ${response.status} ${response.statusText} - ${errorText}`);
+        }
+        
+        const data = await response.json();
+        
+        // Handle paginated response format
+        let categoriesArray: any[] = [];
+        
+        if (Array.isArray(data)) {
+          // Direct array response
+          categoriesArray = data;
+        } else if (data && data.results && Array.isArray(data.results)) {
+          // Paginated response format: { count, next, previous, results }
+          categoriesArray = data.results;
+        } else {
+          throw new Error(`Expected array or paginated response but received: ${JSON.stringify(data)}`);
+        }
+        
+        allCategories.push(...categoriesArray);
+        
+        // Check if there's a next page
+        nextUrl = data.next || null;
       }
       
-      const data = await response.json();
-      
-      // Handle paginated response format
-      let categoriesArray: any[] = [];
-      
-      if (Array.isArray(data)) {
-        // Direct array response
-        categoriesArray = data;
-      } else if (data && data.results && Array.isArray(data.results)) {
-        // Paginated response format: { count, next, previous, results }
-        categoriesArray = data.results;
-      } else {
-        throw new Error(`Expected array or paginated response but received: ${JSON.stringify(data)}`);
-      }
-      
-      return categoriesArray.map(transformCategory);
+      return allCategories.map(transformCategory);
     } catch (error) {
       // Handle authentication errors
       if (handleAuthError(error)) {
@@ -137,7 +148,12 @@ class CategoryService {
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || 'Failed to create category');
+        let errorMessage = errorData.message || errorData.error || errorData.detail || `Failed to create category (${response.status})`;
+        if (errorData.name_en) errorMessage = `English name: ${errorData.name_en}`;
+        if (errorData.name_ar) errorMessage = `Arabic name: ${errorData.name_ar}`;
+        if (errorData.slug) errorMessage = `Slug: ${errorData.slug}`;
+        if (errorData.type) errorMessage = `Type: ${errorData.type}`;
+        throw new Error(errorMessage);
       }
 
       const createdCategory = await response.json();
@@ -168,7 +184,12 @@ class CategoryService {
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || 'Failed to update category');
+        let errorMessage = errorData.message || errorData.error || errorData.detail || `Failed to update category (${response.status})`;
+        if (errorData.name_en) errorMessage = `English name: ${errorData.name_en}`;
+        if (errorData.name_ar) errorMessage = `Arabic name: ${errorData.name_ar}`;
+        if (errorData.slug) errorMessage = `Slug: ${errorData.slug}`;
+        if (errorData.type) errorMessage = `Type: ${errorData.type}`;
+        throw new Error(errorMessage);
       }
 
       const updatedCategory = await response.json();
@@ -194,7 +215,11 @@ class CategoryService {
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || 'Failed to delete category');
+        if (response.status === 404) {
+          throw new Error('Category not found');
+        }
+        const errorMessage = errorData.message || errorData.error || errorData.detail || `Failed to delete category (${response.status})`;
+        throw new Error(errorMessage);
       }
     } catch (error) {
       // Handle authentication errors

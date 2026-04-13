@@ -74,43 +74,53 @@ class CompaniesService {
   private baseUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000/api'}/companies`;
 
   /**
-   * Fetch all companies (requires authentication)
+   * Fetch all companies (fetches all pages from Django backend)
    */
   async getCompanies(): Promise<Company[]> {
     try {
-      // Use fetchWithTokenRefresh for proper authentication handling
-      const response = await fetchWithTokenRefresh(this.baseUrl, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+      const allCompanies: any[] = [];
+      let nextUrl: string | null = this.baseUrl;
       
-      if (!response.ok) {
-        // Handle authentication errors gracefully
-        if (response.status === 401) {
-          throw new Error('Your session has expired. Please log in again.');
+      // Fetch all pages until there's no next page
+      while (nextUrl) {
+        // Use fetchWithTokenRefresh for proper authentication handling
+        const response = await fetchWithTokenRefresh(nextUrl, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+        
+        if (!response.ok) {
+          // Handle authentication errors gracefully
+          if (response.status === 401) {
+            throw new Error('Your session has expired. Please log in again.');
+          }
+          if (response.status === 403) {
+            throw new Error('You do not have permission to access this resource.');
+          }
+          if (response.status >= 500) {
+            throw new Error('Server is temporarily unavailable. Please try again later.');
+          }
+          throw new Error('Unable to load companies. Please refresh the page.');
         }
-        if (response.status === 403) {
-          throw new Error('You do not have permission to access this resource.');
-        }
-        if (response.status >= 500) {
-          throw new Error('Server is temporarily unavailable. Please try again later.');
-        }
-        throw new Error('Unable to load companies. Please refresh the page.');
+        
+        const result = await response.json();
+        
+        // Django backend returns paginated response with results array
+        const companiesArray = result.results || result.data || [];
+        allCompanies.push(...companiesArray);
+        
+        // Check if there's a next page
+        nextUrl = result.next || null;
       }
       
-      const result = await response.json();
-      
-      // Django backend returns paginated response with results array
-      const companiesArray = result.results || result.data || result;
-      
-      if (!Array.isArray(companiesArray)) {
+      if (!Array.isArray(allCompanies)) {
         throw new Error('Invalid response from server');
       }
       
       // Transform Django backend format to frontend format
-      const transformedCompanies = companiesArray.map((company: any) => ({
+      const transformedCompanies = allCompanies.map((company: any) => ({
         id: company.id,
         name: {
           en: company.name_en,
@@ -214,7 +224,12 @@ class CompaniesService {
       });
       
       if (!response.ok) {
-        throw new Error('Failed to create company');
+        const errorData = await response.json().catch(() => ({}));
+        let errorMessage = errorData.message || errorData.error || errorData.detail || `Failed to create company (${response.status})`;
+        if (errorData.name_en) errorMessage = `English name: ${errorData.name_en}`;
+        if (errorData.name_ar) errorMessage = `Arabic name: ${errorData.name_ar}`;
+        if (errorData.slug) errorMessage = `Slug: ${errorData.slug}`;
+        throw new Error(errorMessage);
       }
       
       const result = await response.json();
@@ -267,7 +282,12 @@ class CompaniesService {
       }
       
       if (!response.ok) {
-        throw new Error('Failed to update company');
+        const errorData = await response.json().catch(() => ({}));
+        let errorMessage = errorData.message || errorData.error || errorData.detail || `Failed to update company (${response.status})`;
+        if (errorData.name_en) errorMessage = `English name: ${errorData.name_en}`;
+        if (errorData.name_ar) errorMessage = `Arabic name: ${errorData.name_ar}`;
+        if (errorData.slug) errorMessage = `Slug: ${errorData.slug}`;
+        throw new Error(errorMessage);
       }
       
       const result = await response.json();
@@ -387,7 +407,12 @@ class CompaniesService {
       }
       
       if (!response.ok) {
-        throw new Error('Failed to delete company');
+        const errorData = await response.json().catch(() => ({}));
+        if (response.status === 404) {
+          throw new Error('Company not found');
+        }
+        const errorMessage = errorData.message || errorData.error || errorData.detail || `Failed to delete company (${response.status})`;
+        throw new Error(errorMessage);
       }
       
       // Django DELETE returns 204 No Content or success message directly

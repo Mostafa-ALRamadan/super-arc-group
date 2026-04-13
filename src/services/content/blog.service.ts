@@ -652,7 +652,13 @@ export class BlogService {
       });
       
       if (!response.ok) {
-        throw new Error(`Failed to create blog post (${response.status})`);
+        const errorData = await response.json().catch(() => ({}));
+        let errorMessage = errorData.message || errorData.error || errorData.detail || `Failed to create blog post (${response.status})`;
+        if (errorData.title_en) errorMessage = `English title: ${errorData.title_en}`;
+        if (errorData.title_ar) errorMessage = `Arabic title: ${errorData.title_ar}`;
+        if (errorData.slug) errorMessage = `Slug: ${errorData.slug}`;
+        if (errorData.category_id) errorMessage = `Category: ${errorData.category_id}`;
+        throw new Error(errorMessage);
       }
       
       const post = await response.json();
@@ -728,7 +734,13 @@ export class BlogService {
       });
       
       if (!response.ok) {
-        throw new Error('Failed to update blog post');
+        const errorData = await response.json().catch(() => ({}));
+        let errorMessage = errorData.message || errorData.error || errorData.detail || `Failed to update blog post (${response.status})`;
+        if (errorData.title_en) errorMessage = `English title: ${errorData.title_en}`;
+        if (errorData.title_ar) errorMessage = `Arabic title: ${errorData.title_ar}`;
+        if (errorData.slug) errorMessage = `Slug: ${errorData.slug}`;
+        if (errorData.category_id) errorMessage = `Category: ${errorData.category_id}`;
+        throw new Error(errorMessage);
       }
       
       const post = await response.json();

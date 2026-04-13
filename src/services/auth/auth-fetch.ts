@@ -73,22 +73,27 @@ export async function fetchWithTokenRefresh(url: string, options: RequestInit = 
 
   // Also check for other authentication-related errors
   if (!response.ok) {
-    const errorText = await response.text();
-    
-    // Check if error indicates token expiry (even without 401 status)
-    if (errorText.includes('token') && 
-        (errorText.includes('expired') || errorText.includes('invalid') || errorText.includes('not found'))) {
+    // Only check for auth errors on 401/403 status codes to avoid consuming response body
+    if (response.status === 401 || response.status === 403) {
+      const errorText = await response.text();
       
-      // Clear tokens and redirect to login
-      if (typeof window !== 'undefined') {
-        localStorage.removeItem('access_token');
-        localStorage.removeItem('refresh_token');
-        const currentPath = window.location.pathname;
-        const locale = currentPath.startsWith('/ar') ? 'ar' : 'en';
-        window.location.href = `/${locale}/admin/auth`;
+      // Check if error indicates token expiry
+      if (errorText.includes('token') && 
+          (errorText.includes('expired') || errorText.includes('invalid') || errorText.includes('not found'))) {
+        
+        // Clear tokens and redirect to login
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('access_token');
+          localStorage.removeItem('refresh_token');
+          const currentPath = window.location.pathname;
+          const locale = currentPath.startsWith('/ar') ? 'ar' : 'en';
+          window.location.href = `/${locale}/admin/auth`;
+        }
+        throw new Error('Authentication failed. Please log in again.');
       }
-      throw new Error('Authentication failed. Please log in again.');
     }
+    // For other error status codes (400, 500, etc.), don't read the response body
+    // Let the caller handle the error response
   }
 
   return response;

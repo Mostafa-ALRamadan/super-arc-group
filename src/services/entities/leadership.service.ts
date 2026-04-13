@@ -97,24 +97,34 @@ class LeadershipService {
   }
 
   /**
-   * Get all leadership members - ADMIN method with auth
+   * Get all leadership members - ADMIN method with auth (fetches all pages from Django backend)
    */
   async getAll(): Promise<Leadership[]> {
     try {
-      const response = await fetchWithTokenRefresh(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000/api'}/members/`);
+      const allMembers: any[] = [];
+      let nextUrl: string | null = `${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000/api'}/members/`;
       
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`HTTP error! status: ${response.status}`);
+      // Fetch all pages until there's no next page
+      while (nextUrl) {
+        const response = await fetchWithTokenRefresh(nextUrl);
+        
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const apiResponse = await response.json();
+        
+        // Extract the actual members array from the paginated response
+        const members = apiResponse.results || []; // Handle paginated response
+        allMembers.push(...members);
+        
+        // Check if there's a next page
+        nextUrl = apiResponse.next || null;
       }
       
-      const apiResponse = await response.json();
-      
-      // Extract the actual members array from the paginated response
-      const members = apiResponse.results || apiResponse; // Handle both paginated and non-paginated responses
-      
       // Transform each member to frontend format
-      const transformedMembers = members.map((member: any) => ({
+      const transformedMembers = allMembers.map((member: any) => ({
         id: member.id,
         name_en: member.name_en,
         name_ar: member.name_ar,
@@ -189,7 +199,12 @@ class LeadershipService {
         } catch {
           errorData = { message: errorText };
         }
-        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+        let errorMessage = errorData.message || errorData.error || errorData.detail || `Failed to create leadership member (${response.status})`;
+        if (errorData.name_en) errorMessage = `English name: ${errorData.name_en}`;
+        if (errorData.name_ar) errorMessage = `Arabic name: ${errorData.name_ar}`;
+        if (errorData.position_en) errorMessage = `English position: ${errorData.position_en}`;
+        if (errorData.position_ar) errorMessage = `Arabic position: ${errorData.position_ar}`;
+        throw new Error(errorMessage);
       }
       
       const apiResponse = await response.json();
@@ -247,7 +262,12 @@ class LeadershipService {
       
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+        let errorMessage = errorData.message || errorData.error || errorData.detail || `Failed to update leadership member (${response.status})`;
+        if (errorData.name_en) errorMessage = `English name: ${errorData.name_en}`;
+        if (errorData.name_ar) errorMessage = `Arabic name: ${errorData.name_ar}`;
+        if (errorData.position_en) errorMessage = `English position: ${errorData.position_en}`;
+        if (errorData.position_ar) errorMessage = `Arabic position: ${errorData.position_ar}`;
+        throw new Error(errorMessage);
       }
       
       const member = await response.json();
@@ -287,7 +307,11 @@ class LeadershipService {
       
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+        if (response.status === 404) {
+          throw new Error('Leadership member not found');
+        }
+        const errorMessage = errorData.message || errorData.error || errorData.detail || `Failed to delete leadership member (${response.status})`;
+        throw new Error(errorMessage);
       }
     } catch (error) {
       console.error('Error deleting leadership member:', error);

@@ -12,6 +12,7 @@ import Alert from '../../../../../components/ui/admin/Alert';
 import AdminPagination from '../../../../../components/ui/admin/AdminPagination';
 import { useAuthCheck } from '../../../../../src/hooks/useAuthCheck';
 import { useAuth } from '../../../../../src/contexts/AuthContext';
+import { translateError } from '@/lib/errorMessages';
 
 export default function EmployeesManagement() {
   // Check authentication on component mount
@@ -215,7 +216,8 @@ export default function EmployeesManagement() {
       }, 5000);
     } catch (err) {
       console.error('Failed to delete employee:', err);
-      setError((locale as 'en' | 'ar') === 'ar' ? 'فشل في حذف الموظف' : 'Failed to delete employee');
+      const errorMessage = err instanceof Error ? err.message : 'Failed to delete employee';
+      setError(translateError(errorMessage, locale));
     } finally {
       setDeleteConfirm({ isOpen: false, employeeId: '', employeeName: '' });
     }

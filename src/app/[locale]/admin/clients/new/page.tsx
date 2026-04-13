@@ -7,6 +7,7 @@ import Toast from '../../../../../../components/ui/admin/Toast';
 import ClientForm from '../../../../../../components/admin/forms/ClientForm';
 import { clientService, type ClientFormData } from '../../../../../services/entities/client.service';
 import { useTranslations } from '../../../../../../src/contexts/TranslationContext';
+import { translateError } from '@/lib/errorMessages';
 
 export default function NewClient() {
   const { locale } = useTranslations() as { locale: 'en' | 'ar' };
@@ -85,10 +86,8 @@ export default function NewClient() {
       }, 2000);
     } catch (error) {
       // Show error message
-      const errorMessage = locale === 'ar' 
-        ? `فشل في إنشاء العميل: ${error instanceof Error ? error.message : 'خطأ غير معروف'}` 
-        : `Failed to create client: ${error instanceof Error ? error.message : 'Unknown error'}`;
-      setError(errorMessage);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to create client';
+      setError(translateError(errorMessage, locale));
       setToastType('error');
       setShowToast(true);
     } finally {

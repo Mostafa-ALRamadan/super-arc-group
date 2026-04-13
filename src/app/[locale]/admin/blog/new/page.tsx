@@ -8,6 +8,7 @@ import { useTranslations, useLocale } from '../../../../../contexts/TranslationC
 import { blogService } from '../../../../../services/content/blog.service';
 import { validateBlogForm } from '../../../../../utils/validation';
 import Toast from '../../../../../../components/ui/admin/Toast';
+import { translateError } from '@/lib/errorMessages';
 
 interface BlogFormData {
   slug: string;
@@ -68,14 +69,12 @@ export default function NewBlogPost() {
   // Sidebar on left for English, right for Arabic
   const sidebarPosition = locale === 'ar' ? 'right' : 'left';
 
-  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [showToast, setShowToast] = useState(false);
   const [toastType, setToastType] = useState<'success' | 'error'>('success');
 
   const handleSubmit = async (data: any) => {
-    setIsLoading(true);
     setError(null);
     setSuccess(null);
     
@@ -117,12 +116,10 @@ export default function NewBlogPost() {
         router.push(`/${locale}/admin/blog`);
       }, 2000);
     } catch (error) {
-      const errorMessage = locale === 'ar' ? 'فشل إنشاء المقال' : 'Failed to create blog post';
-      setError(errorMessage);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to create blog post';
+      setError(translateError(errorMessage, locale));
       setToastType('error');
       setShowToast(true);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -188,7 +185,6 @@ export default function NewBlogPost() {
             onSubmit={handleSubmit}
             onCancel={handleCancel}
             isEdit={false}
-            isLoading={isLoading}
           />
         </div>
       </div>

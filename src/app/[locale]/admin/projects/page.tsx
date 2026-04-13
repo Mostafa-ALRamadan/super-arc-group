@@ -11,6 +11,7 @@ import Alert from '../../../../../components/ui/admin/Alert';
 import AdminPagination from '../../../../../components/ui/admin/AdminPagination';
 import { useAuthCheck } from '../../../../../src/hooks/useAuthCheck';
 import { useAuth } from '../../../../../src/contexts/AuthContext';
+import { translateError } from '@/lib/errorMessages';
 import { fetchWithTokenRefresh } from '../../../../services/auth/auth-fetch';
 
 interface Project {
@@ -256,7 +257,9 @@ export default function ProjectsManagement() {
         setSuccess(null);
       }, 5000);
     } catch (error) {
-      setError((locale as 'en' | 'ar') === 'ar' ? 'فشل في حذف المشروع' : 'Failed to delete project');
+      console.error('Failed to delete project:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to delete project';
+      setError(translateError(errorMessage, locale));
     } finally {
       setDeleteConfirm({ isOpen: false, projectId: '', projectTitle: '' });
     }

@@ -8,8 +8,22 @@ import AdminLayout from '../../../../../components/admin/layout/AdminLayout';
 import Alert from '../../../../../components/ui/admin/Alert';
 import ConfirmDialog from '../../../../../components/ui/admin/ConfirmDialog';
 import AdminPagination from '../../../../../components/ui/admin/AdminPagination';
-import { clientService, type Client } from '../../../../services/entities/client.service';
+import { clientService } from '@/services/entities/client.service';
+import { translateError } from '@/lib/errorMessages';
 import LoadingSpinner from '../../../../../components/ui/admin/LoadingSpinner';
+
+interface Client {
+  id: number;
+  name_en: string;
+  name_ar: string;
+  category?: Category;
+  image?: {
+    url: string;
+    alt_en: string;
+    alt_ar: string;
+  };
+  created_at: string;
+}
 
 interface Category {
   id: number;
@@ -104,10 +118,9 @@ export default function ClientsManagement() {
       const clientCategories = categoriesData.filter((cat: any) => cat.type === 'client');
       setCategories(clientCategories);
     } catch (err) {
-      const errorMessage = locale === 'ar' 
-        ? 'فشل في جلب قائمة العملاء'
-        : 'Failed to fetch clients list';
-      setError(errorMessage);
+      console.error('Failed to fetch clients:', err);
+      const errorMessage = err instanceof Error ? err.message : 'Failed to fetch clients list';
+      setError(translateError(errorMessage, locale));
     } finally {
       setLoading(false);
     }
@@ -168,7 +181,8 @@ export default function ClientsManagement() {
       }, 5000);
     } catch (err) {
       console.error('Failed to delete client:', err);
-      setError(locale === 'ar' ? 'فشل في حذف العميل' : 'Failed to delete client');
+      const errorMessage = err instanceof Error ? err.message : 'Failed to delete client';
+      setError(translateError(errorMessage, locale));
     } finally {
       setDeleteConfirm({ isOpen: false, clientId: 0, clientName: '' });
     }

@@ -74,13 +74,21 @@ export async function POST(request: NextRequest) {
         errorData = { error: errorText };
       }
       
-      throw new Error(errorData.error || `Backend returned ${response.status}: ${errorText}`);
+      // Extract meaningful error message
+      let errorMessage = errorData.message || errorData.error || errorData.detail || `Failed to create author (${response.status})`;
+      if (errorData.name_en) errorMessage = `English name: ${errorData.name_en}`;
+      if (errorData.name_ar) errorMessage = `Arabic name: ${errorData.name_ar}`;
+      if (errorData.bio_en) errorMessage = `English bio: ${errorData.bio_en}`;
+      if (errorData.bio_ar) errorMessage = `Arabic bio: ${errorData.bio_ar}`;
+      
+      throw new Error(errorMessage);
     }
     
     const data = await response.json();
     return NextResponse.json(data);
   } catch (error) {
-    console.error('Error creating author:', error);
+    console.error('Error in POST /api/authors:', error);
+    
     return NextResponse.json(
       { success: false, error: error instanceof Error ? error.message : 'Failed to create author' },
       { status: 500 }

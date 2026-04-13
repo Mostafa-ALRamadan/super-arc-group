@@ -148,7 +148,12 @@ class LinksService {
       }
       
       if (!response.ok) {
-        throw new Error('Failed to create link');
+        const errorData = await response.json().catch(() => ({}));
+        let errorMessage = errorData.message || errorData.error || errorData.detail || `Failed to create link (${response.status})`;
+        if (errorData.title) errorMessage = `Title: ${errorData.title}`;
+        if (errorData.url) errorMessage = `URL: ${errorData.url}`;
+        if (errorData.category) errorMessage = `Category: ${errorData.category}`;
+        throw new Error(errorMessage);
       }
       
       const result = await response.json();
@@ -190,7 +195,12 @@ class LinksService {
       }
       
       if (!response.ok) {
-        throw new Error('Failed to update link');
+        const errorData = await response.json().catch(() => ({}));
+        let errorMessage = errorData.message || errorData.error || errorData.detail || `Failed to update link (${response.status})`;
+        if (errorData.title) errorMessage = `Title: ${errorData.title}`;
+        if (errorData.url) errorMessage = `URL: ${errorData.url}`;
+        if (errorData.category) errorMessage = `Category: ${errorData.category}`;
+        throw new Error(errorMessage);
       }
       
       const result = await response.json();
@@ -224,7 +234,12 @@ class LinksService {
       }
       
       if (!response.ok) {
-        throw new Error('Failed to delete link');
+        const errorData = await response.json().catch(() => ({}));
+        if (response.status === 404) {
+          throw new Error('Link not found');
+        }
+        const errorMessage = errorData.message || errorData.error || errorData.detail || `Failed to delete link (${response.status})`;
+        throw new Error(errorMessage);
       }
     } catch (error) {
       console.error('Error deleting link:', error);
