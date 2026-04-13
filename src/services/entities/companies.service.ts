@@ -159,28 +159,39 @@ class CompaniesService {
    */
   async getPublishedCompanies(): Promise<Company[]> {
     try {
-      const response = await fetch(`${this.baseUrl}?status=published`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+      let allCompanies: any[] = [];
+      let nextPage: string | null = `${this.baseUrl}`;
       
-      if (!response.ok) {
-        throw new Error('Failed to fetch published companies');
-      }
-      
-      const result = await response.json();
-      
-      // Handle paginated response format
-      const companiesArray = result.results || result.data || result;
-      
-      if (!Array.isArray(companiesArray)) {
-        throw new Error('Invalid response from server');
+      // Fetch all pages to get complete list of companies
+      while (nextPage) {
+        const response: Response = await fetch(nextPage, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch published companies');
+        }
+        
+        const result: any = await response.json();
+        
+        // Handle paginated response format
+        const companiesArray = result.results || result.data || result;
+        
+        if (!Array.isArray(companiesArray)) {
+          throw new Error('Invalid response from server');
+        }
+        
+        allCompanies = [...allCompanies, ...companiesArray];
+        
+        // Check if there's a next page
+        nextPage = result.next || null;
       }
       
       // Transform Django backend format to frontend format (same as getCompanies)
-      const transformedCompanies = companiesArray.map((company: any) => ({
+      const transformedCompanies = allCompanies.map((company: any) => ({
         id: company.id,
         name: {
           en: company.name_en,

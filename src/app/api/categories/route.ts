@@ -47,8 +47,24 @@ export async function POST(request: NextRequest) {
     });
 
     if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`Backend error: ${response.status} ${response.statusText} - ${errorText}`);
+      // Try to parse JSON error response from backend
+      let errorData = {};
+      let rawText = '';
+      try {
+        const contentType = response.headers.get('content-type');
+        rawText = await response.text();
+        
+        if (contentType && contentType.includes('application/json')) {
+          errorData = JSON.parse(rawText);
+        } else {
+          errorData = { error: rawText };
+        }
+      } catch (parseError) {
+        errorData = { error: rawText || 'Unknown error' };
+      }
+      
+      // Return the backend error with proper status code
+      return NextResponse.json(errorData, { status: response.status });
     }
 
     const data = await response.json();

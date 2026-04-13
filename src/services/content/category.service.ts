@@ -148,11 +148,25 @@ class CategoryService {
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        let errorMessage = errorData.message || errorData.error || errorData.detail || `Failed to create category (${response.status})`;
+        
+        let errorMessage = errorData.detail || errorData.message || errorData.error || `Failed to create category (${response.status})`;
+        
+        // Check for specific validation errors
         if (errorData.name_en) errorMessage = `English name: ${errorData.name_en}`;
         if (errorData.name_ar) errorMessage = `Arabic name: ${errorData.name_ar}`;
         if (errorData.slug) errorMessage = `Slug: ${errorData.slug}`;
         if (errorData.type) errorMessage = `Type: ${errorData.type}`;
+        
+        // Check for non_field_errors (common in Django for combined field validation)
+        if (errorData.non_field_errors && Array.isArray(errorData.non_field_errors)) {
+          errorMessage = errorData.non_field_errors.join(', ');
+        }
+        
+        // Handle PostgreSQL unique constraint violations
+        if (errorMessage.includes('duplicate key value violates unique constraint')) {
+          errorMessage = 'A category with this name and type already exists';
+        }
+        
         throw new Error(errorMessage);
       }
 

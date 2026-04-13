@@ -7,6 +7,7 @@ import CategoryForm from '../../../../../../components/admin/forms/CategoryForm'
 import { useTranslations } from '../../../../../../src/contexts/TranslationContext';
 import { categoryService, type CategoryFormData } from '../../../../../services/content/category.service';
 import Toast from '../../../../../../components/ui/admin/Toast';
+import { translateError } from '@/lib/errorMessages';
 
 export default function NewCategory() {
   const { locale } = useTranslations() as { locale: 'en' | 'ar' };
@@ -66,10 +67,8 @@ export default function NewCategory() {
       }, 2000);
     } catch (error) {
       // Show error message
-      const errorMessage = (locale as 'en' | 'ar') === 'ar' 
-        ? `فشل في إنشاء الفئة: ${error instanceof Error ? error.message : 'خطأ غير معروف'}` 
-        : `Failed to create category: ${error instanceof Error ? error.message : 'Unknown error'}`;
-      setError(errorMessage);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to create category';
+      setError(translateError(errorMessage, locale));
       setToastType('error');
       setShowToast(true);
     }

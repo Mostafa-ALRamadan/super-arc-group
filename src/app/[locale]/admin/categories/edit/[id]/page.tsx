@@ -8,6 +8,7 @@ import { useTranslations } from '../../../../../../../src/contexts/TranslationCo
 import LoadingSpinner from '../../../../../../../components/ui/admin/LoadingSpinner';
 import { categoryService, type CategoryFormData } from '../../../../../../services/content/category.service';
 import Toast from '../../../../../../../components/ui/admin/Toast';
+import { translateError } from '@/lib/errorMessages';
 
 export default function EditCategory({ params }: { params: Promise<{ id: string }> }) {
   const unwrappedParams = React.use(params);
@@ -77,6 +78,7 @@ export default function EditCategory({ params }: { params: Promise<{ id: string 
         }
       } catch (error) {
         console.error('Failed to fetch category:', error);
+        setError(translateError('Failed to load category', locale));
         setInitialData(null);
       } finally {
         setLoading(false);
@@ -104,8 +106,8 @@ export default function EditCategory({ params }: { params: Promise<{ id: string 
       }, 2000);
     } catch (error) {
       console.error('Failed to update category:', error);
-      const errorMessage = (locale as 'en' | 'ar') === 'ar' ? 'فشل في تحديث الفئة' : 'Failed to update category';
-      setError(errorMessage);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to update category';
+      setError(translateError(errorMessage, locale));
       setToastType('error');
       setShowToast(true);
     }

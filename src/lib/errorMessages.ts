@@ -123,6 +123,38 @@ export const errorTranslations: Record<string, { en: string; ar: string }> = {
     en: 'Failed to load project',
     ar: 'فشل في تحميل المشروع',
   },
+  'Failed to create category': {
+    en: 'Failed to create category',
+    ar: 'فشل في إنشاء الفئة',
+  },
+  'Failed to create category in backend': {
+    en: 'Failed to create category in backend',
+    ar: 'فشل في إنشاء الفئة في الخادم',
+  },
+  'A category with this name already exists': {
+    en: 'A category with this name already exists',
+    ar: 'فئة بهذا الاسم موجودة بالفعل',
+  },
+  'A category with this name and type already exists': {
+    en: 'A category with this name and type already exists',
+    ar: 'فئة بهذا الاسم والنوع موجودة بالفعل',
+  },
+  'You cannot create a category with the same name and type': {
+    en: 'You cannot create a category with the same name and type',
+    ar: 'لا يمكنك إنشاء فئة بنفس الاسم والنوع',
+  },
+  'Category with this name and type already exists': {
+    en: 'Category with this name and type already exists',
+    ar: 'فئة بهذا الاسم والنوع موجودة بالفعل',
+  },
+  'Failed to update category': {
+    en: 'Failed to update category',
+    ar: 'فشل في تحديث الفئة',
+  },
+  'Failed to load category': {
+    en: 'Failed to load category',
+    ar: 'فشل في تحميل الفئة',
+  },
   'Category not found': {
     en: 'Category not found',
     ar: 'الفئة غير موجودة',
