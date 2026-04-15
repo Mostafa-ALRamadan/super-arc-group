@@ -115,6 +115,14 @@ export const errorTranslations: Record<string, { en: string; ar: string }> = {
     en: 'Failed to create project',
     ar: 'فشل في إنشاء المشروع',
   },
+  'Invalid data type in one or more fields': {
+    en: 'Invalid data type in one or more fields',
+    ar: 'نوع بيانات غير صالح في أحد الحقول أو أكثر',
+  },
+  'Invalid data type': {
+    en: 'Invalid data type',
+    ar: 'نوع بيانات غير صالح',
+  },
   'Failed to update project': {
     en: 'Failed to update project',
     ar: 'فشل في تحديث المشروع',

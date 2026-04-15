@@ -46,7 +46,7 @@ export default function ContactSection({ locale = 'en' }: ContactSectionProps) {
       email: 'info@superarc.net',
       phone: '+971 547 2020 14',
       phone2: '+963 947 964 829',
-      address: 'Hama, Syria',
+      address: 'سوريا ، حماة , أبوظبي الإامارات العربية المتحدة',
     },
   } : {
     sectionLabel: 'Contact Us',
@@ -72,7 +72,7 @@ export default function ContactSection({ locale = 'en' }: ContactSectionProps) {
       email: 'info@superarc.net',
       phone: '+971 547 2020 14',
       phone2: '+963 947 964 829',
-      address: 'Hama, Syria',
+      address: 'Syria, Hama, Abu Dhabi United Arab Emirates',
     },
   };
 
