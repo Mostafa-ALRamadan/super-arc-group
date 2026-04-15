@@ -232,7 +232,7 @@ export default function Leadership() {
                   
                   {/* Back Side */}
                   <div 
-                    className="absolute inset-0 bg-gradient-to-br from-yellow-400 via-yellow-500 to-amber-600 rounded-2xl shadow-lg overflow-hidden"
+                    className="absolute inset-0 bg-gradient-to-br from-green-800 via-green-900 to-green-950 rounded-2xl shadow-lg overflow-hidden"
                     style={{
                       backfaceVisibility: 'hidden',
                       transform: 'rotateY(180deg)'
