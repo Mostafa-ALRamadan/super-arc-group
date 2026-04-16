@@ -10,11 +10,19 @@ interface ServicesPageProps {
 export async function generateMetadata({ params }: ServicesPageProps): Promise<Metadata> {
   const { locale } = await params;
   
+  const titles = {
+    en: 'Services',
+    ar: 'الخدمات'
+  };
+  
+  const descriptions = {
+    en: 'Super Arc Group offers comprehensive engineering services including Engineering & Design, Construction & Infrastructure, Oil & Gas Services, and Development & Investment across the region.',
+    ar: 'تقدم مجموعة سوبر آرك خدمات هندسية شاملة تشمل الهندسة والتصميم، الإنشاء والبنية التحتية، النفط والغاز، والتطوير والاستثمار في جميع أنحاء المنطقة.'
+  };
+
   return {
-    title: locale === 'ar' ? 'الخدمات | مجموعة سوبر آرك' : 'Services | Super Arc Group',
-    description: locale === 'ar' 
-      ? 'نقدم خدمات هندسية شاملة تشمل الاستشارات والتصميم والإشراف والتنفيذ'
-      : 'We offer comprehensive engineering services including consulting, design, supervision, and execution',
+    title: titles[locale as keyof typeof titles],
+    description: descriptions[locale as keyof typeof descriptions],
   };
 }
 

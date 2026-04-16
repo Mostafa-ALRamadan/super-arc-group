@@ -109,8 +109,10 @@ function ProjectsPageContent() {
     // Extract locale from pathname
     if (pathname.startsWith('/ar')) {
       setLocale('ar');
+      document.title = 'المشاريع | مجموعة سوبر آرك';
     } else {
       setLocale('en');
+      document.title = 'Projects | Super Arc Group';
     }
   }, []);
 

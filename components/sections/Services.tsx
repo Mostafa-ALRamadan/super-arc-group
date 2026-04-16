@@ -24,12 +24,9 @@ import {
   Users
 } from 'lucide-react';
 
-export default function Services() {
-  const [locale, setLocale] = useState<'en' | 'ar'>('en');
-  const [mounted, setMounted] = useState(false);
-  const [showPopup, setShowPopup] = useState(false);
-  const { isVisible, setElement } = useScrollAnimation(0.1);
-const servicesData = [
+const servicesByCategory = {
+  engineering: [
+  // Engineering & Design
   {
     icon: DraftingCompass,
     title: 'Engineering Consultancy',
@@ -64,7 +61,11 @@ const servicesData = [
     description: 'Managing all project phases from planning to handover while controlling cost, time, and quality.',
     titleAr: 'إدارة المشاريع وإدارة التنفيذ',
     descriptionAr: 'إدارة جميع مراحل المشروع من التخطيط حتى التسليم مع ضبط التكلفة والوقت والجودة.'
-  },
+  }
+],
+
+  construction: [
+  // Construction & Infrastructure
   {
     icon: Truck,
     title: 'Roads, Utilities & Infrastructure Development',
@@ -92,7 +93,11 @@ const servicesData = [
     description: 'Delivering excavation, soil support, and earthworks with full structural and safety compliance.',
     titleAr: 'دعم التربة وأعمال الحفر والردميات',
     descriptionAr: 'تنفيذ أعمال الحفر والتدعيم والردميات وفق متطلبات السلامة والاستقرار الإنشائي.'
-  },
+  }
+],
+
+  oilgas: [
+  // Oil, Gas & Industrial Services
   {
     icon: Activity,
     title: 'Water Well Drilling & Testing',
@@ -134,7 +139,11 @@ const servicesData = [
     description: 'Providing heavy equipment and specialized field execution services for large and complex projects.',
     titleAr: 'أسطول المعدات الثقيلة والتنفيذ الميداني التخصصي',
     descriptionAr: 'توفير معدات ثقيلة وخدمات تنفيذ ميداني متخصصة لدعم المشاريع الكبيرة والمعقدة.'
-  },
+  }
+],
+
+  development: [
+  // Development & Investment
   {
     icon: Trees,
     title: 'Agricultural Project Development',
@@ -163,6 +172,43 @@ const servicesData = [
     titleAr: 'التطوير والاستثمار العقاري',
     descriptionAr: 'تطوير مشاريع عقارية ذات قيمة استثمارية عالية تشمل السكني والتجاري ومتعدد الاستخدامات'
   }
+],
+
+};
+
+const categoriesData = [
+  {
+    id: 'engineering',
+    title: 'Engineering & Design',
+    titleAr: 'الهندسة والتصميم',
+    icon: DraftingCompass,
+    color: 'from-primary/20 to-primary/5',
+    borderColor: 'border-primary/30'
+  },
+  {
+    id: 'construction',
+    title: 'Construction & Infrastructure',
+    titleAr: 'الإنشاء والبنية التحتية',
+    icon: Building,
+    color: 'from-secondary/20 to-secondary/5',
+    borderColor: 'border-secondary/30'
+  },
+  {
+    id: 'oilgas',
+    title: 'Oil, Gas & Industrial Services',
+    titleAr: 'النفط والغاز والخدمات الصناعية',
+    icon: Zap,
+    color: 'from-amber-500/20 to-amber-500/5',
+    borderColor: 'border-amber-500/30'
+  },
+  {
+    id: 'development',
+    title: 'Development & Investment',
+    titleAr: 'التطوير والاستثمار',
+    icon: Trees,
+    color: 'from-emerald-500/20 to-emerald-500/5',
+    borderColor: 'border-emerald-500/30'
+  }
 ];
 
 const translations = {
@@ -177,6 +223,12 @@ const translations = {
     description: 'تقدم مجموعة سوبر آرك مجموعة واسعة من الخدمات الهندسية والإنشائية المتكاملة المصممة لتلبية متطلبات المشاريع المعقدة في مختلف القطاعات.'
   }
 };
+
+export default function Services() {
+  const [locale, setLocale] = useState<'en' | 'ar'>('en');
+  const [mounted, setMounted] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);
+  const { isVisible, setElement } = useScrollAnimation(0.1);
 
   const isRTL = locale === 'ar';
   const t = translations[locale];
@@ -233,26 +285,50 @@ const translations = {
         </div>
       </div>
 
-      {/* Services Grid */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 lg:gap-8">
-          {servicesData.map((service, index) => (
-            <div 
-            key={index}
-            onClick={() => setShowPopup(true)}
-            className="h-full cursor-pointer"
-            style={{ opacity: isVisible ? 1 : 0, transform: isVisible ? 'translateY(0)' : 'translateY(40px)', transition: 'all 1s ease-out 0.6s' }}
+      {/* Services Grid by Category */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
+        {categoriesData.map((category, categoryIndex) => (
+          <div
+            key={category.id}
+            style={{ opacity: isVisible ? 1 : 0, transform: isVisible ? 'translateY(0)' : 'translateY(40px)', transition: `all 0.8s ease-out ${0.2 + categoryIndex * 0.15}s` }}
           >
-            <ServiceCard
-              icon={service.icon}
-              title={isRTL ? service.titleAr : service.title}
-              description={isRTL ? service.descriptionAr : service.description}
-              disabled={false}
-              className="h-full"
-            />
+            {/* Category Header - Icon-Based */}
+            <div className="mb-8 text-center">
+              <div className="inline-flex w-20 h-20 rounded-2xl bg-gradient-to-br from-green-800 to-green-900 items-center justify-center shadow-lg mb-4">
+                <category.icon className="w-10 h-10 text-white" />
+              </div>
+              <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
+                {isRTL ? category.titleAr : category.title}
+              </h3>
+              <p className="text-sm text-gray-600">
+                {isRTL 
+                  ? `${servicesByCategory[category.id as keyof typeof servicesByCategory].length} خدمات متخصصة`
+                  : `${servicesByCategory[category.id as keyof typeof servicesByCategory].length} Specialized Services`
+                }
+              </p>
+            </div>
+            
+            {/* Services Grid for this Category */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 lg:gap-8">
+              {servicesByCategory[category.id as keyof typeof servicesByCategory].map((service: any, index: number) => (
+                <div 
+                  key={`${category.id}-${index}`}
+                  onClick={() => setShowPopup(true)}
+                  className="h-full cursor-pointer"
+                  style={{ opacity: isVisible ? 1 : 0, transform: isVisible ? 'translateY(0)' : 'translateY(40px)', transition: `all 0.6s ease-out ${0.4 + index * 0.1}s` }}
+                >
+                  <ServiceCard
+                    icon={service.icon}
+                    title={isRTL ? service.titleAr : service.title}
+                    description={isRTL ? service.descriptionAr : service.description}
+                    disabled={false}
+                    className="h-full"
+                  />
+                </div>
+              ))}
+            </div>
           </div>
-          ))}
-        </div>
+        ))}
       </div>
 
       {/* Popup Modal */}

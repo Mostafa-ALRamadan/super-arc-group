@@ -25,6 +25,7 @@ const translations = {
       experience: "Years of Experience",
       projects: "Projects Delivered",
       clients: "Satisfied Clients",
+      companies: "Specialized Companies",
       commitment: "Commitment to Quality"
     },
     
@@ -69,6 +70,7 @@ const translations = {
       experience: "سنوات من الخبرة",
       projects: "مشاريع مُسلّمة",
       clients: "عملاء راضون",
+      companies: "شركات متخصصة",
       commitment: "الالتزام بالجودة"
     },
     
@@ -245,11 +247,12 @@ export default function About() {
             transition: 'all 0.8s ease-out 0.8s' 
           }}
         >
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
             {[
               { number: "40+", label: t.stats.experience },
               { number: "1000+", label: t.stats.projects },
               { number: "500+", label: t.stats.clients },
+              { number: "3", label: t.stats.companies },
               { number: "100%", label: t.stats.commitment }
             ].map((stat, index) => (
               <div 

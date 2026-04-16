@@ -80,10 +80,16 @@ function BlogPageContent() {
     // Extract locale from pathname
     if (pathname.startsWith('/ar')) {
       setLocale('ar');
+      document.title = 'المدونة | مجموعة سوبر آرك';
     } else {
       setLocale('en');
+      document.title = 'Blog | Super Arc Group';
     }
   }, []);
+
+  useEffect(() => {
+    document.title = locale === 'ar' ? 'المدونة | مجموعة سوبر آرك' : 'Blog | Super Arc Group';
+  }, [locale]);
 
   // Sync with URL query params
   useEffect(() => {

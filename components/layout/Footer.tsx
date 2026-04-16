@@ -217,7 +217,15 @@ export default function Footer() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
                 <span className="text-muted">
-                  {isRTL ? 'سوريا ، حماة , أبوظبي الإامارات العربية المتحدة' : 'Syria, Hama, Abu Dhabi United Arab Emirates'}
+                  {isRTL ? 
+                    <>
+                      حماة، سوريا<br/>أبوظبي، الإمارات العربية المتحدة
+                    </>
+                    : 
+                    <>
+                      Hama, Syria<br/>Abu Dhabi, United Arab Emirates
+                    </>
+                  }
                 </span>
               </div>
               

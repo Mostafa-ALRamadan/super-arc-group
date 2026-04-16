@@ -10,11 +10,19 @@ interface ContactPageProps {
 export async function generateMetadata({ params }: ContactPageProps): Promise<Metadata> {
   const { locale } = await params;
   
+  const titles = {
+    en: 'Contact',
+    ar: 'اتصل بنا'
+  };
+  
+  const descriptions = {
+    en: 'Contact Super Arc Group for engineering consultancy, construction services, and development projects. Reach us at our offices in Syria, Hama and Abu Dhabi, UAE.',
+    ar: 'تواصل مع مجموعة سوبر آرك للاستشارات الهندسية وخدمات البناء ومشاريع التطوير. تواصل معنا في مكاتبنا في سوريا، حماة وأبوظبي، الإمارات العربية المتحدة.'
+  };
+
   return {
-    title: locale === 'ar' ? 'اتصل بنا | مجموعة سوبر آرك' : 'Contact | Super Arc Group',
-    description: locale === 'ar' 
-      ? 'تواصل معنا لمناقشة مشاريعك واحتياجاتك الهندسية'
-      : 'Get in touch with us to discuss your projects and engineering needs',
+    title: titles[locale as keyof typeof titles],
+    description: descriptions[locale as keyof typeof descriptions],
   };
 }
 

@@ -17,6 +17,13 @@ const translations = {
     deepFoundations: "Deep Foundations & Piling",
     alShallalDrilling: "Al Shallal Drilling",
     waterOilWells: "Water & Oil Wells",
+    stats: {
+      experience: "Years of Experience",
+      projects: "Projects Delivered", 
+      clients: "Satisfied Clients",
+      companies: "Specialized Companies",
+      commitment: "Commitment to Quality"
+    }
   },
   ar: {
     title: "خبرات إقليمية. معايير دولية. رؤية عالمية",
@@ -29,6 +36,13 @@ const translations = {
     deepFoundations: "الأساسات العميقة والركائز",
     alShallalDrilling: "الشلال للحفر",
     waterOilWells: "آبار المياه والنفط",
+    stats: {
+      experience: "سنوات من الخبرة",
+      projects: "مشاريع مُسلّمة",
+      clients: "عملاء راضون", 
+      companies: "شركات متخصصة",
+      commitment: "الالتزام بالجودة"
+    }
   },
 };
 
@@ -78,7 +92,7 @@ export default function Hero() {
     <>
       <section 
         ref={setElement} 
-        className="lg:h-screen relative overflow-hidden pt-5"
+        className="relative overflow-hidden pt-5 pb-16"
         style={{
           backgroundImage: 'url(/images/hero-bg.webp)',
           backgroundSize: 'cover',
@@ -101,8 +115,8 @@ export default function Hero() {
         }} />
       </div>
 
-      <div className="relative z-10 lg:min-h-screen flex items-center py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-32 lg:py-0">
+      <div className="relative z-10 flex items-start py-8 min-h-screen">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-20 pb-16">
           <div className="text-center space-y-12">
             {/* Main Heading */}
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight" style={{ opacity: isVisible ? 1 : 0, transform: isVisible ? 'translateY(0)' : 'translateY(40px)', transition: 'all 1s ease-out 0.2s' }}>
@@ -169,6 +183,61 @@ export default function Hero() {
                 </div>
               </a>
 
+            </div>
+
+            {/* About Preview Section */}
+            <div className="mt-20 mb-12" style={{ opacity: isVisible ? 1 : 0, transform: isVisible ? 'translateY(0)' : 'translateY(40px)', transition: 'all 1s ease-out 1s' }}>
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-6">
+                {isRTL ? "مجموعة سوبر آرك" : "About Super Arc Group"}
+              </h2>
+              
+              <p className="text-lg sm:text-xl text-gray-200 leading-relaxed mb-10 max-w-4xl mx-auto">
+                {isRTL 
+                  ? "شريك إقليمي موثوق في الهندسة والمقاولات والتطوير، يقدم حلولاً متكاملة في قطاعات البنية التحتية والأساسات العميقة والحفر والعقارات."
+                  : "A trusted regional engineering, contracting, and development partner delivering integrated solutions across infrastructure, deep foundations, drilling, and real estate sectors."
+                }
+              </p>
+
+              <Link 
+                href={`/${locale}/who-we-are`}
+                className="inline-flex items-center gap-3 px-8 py-4 bg-secondary text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+              >
+                {isRTL ? "تعرف المزيد عنا" : "Learn More About Us"}
+                {isRTL ? <ArrowLeft className="w-5 h-5" /> : <ArrowRight className="w-5 h-5" />}
+              </Link>
+            </div>
+
+            {/* Statistics Bar */}
+            <div className="mt-20" style={{ opacity: isVisible ? 1 : 0, transform: isVisible ? 'translateY(0)' : 'translateY(40px)', transition: 'all 1s ease-out 1.2s' }}>
+              <div 
+                className="rounded-lg p-8"
+                style={{ 
+                  backgroundImage: 'linear-gradient(135deg, rgb(19, 57, 46) 0%, rgb(39, 104, 84) 100%)',
+                }}
+              >
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+                  {[
+                    { number: "40+", label: t.stats.experience },
+                    { number: "1000+", label: t.stats.projects },
+                    { number: "500+", label: t.stats.clients },
+                    { number: "3", label: t.stats.companies },
+                    { number: "100%", label: t.stats.commitment }
+                  ].map((stat, index) => (
+                    <div 
+                      key={index}
+                      className="text-center"
+                      style={{ 
+                        opacity: isVisible ? 1 : 0, 
+                        transform: isVisible ? 'translateY(0)' : 'translateY(30px)', 
+                        transition: `all 0.8s ease-out ${1.2 + index * 0.1}s` 
+                      }}
+                    >
+                      <div className="text-5xl font-black text-white mb-2" style={{ fontFamily: 'system-ui, -apple-system, sans-serif', letterSpacing: '-0.02em' }}>{stat.number}</div>
+                      <div className="text-base font-medium text-white/80">{stat.label}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
         </div>

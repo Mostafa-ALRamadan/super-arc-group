@@ -46,7 +46,7 @@ export default function ContactSection({ locale = 'en' }: ContactSectionProps) {
       email: 'info@superarcgroup.com',
       phone: '+971 547 2020 14',
       phone2: '+963 947 964 829',
-      address: 'سوريا ، حماة , أبوظبي الإامارات العربية المتحدة',
+      address: 'حماة، سوريا<br/>أبوظبي، الإمارات العربية المتحدة',
     },
   } : {
     sectionLabel: 'Contact Us',
@@ -72,7 +72,7 @@ export default function ContactSection({ locale = 'en' }: ContactSectionProps) {
       email: 'info@superarcgroup.com',
       phone: '+971 547 2020 14',
       phone2: '+963 947 964 829',
-      address: 'Syria, Hama, Abu Dhabi United Arab Emirates',
+      address: 'Hama, Syria<br/>Abu Dhabi, United Arab Emirates',
     },
   };
 
@@ -222,14 +222,7 @@ export default function ContactSection({ locale = 'en' }: ContactSectionProps) {
                     <h4 className="text-sm font-semibold text-main mb-1">
                       {isRTL ? 'العنوان' : 'Address'}
                     </h4>
-                    <a
-                      href="https://maps.google.com/?q=Super+Arc+Consultant+L.L.C,+Abu+Dhabi,+United+Arab+Emirates"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-primary hover:text-primary-dark font-medium transition-colors"
-                    >
-                      <span dir="ltr">{translations.info.address}</span>
-                    </a>
+                    <span dir="ltr" className="text-primary font-medium" dangerouslySetInnerHTML={{ __html: translations.info.address }} />
                   </div>
                 </div>
               </div>

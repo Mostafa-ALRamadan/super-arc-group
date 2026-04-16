@@ -7,8 +7,8 @@ export const metadata: Metadata = {
     default: 'Super Arc Group',
     template: '%s | Super Arc Group'
   },
-  description: 'A leading corporate company dedicated to excellence and innovation.',
-  keywords: ['corporate', 'business', 'excellence', 'innovation', 'super arc group'],
+  description: 'Super Arc Group - A trusted regional engineering, contracting, and development partner delivering integrated solutions across infrastructure, deep foundations, drilling, and real estate sectors since 1987.',
+  keywords: ['engineering', 'construction', 'development', 'infrastructure', 'deep foundations', 'drilling', 'real estate', 'super arc group', 'UAE', 'Middle East'],
   authors: [{ name: 'Super Arc Group' }],
   creator: 'Super Arc Group',
   publisher: 'Super Arc Group',

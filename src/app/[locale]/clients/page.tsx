@@ -95,6 +95,17 @@ function ClientsPageContent({ locale }: { locale: string }) {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    const pathname = window.location.pathname;
+    
+    // Extract locale from pathname
+    if (pathname.startsWith('/ar')) {
+      document.title = 'عملاؤنا | مجموعة سوبر آرك';
+    } else {
+      document.title = 'Clients | Super Arc Group';
+    }
+  }, [locale]);
+
   // Filter clients by selected category
   const filteredClients = selectedCategory === 'all' || selectedCategory === ''
     ? clients
