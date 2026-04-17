@@ -230,7 +230,7 @@ export default function Services() {
   const [locale, setLocale] = useState<'en' | 'ar'>('en');
   const [mounted, setMounted] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
-  const { isVisible, setElement } = useScrollAnimation(0.1);
+  const { isVisible, setElement } = useScrollAnimation(0.01);
 
   const isRTL = locale === 'ar';
   const t = translations[locale];
