@@ -215,12 +215,14 @@ const translations = {
   en: {
     sectionLabel: 'Our Services',
     title: 'Comprehensive Engineering & Contracting Solutions',
-    description: 'Super Arc Group delivers a wide spectrum of integrated engineering, contracting, and development services designed to meet complex project requirements across multiple sectors.'
+    description: 'Super Arc Group delivers a wide spectrum of integrated engineering, contracting, and development services designed to meet complex project requirements across multiple sectors.',
+    navigateTo: 'Navigate to'
   },
   ar: {
     sectionLabel: 'خدماتنا',
     title: 'حلول هندسية وإنشائية متكاملة',
-    description: 'تقدم مجموعة سوبر آرك مجموعة واسعة من الخدمات الهندسية والإنشائية المتكاملة المصممة لتلبية متطلبات المشاريع المعقدة في مختلف القطاعات.'
+    description: 'تقدم مجموعة سوبر آرك مجموعة واسعة من الخدمات الهندسية والإنشائية المتكاملة المصممة لتلبية متطلبات المشاريع المعقدة في مختلف القطاعات.',
+    navigateTo: 'الانتقال إلى'
   }
 };
 
@@ -232,6 +234,21 @@ export default function Services() {
 
   const isRTL = locale === 'ar';
   const t = translations[locale];
+
+  const handleSmoothScroll = (e: React.MouseEvent<HTMLAnchorElement>, targetId: string) => {
+    e.preventDefault();
+    const element = document.getElementById(targetId);
+    if (element) {
+      const headerOffset = 80; // Match the scroll-margin-top
+      const elementPosition = element.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
+    }
+  };
 
   useEffect(() => {
     setMounted(true);
@@ -285,11 +302,48 @@ export default function Services() {
         </div>
       </div>
 
+      {/* Category Navigation */}
+      <div 
+        className="bg-gradient-to-br from-bg-light to-white"
+        style={{ 
+          opacity: isVisible ? 1 : 0, 
+          transform: isVisible ? 'translateY(0)' : 'translateY(30px)', 
+          transition: 'all 0.8s ease-out 0.6s' 
+        }}
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div className="flex flex-col items-center gap-4">
+            <h2 className="text-sm font-semibold text-main uppercase tracking-wide">
+              {isRTL ? 'الانتقال إلى خدمات' : 'Navigate to services'}
+            </h2>
+            <div className="flex flex-wrap gap-3 justify-center">
+              {categoriesData.map((category, index) => (
+                <a
+                  key={category.id}
+                  href={`#${category.id}`}
+                  onClick={(e) => handleSmoothScroll(e, category.id)}
+                  className={`px-6 py-3 rounded-xl font-semibold text-sm transition-all duration-300 border cursor-pointer hover:shadow-lg hover:-translate-y-1 hover:scale-105 ${
+                    'bg-white text-neutral-700 border-gray-200 hover:bg-green-800 hover:text-white hover:border-green-800 hover:shadow-green-800/25'
+                  }`}
+                  style={{ 
+                    opacity: isVisible ? 1 : 0
+                  }}
+                >
+                  {isRTL ? category.titleAr : category.title}
+                </a>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Services Grid by Category */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
         {categoriesData.map((category, categoryIndex) => (
           <div
             key={category.id}
+            id={category.id}
+            className="scroll-mt-32"
             style={{ opacity: isVisible ? 1 : 0, transform: isVisible ? 'translateY(0)' : 'translateY(40px)', transition: `all 0.8s ease-out ${0.2 + categoryIndex * 0.15}s` }}
           >
             {/* Category Header - Icon-Based */}
