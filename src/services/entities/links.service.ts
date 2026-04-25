@@ -30,7 +30,7 @@ export interface LinkResponse {
 }
 
 class LinksService {
-  private baseUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000/api'}/links`;
+  private baseUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000/api'}/links/`;
 
   /**
    * Get all links
@@ -129,7 +129,7 @@ class LinksService {
       
       if (isClient) {
         // Client-side: use automatic token refresh with relative URL
-        response = await fetchWithTokenRefresh('/api/links', {
+        response = await fetchWithTokenRefresh('/api/links/', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

@@ -44,7 +44,7 @@ export interface EmployeeFormData {
 }
 
 class EmployeeService {
-  private baseUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000/api'}/employees`;
+  private baseUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000/api'}/employees/`;
 
   /**
    * Get all employees (fetches all pages from Django backend)
@@ -154,7 +154,7 @@ class EmployeeService {
       } else if (employee.company_id) {
         // Fetch company name if we have company_id but no company object
         try {
-          const companiesResponse = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000/api'}/companies`);
+          const companiesResponse = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000/api'}/companies/`);
           if (companiesResponse.ok) {
             const companiesResult = await companiesResponse.json();
             const companiesArray = companiesResult.results || companiesResult.data || companiesResult;
@@ -222,7 +222,7 @@ class EmployeeService {
       
       if (isClient) {
         // Client-side: use automatic token refresh
-        response = await fetchWithTokenRefresh('/api/employees', {
+        response = await fetchWithTokenRefresh('/api/employees/', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -231,7 +231,7 @@ class EmployeeService {
         });
       } else {
         // Server-side: use absolute URL (for SSR compatibility)
-        response = await fetchWithTokenRefresh('/api/employees', {
+        response = await fetchWithTokenRefresh('/api/employees/', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

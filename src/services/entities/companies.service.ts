@@ -226,7 +226,7 @@ class CompaniesService {
    */
   async createCompany(companyData: CompanyFormData): Promise<Company> {
     try {
-      const response = await fetchWithTokenRefresh('/api/companies', {
+      const response = await fetchWithTokenRefresh('/api/companies/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

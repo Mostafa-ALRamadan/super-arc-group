@@ -37,7 +37,7 @@ export interface LeadershipFormData {
 }
 
 class LeadershipService {
-  private baseUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000/api'}/members`;
+  private baseUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000/api'}/members/`;
 
   /**
    * Check if backend is available
@@ -152,7 +152,7 @@ class LeadershipService {
    */
   async getById(id: number): Promise<Leadership> {
     try {
-      const response = await fetchWithTokenRefresh(`${this.baseUrl}/${id}`);
+      const response = await fetchWithTokenRefresh(`${this.baseUrl}${id}/`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -252,7 +252,7 @@ class LeadershipService {
    */
   async update(id: number, data: LeadershipFormData): Promise<Leadership> {
     try {
-      const response = await fetchWithTokenRefresh(`${this.baseUrl}/${id}`, {
+      const response = await fetchWithTokenRefresh(`${this.baseUrl}${id}/`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -301,7 +301,7 @@ class LeadershipService {
    */
   async delete(id: number): Promise<void> {
     try {
-      const response = await fetchWithTokenRefresh(`${this.baseUrl}/${id}`, {
+      const response = await fetchWithTokenRefresh(`${this.baseUrl}${id}/`, {
         method: 'DELETE',
       });
       

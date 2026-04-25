@@ -62,7 +62,7 @@ export default function NewCompany() {
       // Create links if any
       if (links && links.length > 0) {
         for (const link of links) {
-          const linkResponse = await fetchWithTokenRefresh('/api/links', {
+          const linkResponse = await fetchWithTokenRefresh('/api/links/', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',

@@ -45,7 +45,7 @@ export interface ClientFormData {
 }
 
 class ClientService {
-  private baseUrl = `${API_BASE_URL}/clients`;
+  private baseUrl = `${API_BASE_URL}/clients/`;
 
   /**
    * Get all clients (fetches all pages from Django backend)
@@ -53,7 +53,7 @@ class ClientService {
   async getAll(): Promise<Client[]> {
     try {
       const allClients: Client[] = [];
-      let nextUrl: string | null = `${this.baseUrl}/`;
+      let nextUrl: string | null = this.baseUrl;
       
       // Fetch all pages until there's no next page
       while (nextUrl) {
@@ -87,7 +87,7 @@ class ClientService {
    */
   async getById(id: number): Promise<Client> {
     try {
-      const response = await fetchWithTokenRefresh(`${this.baseUrl}/${id}`);
+      const response = await fetchWithTokenRefresh(`${this.baseUrl}${id}/`);
       
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
@@ -109,7 +109,7 @@ class ClientService {
    */
   async create(data: ClientFormData): Promise<Client> {
     try {
-      const response = await fetchWithTokenRefresh(`${this.baseUrl}/`, {
+      const response = await fetchWithTokenRefresh(`${this.baseUrl}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -141,7 +141,7 @@ class ClientService {
    */
   async update(id: number, data: ClientFormData): Promise<Client> {
     try {
-      const response = await fetchWithTokenRefresh(`${this.baseUrl}/${id}`, {
+      const response = await fetchWithTokenRefresh(`${this.baseUrl}${id}/`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -172,7 +172,7 @@ class ClientService {
    */
   async delete(id: number): Promise<void> {
     try {
-      const response = await fetchWithTokenRefresh(`${this.baseUrl}/${id}`, {
+      const response = await fetchWithTokenRefresh(`${this.baseUrl}${id}/`, {
         method: 'DELETE',
       });
       

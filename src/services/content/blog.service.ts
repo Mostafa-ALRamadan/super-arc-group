@@ -643,7 +643,7 @@ export class BlogService {
    */
   async createPost(data: BlogFormData): Promise<BlogPost> {
     try {
-      const response = await fetchWithTokenRefresh('/api/blogs', {
+      const response = await fetchWithTokenRefresh('/api/blogs/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

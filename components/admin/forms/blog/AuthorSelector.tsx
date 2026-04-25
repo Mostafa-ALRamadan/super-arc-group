@@ -51,7 +51,7 @@ const AuthorSelector: React.FC<AuthorSelectorProps> = ({
     try {
       setLoading(true);
       setError(null);
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000/api'}/authors`);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000/api'}/authors/`);
       const result = await response.json();
       
       // Handle different response formats

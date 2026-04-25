@@ -138,7 +138,7 @@ class CategoryService {
   async createCategory(data: CategoryFormData): Promise<Category> {
     try {
       const apiData = transformFormData(data);
-      const response = await fetchWithTokenRefresh('/api/categories', {
+      const response = await fetchWithTokenRefresh('/api/categories/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -188,7 +188,7 @@ class CategoryService {
   async updateCategory(id: string, data: Partial<CategoryFormData>): Promise<Category> {
     try {
       const apiData = transformFormData(data as CategoryFormData);
-      const response = await fetchWithTokenRefresh(`/api/categories/${id}`, {
+      const response = await fetchWithTokenRefresh(`/api/categories/${id}/`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -223,7 +223,7 @@ class CategoryService {
    */
   async deleteCategory(id: string): Promise<void> {
     try {
-      const response = await fetchWithTokenRefresh(`/api/categories/${id}`, {
+      const response = await fetchWithTokenRefresh(`/api/categories/${id}/`, {
         method: 'DELETE',
       });
 
