@@ -87,22 +87,26 @@ export async function POST(request: NextRequest) {
       );
     }
     
-    // Transform the frontend data to match backend expectations
+    // Data is already in flat format from blogService.createPost()
+    // Just ensure all required fields are present
     const backendData = {
-      title_en: body.title.en,
-      title_ar: body.title.ar,
-      excerpt_en: body.excerpt.en,
-      excerpt_ar: body.excerpt.ar,
+      title_en: body.title_en,
+      title_ar: body.title_ar,
+      excerpt_en: body.excerpt_en,
+      excerpt_ar: body.excerpt_ar,
       content: body.content, // Editor.js format
+      slug: body.slug,
       cover_image_id: body.cover_image_id || null,
       category_id: body.category_id,
       author_id: body.author_id,
       reading_time: body.reading_time || 5,
-      tags_en: body.tags?.en || [],
-      tags_ar: body.tags?.ar || [],
+      tags_en: body.tags_en || [],
+      tags_ar: body.tags_ar || [],
       status: body.status || 'draft',
       is_featured: body.is_featured || false,
-      published_at: new Date().toISOString(),
+      published: body.published ?? body.status === 'published',
+      featured: body.featured ?? body.is_featured ?? false,
+      published_at: body.published_at || new Date().toISOString(),
       seo: body.seo || {
         meta_description: '',
         keywords: '',

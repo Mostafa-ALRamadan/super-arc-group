@@ -4,11 +4,11 @@ const baseUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:800
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
     const resolvedParams = await params;
-    const id = resolvedParams.id;
+    const slug = resolvedParams.slug;
     
     // Get the Authorization header from the incoming request
     const authHeader = request.headers.get('authorization');
@@ -21,7 +21,7 @@ export async function GET(
     }
     
     // Forward the request to backend with the user's auth token
-    const response = await fetch(`${baseUrl}/blogs/${id}/`, {
+    const response = await fetch(`${baseUrl}/blogs/${slug}/`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -56,11 +56,11 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
     const resolvedParams = await params;
-    const id = resolvedParams.id;
+    const slug = resolvedParams.slug;
     const body = await request.json();
     
     // Get the Authorization header from the incoming request
@@ -98,7 +98,7 @@ export async function PUT(
     };
     
     // Forward the request to backend with proper auth
-    const response = await fetch(`${baseUrl}/blogs/${id}/`, {
+    const response = await fetch(`${baseUrl}/blogs/${slug}/`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -133,7 +133,7 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
     const authHeader = request.headers.get('authorization');
@@ -145,10 +145,10 @@ export async function DELETE(
     }
     
     const resolvedParams = await params;
-    const { id } = resolvedParams;
+    const { slug } = resolvedParams;
     
     // Forward DELETE request to backend
-    const response = await fetch(`${baseUrl}/blogs/${id}/`, {
+    const response = await fetch(`${baseUrl}/blogs/${slug}/`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',

@@ -500,7 +500,7 @@ export class BlogService {
         return null;
       }
       
-      const response = await fetchWithTokenRefresh(`${this.baseUrl}/${slug}/`, {
+      const response = await fetchWithTokenRefresh(`${this.baseUrl}${slug}/`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -619,7 +619,7 @@ export class BlogService {
         throw new Error('Post slug is required');
       }
       
-      const response = await fetchWithTokenRefresh(`${this.baseUrl}/${slug}/`, {
+      const response = await fetchWithTokenRefresh(`${this.baseUrl}${slug}/`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -658,8 +658,20 @@ export class BlogService {
         category_id: data.category_id,
         author_id: data.author_id,
         cover_image_id: data.cover_image_id,
+        reading_time: data.reading_time || 5,
+        tags_en: data.tags?.en || [],
+        tags_ar: data.tags?.ar || [],
+        status: data.status || 'draft',
+        is_featured: data.is_featured || false,
         published: data.published ?? data.status === 'published',
         featured: data.featured ?? data.is_featured,
+        published_at: data.published_at || new Date().toISOString(),
+        seo: data.seo || {
+          meta_description: '',
+          keywords: '',
+          og_title: '',
+          og_description: ''
+        }
       };
       
       const response = await fetchWithTokenRefresh(this.baseUrl, {
