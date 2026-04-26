@@ -255,7 +255,7 @@ export default function EmployeesManagement() {
               {locale === 'ar' ? 'إدارة الموظفين' : 'Employees Management'}
             </h1>
             <p className="text-muted">
-              {locale === 'ar' ? 'إدارة موظفي الشركة' : 'Manage company employees'}
+              {locale === 'ar' ? 'إدارة موظفي الشركات' : 'Manage company employees'}
             </p>
           </div>
 
@@ -329,7 +329,7 @@ export default function EmployeesManagement() {
             {locale === 'ar' ? 'إدارة الموظفين' : 'Employees Management'}
           </h1>
           <p className="text-muted">
-            {locale === 'ar' ? 'إدارة موظفي الشركات والفرق' : 'Manage company employees and teams'}
+            {locale === 'ar' ? 'إدارة موظفي الشركات' : 'Manage company employees and teams'}
           </p>
         </div>
 
