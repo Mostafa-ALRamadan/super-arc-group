@@ -756,12 +756,38 @@ export class BlogService {
    */
   async updatePost(slug: string, data: Partial<BlogFormData>): Promise<BlogPost> {
     try {
-      const response = await fetchWithTokenRefresh(`${this.baseUrl}${slug}`, {
+      // Transform nested frontend format to flat backend format
+      const backendData: any = {};
+      
+      if (data.title) {
+        backendData.title_en = data.title.en;
+        backendData.title_ar = data.title.ar;
+      }
+      if (data.excerpt) {
+        backendData.excerpt_en = data.excerpt.en;
+        backendData.excerpt_ar = data.excerpt.ar;
+      }
+      if (data.content !== undefined) backendData.content = data.content;
+      if (data.slug !== undefined) backendData.slug = data.slug;
+      if (data.cover_image_id !== undefined) backendData.cover_image_id = data.cover_image_id;
+      if (data.category_id !== undefined) backendData.category_id = data.category_id;
+      if (data.author_id !== undefined) backendData.author_id = data.author_id;
+      if (data.reading_time !== undefined) backendData.reading_time = data.reading_time;
+      if (data.tags) {
+        backendData.tags_en = data.tags.en || [];
+        backendData.tags_ar = data.tags.ar || [];
+      }
+      if (data.status !== undefined) backendData.status = data.status;
+      if (data.is_featured !== undefined) backendData.is_featured = data.is_featured;
+      if (data.published_at !== undefined) backendData.published_at = data.published_at;
+      if (data.seo !== undefined) backendData.seo = data.seo;
+      
+      const response = await fetchWithTokenRefresh(`${this.baseUrl}${slug}/`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify(backendData),
       });
       
       if (!response.ok) {

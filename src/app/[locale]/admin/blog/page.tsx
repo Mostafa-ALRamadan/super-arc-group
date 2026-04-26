@@ -244,6 +244,8 @@ export default function BlogManagement() {
     try {
       await blogService.deletePost(deleteConfirm.postId);
       setBlogPosts(prev => prev.filter(post => post.slug !== deleteConfirm.postId));
+      setAllBlogPosts(prev => prev.filter(post => post.slug !== deleteConfirm.postId));
+      setTotalPosts(prev => prev - 1);
       setSuccess(locale === 'ar' ? 'تم حذف المقال بنجاح' : 'Post deleted successfully');
       
       // Auto-dismiss success notification after 5 seconds
