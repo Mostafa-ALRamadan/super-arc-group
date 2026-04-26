@@ -45,10 +45,10 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
   const seoDescription = (post as any).seo?.og_description || (post as any).seo?.social_description || (post as any).seo?.meta_description || description;
 
   return {
-    title,        // ✅ Use content title for tab title
+    title,        // ? Use content title for tab title
     description,
     openGraph: {
-      title: seoTitle,  // ✅ Use SEO title for social sharing
+      title: seoTitle,  // ? Use SEO title for social sharing
       description: seoDescription,
       images: coverImage ? [
         {
@@ -62,7 +62,7 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
     },
     twitter: {
       card: 'summary_large_image',
-      title: seoTitle,  // ✅ Use SEO title for social sharing
+      title: seoTitle,  // ? Use SEO title for social sharing
       description: seoDescription,
       images: [coverImage],
     },
@@ -85,12 +85,12 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-4xl font-bold text-neutral-900 mb-4">
-            {locale === 'en' ? 'Article Not Found' : 'المقالة غير موجودة'}
+            {locale === 'en' ? 'Article Not Found' : 'المقال غير موجود'}
           </h1>
           <p className="text-neutral-600 mb-8">
             {locale === 'en' 
               ? 'The requested blog post could not be found.' 
-              : 'المقالة المطلوبة غير موجودة'}
+              : 'المقال المطلوب غير موجود'}
           </p>
           <Link 
             href={`/${locale}/blog`}
@@ -242,9 +242,9 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         locale={locale as 'en' | 'ar'}
       />
       
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-16">
         {/* Article Metadata */}
-        <div className="mb-16 pb-8 border-b border-gray-200/60 bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-sm">
+        <div className="mb-8 md:mb-16 pb-8 border-b border-gray-200/60 bg-white/80 backdrop-blur-sm rounded-2xl p-4 md:p-8 shadow-sm">
           <div className="flex flex-wrap items-center justify-between gap-6 mb-8">
             {/* Author Info */}
             <div className={`flex items-center ${locale === 'ar' ? 'space-x-reverse space-x-4' : 'space-x-4'}`}>
@@ -282,7 +282,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                 <svg className="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                <span className={`font-medium ${locale === 'ar' ? 'mr-2' : 'ml-2'}`}>{post.reading_time || 5} {locale === 'ar' ? 'دقيقة قراءة' : 'min read'}</span>
+                <span className={`font-medium ${locale === 'ar' ? 'mr-2' : 'ml-2'}`}>{post.reading_time || 5} {locale === 'ar' ? 'دقائق قراءة' : 'min read'}</span>
               </div>
               {post.category && (
                 <div className="flex items-center bg-primary/10 px-4 py-2 rounded-full">

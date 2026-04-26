@@ -52,6 +52,7 @@ export interface BlogPost {
 }
 
 export interface BlogFormData {
+  slug: string;
   title: { en: string; ar: string };
   excerpt: { en: string; ar: string };
   content: any;
@@ -62,6 +63,8 @@ export interface BlogFormData {
   tags: { en: string[]; ar: string[] };
   status: 'draft' | 'published' | 'archived';
   is_featured?: boolean;
+  published?: boolean;
+  featured?: boolean;
   seo?: {
     meta_description?: string;
     keywords?: string;
@@ -78,7 +81,7 @@ export class BlogService {
   private baseUrl: string;
 
   constructor() {
-    this.baseUrl = `${API_BASE_URL}/blogs`;
+    this.baseUrl = `${API_BASE_URL}/blogs/`;
   }
 
   /**
@@ -389,7 +392,8 @@ export class BlogService {
       });
       
       if (!response.ok) {
-        throw new Error('Failed to fetch published blog posts');
+        console.warn(`Failed to fetch published blog posts: ${response.status}`);
+        return []; // Return empty array instead of throwing
       }
       
       const result = await response.json();
@@ -454,7 +458,7 @@ export class BlogService {
               en: post.category.name_en,
               ar: post.category.name_ar
             },
-            slug: post.category.slug
+            slug: post.category.slugauthors
           } : undefined,
           category_id: post.category?.id || post.category_id,
           author: post.author ? {
@@ -482,8 +486,8 @@ export class BlogService {
       
       return publishedPosts;
     } catch (error: any) {
-      console.error('Error fetching published blog posts:', error);
-      throw error;
+      console.warn('Error fetching published blog posts:', error?.message || error);
+      return []; // Return empty array during build failures
     }
   }
 
@@ -643,12 +647,27 @@ export class BlogService {
    */
   async createPost(data: BlogFormData): Promise<BlogPost> {
     try {
-      const response = await fetchWithTokenRefresh('/api/blogs/', {
+      // Transform nested frontend format to flat backend format
+      const backendData = {
+        title_en: data.title.en,
+        title_ar: data.title.ar,
+        excerpt_en: data.excerpt.en,
+        excerpt_ar: data.excerpt.ar,
+        content: data.content,
+        slug: data.slug,
+        category_id: data.category_id,
+        author_id: data.author_id,
+        cover_image_id: data.cover_image_id,
+        published: data.published ?? data.status === 'published',
+        featured: data.featured ?? data.is_featured,
+      };
+      
+      const response = await fetchWithTokenRefresh(this.baseUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify(backendData),
       });
       
       if (!response.ok) {
@@ -725,7 +744,7 @@ export class BlogService {
    */
   async updatePost(slug: string, data: Partial<BlogFormData>): Promise<BlogPost> {
     try {
-      const response = await fetchWithTokenRefresh(`/api/blogs/${slug}/`, {
+      const response = await fetchWithTokenRefresh(`${this.baseUrl}${slug}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

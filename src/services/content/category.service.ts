@@ -37,7 +37,7 @@ const transformFormData = (formData: CategoryFormData) => ({
 });
 
 class CategoryService {
-  private baseUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000/api'}/categories`;
+  private baseUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000/api'}/categories/`;
 
   /**
    * Get all categories (fetches all pages from Django backend)
@@ -93,7 +93,7 @@ class CategoryService {
    */
   async getCategoryBySlug(slug: string): Promise<Category | null> {
     try {
-      const response = await fetch(`${this.baseUrl}/slug/${slug}`);
+      const response = await fetch(`${this.baseUrl}${slug}`);
       if (!response.ok) {
         if (response.status === 404) return null;
         throw new Error('Failed to fetch category');
@@ -111,7 +111,7 @@ class CategoryService {
    */
   async getCategoryById(id: string): Promise<Category | null> {
     try {
-      const response = await fetchWithTokenRefresh(`${this.baseUrl}/${id}/`);
+      const response = await fetchWithTokenRefresh(`${this.baseUrl}${id}/`);
       
       if (!response.ok) {
         if (response.status === 404) return null;
@@ -188,7 +188,7 @@ class CategoryService {
   async updateCategory(id: string, data: Partial<CategoryFormData>): Promise<Category> {
     try {
       const apiData = transformFormData(data as CategoryFormData);
-      const response = await fetchWithTokenRefresh(`/api/categories/${id}/`, {
+      const response = await fetchWithTokenRefresh(`${this.baseUrl}${id}/`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -223,7 +223,7 @@ class CategoryService {
    */
   async deleteCategory(id: string): Promise<void> {
     try {
-      const response = await fetchWithTokenRefresh(`/api/categories/${id}/`, {
+      const response = await fetchWithTokenRefresh(`${this.baseUrl}${id}/`, {
         method: 'DELETE',
       });
 

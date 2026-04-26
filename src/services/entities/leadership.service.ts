@@ -39,22 +39,7 @@ export interface LeadershipFormData {
 class LeadershipService {
   private baseUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000/api'}/members/`;
 
-  /**
-   * Check if backend is available
-   */
-  private async isBackendAvailable(): Promise<boolean> {
-    try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000/api'}/health`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      return response.ok;
-    } catch (error) {
-      return false;
-    }
-  }
+
 
   /**
    * Get all leadership members - PUBLIC method for frontend

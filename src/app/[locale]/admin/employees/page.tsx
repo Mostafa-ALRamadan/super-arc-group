@@ -107,7 +107,7 @@ export default function EmployeesManagement() {
       if (company) return company.name[locale as 'en' | 'ar'];
     }
     
-    return locale === 'ar' ? 'غير معروف' : 'Unknown';
+    return locale === 'ar' ? '??? ?????' : 'Unknown';
   };
 
   // Fetch employees and companies on mount (only when authenticated)
@@ -192,7 +192,7 @@ export default function EmployeesManagement() {
   }, [searchTerm, selectedCompany]);
 
   const handleEdit = (employeeId: number) => {
-    router.push(`/${locale}/admin/employees/edit/${employeeId}`);
+    router.push(`/${locale}/admin/employees/edit/${employeeId}/`);
   };
 
   const handleDeleteClick = (employeeId: number, employeeName: string) => {
@@ -208,7 +208,7 @@ export default function EmployeesManagement() {
       await employeeService.deleteEmployee(deleteConfirm.employeeId);
       // Remove from frontend state after successful deletion
       setAllEmployees(prev => prev.filter(employee => employee.id !== parseInt(deleteConfirm.employeeId)));
-      setSuccess((locale as 'en' | 'ar') === 'ar' ? 'تم حذف الموظف بنجاح' : 'Employee deleted successfully');
+      setSuccess((locale as 'en' | 'ar') === 'ar' ? '?? ??? ?????? ?????' : 'Employee deleted successfully');
       
       // Auto-dismiss success notification after 5 seconds
       setTimeout(() => {
@@ -236,7 +236,7 @@ export default function EmployeesManagement() {
   // Show loading while checking authentication
   if (!isAuthenticated) {
     return (
-      <AdminLayout title={locale === 'ar' ? 'إدارة الموظفين' : 'Employees Management'} sidebarPosition={sidebarPosition}>
+      <AdminLayout title={locale === 'ar' ? '????? ????????' : 'Employees Management'} sidebarPosition={sidebarPosition}>
         <div className="p-6">
           <div className="flex items-center justify-center h-64">
             <LoadingSpinner size="lg" />
@@ -248,14 +248,14 @@ export default function EmployeesManagement() {
 
   if (loading) {
     return (
-      <AdminLayout title={locale === 'ar' ? 'إدارة الموظفين' : 'Employees Management'} sidebarPosition={sidebarPosition}>
+      <AdminLayout title={locale === 'ar' ? '????? ????????' : 'Employees Management'} sidebarPosition={sidebarPosition}>
         <div className="p-6">
           <div className="mb-6">
             <h1 className="text-2xl font-bold text-main">
-              {locale === 'ar' ? 'إدارة الموظفين' : 'Employees Management'}
+              {locale === 'ar' ? '????? ????????' : 'Employees Management'}
             </h1>
             <p className="text-muted">
-              {locale === 'ar' ? 'إدارة موظفي الشركة' : 'Manage company employees'}
+              {locale === 'ar' ? '????? ????? ??????' : 'Manage company employees'}
             </p>
           </div>
 
@@ -264,7 +264,7 @@ export default function EmployeesManagement() {
             <div className="flex flex-col sm:flex-row sm:items-center gap-3">
               <input
                 type="text"
-                placeholder={locale === 'ar' ? 'البحث في الموظفين...' : 'Search employees...'}
+                placeholder={locale === 'ar' ? '????? ?? ????????...' : 'Search employees...'}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className={`${locale === 'ar' ? 'ml-0 sm:ml-6' : 'mr-0 sm:mr-6'} px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary w-full sm:w-auto`}
@@ -274,7 +274,7 @@ export default function EmployeesManagement() {
                 onChange={(e) => setSelectedCompany(e.target.value)}
                 className={`px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary ${locale === 'ar' ? 'text-right' : 'text-left'}`}
               >
-                <option value="">{locale === 'ar' ? 'جميع الشركات' : 'All Companies'}</option>
+                <option value="">{locale === 'ar' ? '???? ???????' : 'All Companies'}</option>
                 {companies.map(company => (
                   <option key={company.id} value={company.id.toString()}>
                     {company.name[locale as 'en' | 'ar']}
@@ -286,7 +286,7 @@ export default function EmployeesManagement() {
               onClick={() => router.push(`/${locale}/admin/employees/new`)}
               className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-colors duration-200 w-full lg:w-auto"
             >
-              {locale === 'ar' ? 'إنشاء موظف جديد' : 'Create New Employee'}
+              {locale === 'ar' ? '????? ???? ????' : 'Create New Employee'}
             </button>
           </div>
 
@@ -303,7 +303,7 @@ export default function EmployeesManagement() {
 
   if (error) {
     return (
-      <AdminLayout title={locale === 'ar' ? 'إدارة الموظفين' : 'Employees Management'} sidebarPosition={sidebarPosition}>
+      <AdminLayout title={locale === 'ar' ? '????? ????????' : 'Employees Management'} sidebarPosition={sidebarPosition}>
         <div className="p-6">
           <div className="flex items-center justify-center h-64">
             <div className="text-center">
@@ -312,7 +312,7 @@ export default function EmployeesManagement() {
                 onClick={() => window.location.reload()}
                 className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark"
               >
-                {locale === 'ar' ? 'إعادة المحاولة' : 'Retry'}
+                {locale === 'ar' ? '????? ????????' : 'Retry'}
               </button>
             </div>
           </div>
@@ -322,14 +322,14 @@ export default function EmployeesManagement() {
   }
 
   return (
-    <AdminLayout title={locale === 'ar' ? 'إدارة الموظفين' : 'Employees Management'} sidebarPosition={sidebarPosition}>
+    <AdminLayout title={locale === 'ar' ? '????? ????????' : 'Employees Management'} sidebarPosition={sidebarPosition}>
       <div className="p-6">
         <div className="mb-6">
           <h1 className="text-2xl font-bold text-main">
-            {locale === 'ar' ? 'إدارة الموظفين' : 'Employees Management'}
+            {locale === 'ar' ? '????? ????????' : 'Employees Management'}
           </h1>
           <p className="text-muted">
-            {locale === 'ar' ? 'إدارة موظفي الشركات والفرق' : 'Manage company employees and teams'}
+            {locale === 'ar' ? '????? ????? ??????? ??????' : 'Manage company employees and teams'}
           </p>
         </div>
 
@@ -338,7 +338,7 @@ export default function EmployeesManagement() {
           <div className="flex flex-col sm:flex-row sm:items-center gap-3">
             <input
               type="text"
-              placeholder={locale === 'ar' ? 'البحث في الموظفين...' : 'Search employees...'}
+              placeholder={locale === 'ar' ? '????? ?? ????????...' : 'Search employees...'}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className={`${locale === 'ar' ? 'ml-0 sm:ml-6' : 'mr-0 sm:mr-6'} px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary w-full sm:w-auto`}
@@ -348,7 +348,7 @@ export default function EmployeesManagement() {
               onChange={(e) => setSelectedCompany(e.target.value)}
               className={`px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary ${locale === 'ar' ? 'text-right' : 'text-left'}`}
             >
-              <option value="">{locale === 'ar' ? 'جميع الشركات' : 'All Companies'}</option>
+              <option value="">{locale === 'ar' ? '???? ???????' : 'All Companies'}</option>
               {companies.map(company => (
                 <option key={company.id} value={company.id.toString()}>
                   {company.name[locale as 'en' | 'ar']}
@@ -360,7 +360,7 @@ export default function EmployeesManagement() {
             onClick={() => router.push(`/${locale}/admin/employees/new`)}
             className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-colors duration-200 w-full lg:w-auto"
           >
-            {locale === 'ar' ? 'إنشاء موظف جديد' : 'Create New Employee'}
+            {locale === 'ar' ? '????? ???? ????' : 'Create New Employee'}
           </button>
         </div>
 
@@ -392,19 +392,19 @@ export default function EmployeesManagement() {
               <thead className="bg-gray-50">
                 <tr>
                   <th className={`px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider ${locale === 'ar' ? 'text-right' : 'text-left'}`}>
-                    {locale === 'ar' ? 'الصورة' : 'Photo'}
+                    {locale === 'ar' ? '??????' : 'Photo'}
                   </th>
                   <th className={`px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider ${locale === 'ar' ? 'text-right' : 'text-left'}`}>
-                    {locale === 'ar' ? 'الاسم' : 'Name'}
+                    {locale === 'ar' ? '?????' : 'Name'}
                   </th>
                   <th className={`px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider ${locale === 'ar' ? 'text-right' : 'text-left'}`}>
-                    {locale === 'ar' ? 'المنصب' : 'Position'}
+                    {locale === 'ar' ? '??????' : 'Position'}
                   </th>
                   <th className={`px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider ${locale === 'ar' ? 'text-right' : 'text-left'}`}>
-                    {locale === 'ar' ? 'الشركة' : 'Company'}
+                    {locale === 'ar' ? '??????' : 'Company'}
                   </th>
                   <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    {locale === 'ar' ? 'الإجراءات' : 'Actions'}
+                    {locale === 'ar' ? '?????????' : 'Actions'}
                   </th>
                 </tr>
               </thead>
@@ -413,8 +413,8 @@ export default function EmployeesManagement() {
                   <tr>
                     <td colSpan={5} className="px-6 py-12 text-center text-gray-500">
                       {searchTerm || selectedCompany
-                        ? (locale === 'ar' ? 'لا توجد موظفين تطابق بحثك' : 'No employees match your search')
-                        : (locale === 'ar' ? 'لم يتم العثور على موظفين' : 'No employees found')
+                        ? (locale === 'ar' ? '?? ???? ?????? ????? ????' : 'No employees match your search')
+                        : (locale === 'ar' ? '?? ??? ?????? ??? ??????' : 'No employees found')
                       }
                     </td>
                   </tr>
@@ -448,13 +448,13 @@ export default function EmployeesManagement() {
                           onClick={() => handleEdit(employee.id)}
                           className={`text-indigo-600 hover:text-indigo-900 ${locale === 'ar' ? 'ml-4' : 'mr-4'}`}
                         >
-                          {locale === 'ar' ? 'تعديل' : 'Edit'}
+                          {locale === 'ar' ? '?????' : 'Edit'}
                         </button>
                         <button
                           onClick={() => handleDeleteClick(employee.id, employee.name[locale as 'en' | 'ar'])}
                           className="text-red-600 hover:text-red-900"
                         >
-                          {locale === 'ar' ? 'حذف' : 'Delete'}
+                          {locale === 'ar' ? '???' : 'Delete'}
                         </button>
                       </td>
                     </tr>
@@ -480,8 +480,8 @@ export default function EmployeesManagement() {
           <div className="text-center py-8 sm:py-12">
             <div className="text-gray-500 text-lg mb-4">
               {allEmployees.length === 0 
-                ? (locale === 'ar' ? 'لم يتم العثور على موظفين' : 'No employees found')
-                : (locale === 'ar' ? 'لا توجد موظفين تطابق بحثك' : 'No employees match your search')
+                ? (locale === 'ar' ? '?? ??? ?????? ??? ??????' : 'No employees found')
+                : (locale === 'ar' ? '?? ???? ?????? ????? ????' : 'No employees match your search')
               }
             </div>
             <div className="flex flex-col sm:flex-row gap-3 justify-center items-center">
@@ -490,14 +490,14 @@ export default function EmployeesManagement() {
                   onClick={clearFilters}
                   className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-colors duration-200 w-full sm:w-auto"
                 >
-                  {locale === 'ar' ? 'مسح البحث' : 'Clear Search'}
+                  {locale === 'ar' ? '??? ?????' : 'Clear Search'}
                 </button>
               )}
               <button
                 onClick={() => router.push(`/${locale}/admin/employees/new`)}
                 className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-colors duration-200 w-full sm:w-auto"
               >
-                {locale === 'ar' ? 'إنشاء موظف جديد' : 'Create New Employee'}
+                {locale === 'ar' ? '????? ???? ????' : 'Create New Employee'}
               </button>
             </div>
           </div>
@@ -507,14 +507,14 @@ export default function EmployeesManagement() {
       {/* Delete Confirmation Dialog */}
       <ConfirmDialog
         isOpen={deleteConfirm.isOpen}
-        title={locale === 'ar' ? 'تأكيد الحذف' : 'Confirm Delete'}
+        title={locale === 'ar' ? '????? ?????' : 'Confirm Delete'}
         message={
           locale === 'ar' 
-            ? `هل أنت متأكد من أنك تريد حذف الموظف "${deleteConfirm.employeeName}"؟ لا يمكن التراجع عن هذا الإجراء.`
+            ? `?? ??? ????? ?? ??? ???? ??? ?????? "${deleteConfirm.employeeName}"? ?? ???? ??????? ?? ??? ???????.`
             : `Are you sure you want to delete the employee "${deleteConfirm.employeeName}"? This action cannot be undone.`
         }
-        confirmText={locale === 'ar' ? 'حذف' : 'Delete'}
-        cancelText={locale === 'ar' ? 'إلغاء' : 'Cancel'}
+        confirmText={locale === 'ar' ? '???' : 'Delete'}
+        cancelText={locale === 'ar' ? '?????' : 'Cancel'}
         onConfirm={handleDeleteConfirm}
         onCancel={handleDeleteCancel}
         locale={locale}

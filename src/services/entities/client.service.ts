@@ -197,7 +197,7 @@ class ClientService {
   async getCategories(): Promise<any[]> {
     try {
       const allCategories: any[] = [];
-      let nextUrl: string | null = `${API_BASE_URL}/categories`;
+      let nextUrl: string | null = `${API_BASE_URL}/categories/`;
       
       // Fetch all pages until there's no next page
       while (nextUrl) {

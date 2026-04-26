@@ -8,6 +8,7 @@ import { useTranslations } from '../../../../../../src/contexts/TranslationConte
 import { type CompanyFormData } from '../../../../../services/entities/companies.service';
 import { type LinkFormData } from '../../../../../services/entities/links.service';
 import { companiesService } from '../../../../../services/entities/companies.service';
+import { linksService } from '../../../../../services/entities/links.service';
 import { fetchWithTokenRefresh } from '../../../../../services/auth/auth-fetch';
 import Toast from '../../../../../../components/ui/admin/Toast';
 import { translateError } from '@/lib/errorMessages';
@@ -62,21 +63,10 @@ export default function NewCompany() {
       // Create links if any
       if (links && links.length > 0) {
         for (const link of links) {
-          const linkResponse = await fetchWithTokenRefresh('/api/links/', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              ...link,
-              company: company.id
-            }),
+          await linksService.createLink({
+            ...link,
+            company: company.id
           });
-          
-          if (!linkResponse.ok) {
-            const linkError = await linkResponse.json().catch(() => ({}));
-            throw new Error(linkError.error || 'Failed to create link');
-          }
         }
       }
       

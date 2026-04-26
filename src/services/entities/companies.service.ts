@@ -71,7 +71,7 @@ export interface CompanyFormData {
 }
 
 class CompaniesService {
-  private baseUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000/api'}/companies`;
+  private baseUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000/api'}/companies/`;
 
   /**
    * Fetch all companies (fetches all pages from Django backend)
@@ -172,7 +172,8 @@ class CompaniesService {
         });
         
         if (!response.ok) {
-          throw new Error('Failed to fetch published companies');
+          console.warn(`Failed to fetch published companies: ${response.status}`);
+          return []; // Return empty array instead of throwing
         }
         
         const result: any = await response.json();
@@ -216,8 +217,8 @@ class CompaniesService {
       
       return transformedCompanies;
     } catch (error) {
-      console.error('Error fetching published companies:', error);
-      throw error;
+      console.warn('Error fetching published companies:', error);
+      return []; // Return empty array during build failures
     }
   }
 
@@ -226,12 +227,23 @@ class CompaniesService {
    */
   async createCompany(companyData: CompanyFormData): Promise<Company> {
     try {
-      const response = await fetchWithTokenRefresh('/api/companies/', {
+      // Transform frontend format to backend format
+      const backendData = {
+        name_en: companyData.name.en,
+        name_ar: companyData.name.ar,
+        slug: companyData.slug,
+        description_en: companyData.description.en,
+        description_ar: companyData.description.ar,
+        link: companyData.link,
+        image_id: companyData.image_id || companyData.image?.id || null,
+      };
+      
+      const response = await fetchWithTokenRefresh(this.baseUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(companyData),
+        body: JSON.stringify(backendData),
       });
       
       if (!response.ok) {
@@ -251,7 +263,29 @@ class CompaniesService {
         throw new Error('Invalid response from server');
       }
       
-      return result;
+      // Transform backend format to frontend format
+      return {
+        id: result.id,
+        name: {
+          en: result.name_en,
+          ar: result.name_ar,
+        },
+        slug: result.slug,
+        description: {
+          en: result.description_en,
+          ar: result.description_ar,
+        },
+        link: result.link,
+        image: result.image ? {
+          id: result.image.id,
+          url: result.image.url,
+          alt_en: result.image.alt_en,
+          alt_ar: result.image.alt_ar,
+        } : undefined,
+        image_id: result.image?.id || null,
+        createdAt: result.created_at,
+        updatedAt: result.updated_at,
+      };
     } catch (error) {
       console.error('Error creating company:', error);
       throw error;
@@ -267,6 +301,23 @@ class CompaniesService {
       // Backend expects only basic company fields, not image data or slug
       const { image, slug: slugFromData, ...companyDataWithoutImageAndSlug } = companyData;
       
+      // Transform frontend format to backend format
+      const backendData: any = {};
+      if (companyDataWithoutImageAndSlug.name) {
+        backendData.name_en = companyDataWithoutImageAndSlug.name.en;
+        backendData.name_ar = companyDataWithoutImageAndSlug.name.ar;
+      }
+      if (companyDataWithoutImageAndSlug.description) {
+        backendData.description_en = companyDataWithoutImageAndSlug.description.en;
+        backendData.description_ar = companyDataWithoutImageAndSlug.description.ar;
+      }
+      if (companyDataWithoutImageAndSlug.link !== undefined) {
+        backendData.link = companyDataWithoutImageAndSlug.link;
+      }
+      if (companyDataWithoutImageAndSlug.image_id !== undefined) {
+        backendData.image_id = companyDataWithoutImageAndSlug.image_id;
+      }
+      
       // Check if we're on client side and have a token
       const isClient = typeof window !== 'undefined';
       
@@ -274,21 +325,21 @@ class CompaniesService {
       
       if (isClient) {
         // Client-side: use automatic token refresh
-        response = await fetchWithTokenRefresh(`/api/companies/${slug}/`, {
+        response = await fetchWithTokenRefresh(`${this.baseUrl}${slug}/`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(companyDataWithoutImageAndSlug),
+          body: JSON.stringify(backendData),
         });
       } else {
         // Server-side: use absolute URL (for SSR compatibility)
-        response = await fetchWithTokenRefresh(`/api/companies/${slug}/`, {
+        response = await fetchWithTokenRefresh(`${this.baseUrl}${slug}/`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(companyDataWithoutImageAndSlug),
+          body: JSON.stringify(backendData),
         });
       }
       
@@ -314,12 +365,34 @@ class CompaniesService {
       }
       
       // Django backend returns the company data directly, not wrapped in a success object
-      // If we have an id field, the creation was successful
+      // If we have an id field, the update was successful
       if (!result.id) {
         throw new Error('Invalid response from server');
       }
       
-      return result;
+      // Transform backend format to frontend format
+      return {
+        id: result.id,
+        name: {
+          en: result.name_en,
+          ar: result.name_ar,
+        },
+        slug: result.slug,
+        description: {
+          en: result.description_en,
+          ar: result.description_ar,
+        },
+        link: result.link,
+        image: result.image ? {
+          id: result.image.id,
+          url: result.image.url,
+          alt_en: result.image.alt_en,
+          alt_ar: result.image.alt_ar,
+        } : undefined,
+        image_id: result.image?.id || null,
+        createdAt: result.created_at,
+        updatedAt: result.updated_at,
+      };
     } catch (error) {
       // Handle authentication errors
       if (handleAuthError(error)) {
@@ -342,7 +415,7 @@ class CompaniesService {
       
       if (isClient) {
         // Client-side: use automatic token refresh
-        response = await fetchWithTokenRefresh(`${this.baseUrl}/${slug}/`);
+        response = await fetchWithTokenRefresh(`${this.baseUrl}${slug}/`);
       } else {
         // Server-side: use absolute URL with admin credentials for public access
         response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000/api'}/companies/${slug}/`, {
@@ -407,12 +480,12 @@ class CompaniesService {
       
       if (isClient) {
         // Client-side: use automatic token refresh
-        response = await fetchWithTokenRefresh(`${this.baseUrl}/${slug}/`, {
+        response = await fetchWithTokenRefresh(`${this.baseUrl}${slug}/`, {
           method: 'DELETE',
         });
       } else {
         // Server-side: use absolute URL (for SSR compatibility)
-        response = await fetch(`${this.baseUrl}/${slug}/`, {
+        response = await fetch(`${this.baseUrl}${slug}/`, {
           method: 'DELETE',
         });
       }
@@ -451,7 +524,7 @@ class CompaniesService {
     
     try {
       // Always use fetchWithTokenRefresh since this method is only called from client-side operations
-      const response = await fetchWithTokenRefresh(`${this.baseUrl.replace('/companies', '')}/images/${imageId}/`, {
+      const response = await fetchWithTokenRefresh(`${this.baseUrl.replace('/companies', '')}images/${imageId}/`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',

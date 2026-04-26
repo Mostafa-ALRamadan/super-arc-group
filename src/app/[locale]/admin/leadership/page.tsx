@@ -98,7 +98,7 @@ export default function LeadershipManagement() {
       await leadershipService.delete(id);
       // Remove from frontend state after successful deletion
       setLeadership(prev => prev.filter(member => member.id !== id));
-      setSuccess((locale as 'en' | 'ar') === 'ar' ? 'تم حذف العضو القيادي بنجاح' : 'Leadership member deleted successfully');
+      setSuccess((locale as 'en' | 'ar') === 'ar' ? 'تم حذف عضو القيادة بنجاح' : 'Leadership member deleted successfully');
       
       // Auto-dismiss success notification after 5 seconds
       setTimeout(() => {
@@ -151,7 +151,7 @@ export default function LeadershipManagement() {
             {locale === 'ar' ? 'إدارة القيادة' : 'Leadership Management'}
           </h1>
           <p className="text-muted">
-            {locale === 'ar' ? 'إدارة أعضاء الفريق القيادي' : 'Manage leadership team members'}
+            {locale === 'ar' ? 'إدارة أعضاء فريق القيادة' : 'Manage leadership team members'}
           </p>
         </div>
 
@@ -161,7 +161,7 @@ export default function LeadershipManagement() {
             onClick={() => router.push(`/${locale}/admin/leadership/new`)}
             className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-colors duration-200"
           >
-            {locale === 'ar' ? 'إنشاء عضو قيادي' : 'Create Leadership Member'}
+            {locale === 'ar' ? 'إنشاء عضو قيادة' : 'Create Leadership Member'}
           </button>
         </div>
 
@@ -190,13 +190,13 @@ export default function LeadershipManagement() {
           ) : leadership.length === 0 ? (
             <div className="text-center py-12">
               <div className="text-gray-400 text-lg mb-4">
-                {locale === 'ar' ? 'لم يتم العثور على أعضاء قياديين' : 'No leadership members found'}
+                {locale === 'ar' ? 'لا يوجد أعضاء قيادة' : 'No leadership members found'}
               </div>
               <button
                 onClick={() => router.push(`/${locale}/admin/leadership/new`)}
                 className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-colors duration-200"
               >
-                {locale === 'ar' ? 'إنشاء أول عضو قيادي' : 'Create First Leadership Member'}
+                {locale === 'ar' ? 'إنشاء أول عضو قيادة' : 'Create First Leadership Member'}
               </button>
             </div>
           ) : (
@@ -259,7 +259,7 @@ export default function LeadershipManagement() {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                           <button
-                            onClick={() => router.push(`/${locale}/admin/leadership/edit/${member.id}`)}
+                            onClick={() => router.push(`/${locale}/admin/leadership/edit/${member.id}/`)}
                             className={`text-indigo-600 hover:text-indigo-900 ${locale === 'ar' ? 'ml-4' : 'mr-4'}`}
                           >
                             {locale === 'ar' ? 'تعديل' : 'Edit'}
@@ -300,7 +300,7 @@ export default function LeadershipManagement() {
           title={locale === 'ar' ? 'تأكيد الحذف' : 'Confirm Delete'}
           message={
             locale === 'ar'
-              ? `هل أنت متأكد من أنك تريد حذف العضو القيادي "${deleteDialog.name}"؟ لا يمكن التراجع عن هذا الإجراء.`
+              ? `هل أنت متأكد من أنك تريد حذف عضو القيادة "${deleteDialog.name}"؟ لا يمكن التراجع عن هذا الإجراء.`
               : `Are you sure you want to delete the leadership member "${deleteDialog.name}"? This action cannot be undone.`
           }
           confirmText={locale === 'ar' ? 'حذف' : 'Delete'}

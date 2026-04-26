@@ -132,7 +132,7 @@ class EmployeeService {
    */
   async getEmployeeById(id: string): Promise<Employee | null> {
     try {
-      const response = await fetch(`${this.baseUrl}/${id}/`);
+      const response = await fetch(`${this.baseUrl}${id}/`);
       
       if (!response.ok) {
         if (response.status === 404) {
@@ -222,7 +222,7 @@ class EmployeeService {
       
       if (isClient) {
         // Client-side: use automatic token refresh
-        response = await fetchWithTokenRefresh('/api/employees/', {
+        response = await fetchWithTokenRefresh(this.baseUrl, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -231,7 +231,7 @@ class EmployeeService {
         });
       } else {
         // Server-side: use absolute URL (for SSR compatibility)
-        response = await fetchWithTokenRefresh('/api/employees/', {
+        response = await fetchWithTokenRefresh(this.baseUrl, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -311,7 +311,7 @@ class EmployeeService {
       
       if (isClient) {
         // Client-side: use automatic token refresh
-        response = await fetchWithTokenRefresh(`${this.baseUrl}/${id}/`, {
+        response = await fetchWithTokenRefresh(`${this.baseUrl}${id}/`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -320,7 +320,7 @@ class EmployeeService {
         });
       } else {
         // Server-side: use absolute URL (for SSR compatibility)
-        response = await fetch(`${this.baseUrl}/${id}/`, {
+        response = await fetch(`${this.baseUrl}${id}/`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -446,12 +446,12 @@ class EmployeeService {
       
       if (isClient) {
         // Client-side: use automatic token refresh
-        response = await fetchWithTokenRefresh(`${this.baseUrl}/${id}/`, {
+        response = await fetchWithTokenRefresh(`${this.baseUrl}${id}/`, {
           method: 'DELETE',
         });
       } else {
         // Server-side: use absolute URL (for SSR compatibility)
-        response = await fetch(`${this.baseUrl}/${id}/`, {
+        response = await fetch(`${this.baseUrl}${id}/`, {
           method: 'DELETE',
         });
       }
@@ -488,10 +488,10 @@ class EmployeeService {
       
       if (isClient) {
         // Client-side: use automatic token refresh
-        response = await fetchWithTokenRefresh(`${this.baseUrl}/?company=${companyId}`);
+        response = await fetchWithTokenRefresh(`${this.baseUrl}?company=${companyId}`);
       } else {
         // Server-side: use absolute URL for SSR compatibility
-        response = await fetch(`${this.baseUrl}/?company=${companyId}`);
+        response = await fetch(`${this.baseUrl}?company=${companyId}`);
       }
       
       if (!response.ok) {

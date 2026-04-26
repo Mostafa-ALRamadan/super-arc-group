@@ -82,7 +82,7 @@ export async function generateMetadata({ params }: ProjectPageProps): Promise<Me
   const title = getLocalizedValue(project.title_en, project.title_ar, locale);
   const description = getLocalizedValue(
     `Project for ${project.client} in ${project.location_en}`,
-    `مشروع لصالح ${project.client} في ${project.location_ar}`,
+    `مشروع لـ ${project.client} في ${project.location_ar}`,
     locale
   );
 
@@ -91,10 +91,10 @@ export async function generateMetadata({ params }: ProjectPageProps): Promise<Me
   const seoDescription = (project as any).seo?.social_description || (project as any).seo?.og_description || description;
 
   return {
-    title: title,        // ✅ Use content title for tab title
+    title: title,        // ? Use content title for tab title
     description: description,
     openGraph: {
-      title: seoTitle,  // ✅ Use SEO title for social sharing
+      title: seoTitle,  // ? Use SEO title for social sharing
       description: seoDescription,
       images: [
         {
@@ -108,7 +108,7 @@ export async function generateMetadata({ params }: ProjectPageProps): Promise<Me
     },
     twitter: {
       card: 'summary_large_image',
-      title: seoTitle,  // ✅ Use SEO title for social sharing
+      title: seoTitle,  // ? Use SEO title for social sharing
       description: seoDescription,
       images: [project.image?.url || '/images/default-project.jpg'],
     },
@@ -155,7 +155,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
   return (
     <article className={`min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 ${isRTL ? 'rtl' : 'ltr'}`}>
       {/* Hero Section - Project Specific Design */}
-      <div className="relative h-[400px] md:h-[500px] overflow-hidden bg-gradient-to-br from-primary/5 via-primary/3 to-primary/5">
+      <div className="relative min-h-[500px] md:h-[500px] overflow-hidden bg-gradient-to-br from-primary/5 via-primary/3 to-primary/5 pt-32 md:pt-20">
         {/* Background Pattern */}
         <div className="absolute inset-0 opacity-5">
           <div className="absolute top-0 left-0 w-full h-full bg-grid-pattern"></div>
@@ -185,7 +185,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
             </div>
 
             {/* Title - Different Typography */}
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight mb-6 tracking-tight">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-4 md:mb-6 tracking-tight">
               {title}
             </h1>
 
@@ -244,7 +244,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
             </div>
             <div>
               <h2 className="text-2xl font-bold text-gray-900">{locale === 'ar' ? 'نظرة عامة على المشروع' : 'Project Overview'}</h2>
-              <p className="text-gray-600">{locale === 'ar' ? 'تفاصيل أساسية عن المشروع' : 'Key project information'}</p>
+              <p className="text-gray-600">{locale === 'ar' ? 'معلومات أساسية عن المشروع' : 'Key project information'}</p>
             </div>
           </div>
           
@@ -321,7 +321,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
             </div>
             <div>
               <h2 className="text-2xl font-bold text-gray-900">{locale === 'ar' ? 'تفاصيل المشروع' : 'Project Details'}</h2>
-              <p className="text-gray-600">{locale === 'ar' ? 'المعلومات الكاملة عن المشروع' : 'Complete project information'}</p>
+              <p className="text-gray-600">{locale === 'ar' ? 'معلومات كاملة عن المشروع' : 'Complete project information'}</p>
             </div>
           </div>
           
@@ -337,9 +337,9 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
         <div className="bg-gradient-to-r from-primary via-primary-dark to-primary rounded-2xl p-8 shadow-2xl text-white">
           <div className="flex flex-col md:flex-row items-center justify-between gap-8">
             <div className="text-center md:text-left">
-              <h3 className="text-2xl font-bold mb-3">{locale === 'ar' ? 'عودة إلى معرض المشاريع' : 'Back to Project Gallery'}</h3>
+              <h3 className="text-2xl font-bold mb-3">{locale === 'ar' ? 'العودة إلى معرض المشاريع' : 'Back to Project Gallery'}</h3>
               <p className="text-primary-light/90 text-lg">
-                {locale === 'ar' ? 'اكتشف المزيد من مشاريعنا المتميزة' : 'Discover more of our exceptional projects'}
+                {locale === 'ar' ? 'اكتشف المزيد من مشاريعنا الاستثنائية' : 'Discover more of our exceptional projects'}
               </p>
             </div>
             <div className={`flex items-center ${locale === 'ar' ? 'space-x-reverse space-x-4' : 'space-x-4'}`}>
@@ -349,7 +349,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
               >
                 {locale === 'ar' ? (
                   <>
-                    جميع المشاريع
+                    عرض المشاريع
                     <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
                     </svg>

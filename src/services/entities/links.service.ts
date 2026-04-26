@@ -96,10 +96,10 @@ class LinksService {
       
       if (isClient) {
         // Client-side: use automatic token refresh
-        response = await fetchWithTokenRefresh(`${this.baseUrl}/${id}/`);
+        response = await fetchWithTokenRefresh(`${this.baseUrl}${id}/`);
       } else {
         // Server-side: use absolute URL (for SSR compatibility)
-        response = await fetch(`${this.baseUrl}/${id}/`);
+        response = await fetch(`${this.baseUrl}${id}/`);
       }
       
       if (!response.ok) {
@@ -129,7 +129,7 @@ class LinksService {
       
       if (isClient) {
         // Client-side: use automatic token refresh with relative URL
-        response = await fetchWithTokenRefresh('/api/links/', {
+        response = await fetchWithTokenRefresh(this.baseUrl, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -176,7 +176,7 @@ class LinksService {
       
       if (isClient) {
         // Client-side: use automatic token refresh with full URL
-        response = await fetchWithTokenRefresh(`${this.baseUrl}/${id}/`, {
+        response = await fetchWithTokenRefresh(`${this.baseUrl}${id}/`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -185,7 +185,7 @@ class LinksService {
         });
       } else {
         // Server-side: use absolute URL (for SSR compatibility)
-        response = await fetch(`${this.baseUrl}/${id}/`, {
+        response = await fetch(`${this.baseUrl}${id}/`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -223,12 +223,12 @@ class LinksService {
       
       if (isClient) {
         // Client-side: use automatic token refresh with full URL
-        response = await fetchWithTokenRefresh(`${this.baseUrl}/${id}/`, {
+        response = await fetchWithTokenRefresh(`${this.baseUrl}${id}/`, {
           method: 'DELETE',
         });
       } else {
         // Server-side: use absolute URL (for SSR compatibility)
-        response = await fetch(`${this.baseUrl}/${id}/`, {
+        response = await fetch(`${this.baseUrl}${id}/`, {
           method: 'DELETE',
         });
       }

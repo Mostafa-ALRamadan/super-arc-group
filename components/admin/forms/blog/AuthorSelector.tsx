@@ -52,6 +52,13 @@ const AuthorSelector: React.FC<AuthorSelectorProps> = ({
       setLoading(true);
       setError(null);
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000/api'}/authors/`);
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error(`Authors fetch failed: ${response.status}`, errorText);
+        throw new Error(`Failed to fetch authors: ${response.status}`);
+      }
+      
       const result = await response.json();
       
       // Handle different response formats
@@ -85,7 +92,7 @@ const AuthorSelector: React.FC<AuthorSelectorProps> = ({
       }
     } catch (err) {
       console.error('Failed to fetch authors:', err);
-      setError(locale === 'ar' ? 'فشل في تحميل المؤلفين' : 'Failed to load authors');
+      setError(locale === 'ar' ? '\u0641\u0634\u0644 \u0641\u064a \u062a\u062d\u0645\u064a\u0644 \u0627\u0644\u0645\u0624\u0644\u0641\u064a\u0646' : 'Failed to load authors');
     } finally {
       setLoading(false);
     }
@@ -106,7 +113,7 @@ const AuthorSelector: React.FC<AuthorSelectorProps> = ({
       <div className={`flex items-center space-x-2 ${className}`}>
         <LoadingSpinner size="sm" />
         <span className="text-sm text-muted">
-          {locale === 'ar' ? 'جاري تحميل المؤلفين...' : 'Loading authors...'}
+          {locale === 'ar' ? '\u062c\u0627\u0631\u064a \u062a\u062d\u0645\u064a\u0644 \u0627\u0644\u0645\u0624\u0644\u0641\u064a\u0646...' : 'Loading authors...'}
         </span>
       </div>
     );
@@ -121,7 +128,7 @@ const AuthorSelector: React.FC<AuthorSelectorProps> = ({
           onClick={() => window.location.reload()}
           className="text-sm text-primary hover:text-primary-dark"
         >
-          {locale === 'ar' ? 'إعادة المحاولة' : 'Retry'}
+          {locale === 'ar' ? '\u0625\u0639\u0627\u062f\u0629 \u0627\u0644\u0645\u062d\u0627\u0648\u0644\u0629' : 'Retry'}
         </button>
       </div>
     );
@@ -130,7 +137,7 @@ const AuthorSelector: React.FC<AuthorSelectorProps> = ({
   return (
     <div className={`space-y-2 ${className}`}>
       <label className="block text-sm font-medium text-main mb-2">
-        {locale === 'ar' ? 'المؤلف' : 'Author'}
+        {locale === 'ar' ? '\u0627\u0644\u0645\u0624\u0644\u0641' : 'Author'}
       </label>
       
       <div className="flex space-x-2">
@@ -142,7 +149,7 @@ const AuthorSelector: React.FC<AuthorSelectorProps> = ({
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
           >
             <option value="">
-              {locale === 'ar' ? 'اختر مؤلفاً' : 'Select an author'}
+              {locale === 'ar' ? '\u0627\u062e\u062a\u0631 \u0645\u0624\u0644\u0641\u0627\u064b' : 'Select an author'}
             </option>
             {authors.map((author) => (
               <option key={author.id} value={author.id}>
@@ -158,7 +165,7 @@ const AuthorSelector: React.FC<AuthorSelectorProps> = ({
           onClick={onAddNewAuthor}
           className="px-4 py-3 bg-primary text-white rounded-lg hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-colors duration-200 whitespace-nowrap"
         >
-          {locale === 'ar' ? '+ إضافة جديد' : '+ Add New'}
+          {locale === 'ar' ? '+ \u0625\u0636\u0627\u0641\u0629 \u062c\u062f\u064a\u062f' : '+ Add New'}
         </button>
       </div>
 
@@ -194,7 +201,7 @@ const AuthorSelector: React.FC<AuthorSelectorProps> = ({
                     onClick={() => onEditAuthor(selectedAuthor)}
                     className="text-sm text-primary hover:text-primary-dark font-medium"
                   >
-                    {locale === 'ar' ? 'تعديل' : 'Edit'}
+                    {locale === 'ar' ? '\u062a\u0639\u062f\u064a\u0644' : 'Edit'}
                   </button>
                 )}
               </div>
@@ -207,14 +214,14 @@ const AuthorSelector: React.FC<AuthorSelectorProps> = ({
       {authors.length === 0 && (
         <div className="text-center py-4 px-3 bg-yellow-50 border border-yellow-200 rounded-lg">
           <div className="text-sm text-yellow-800 mb-2">
-            {locale === 'ar' ? 'لا يوجد مؤلفون متاحون' : 'No authors available'}
+            {locale === 'ar' ? '\u0644\u0627 \u064a\u0648\u062c\u062f \u0645\u0624\u0644\u0641\u0648\u0646 \u0645\u062a\u0627\u062d\u0648\u0646' : 'No authors available'}
           </div>
           <button
             type="button"
             onClick={onAddNewAuthor}
             className="text-sm text-primary hover:text-primary-dark font-medium"
           >
-            {locale === 'ar' ? 'إنشاء أول مؤلف' : 'Create first author'}
+            {locale === 'ar' ? '\u0625\u0646\u0634\u0627\u0621 \u0623\u0648\u0644 \u0645\u0624\u0644\u0641' : 'Create first author'}
           </button>
         </div>
       )}

@@ -68,7 +68,7 @@ const BlogPostHero: React.FC<BlogPostHeroProps> = ({ post, locale }) => {
   const readingTime = post.readingTime;
 
   return (
-    <div className="relative w-full h-[70vh] min-h-[500px] max-h-[800px] overflow-hidden">
+    <div className="relative w-full min-h-[60vh] md:h-[70vh] md:min-h-[500px] max-h-[800px] overflow-hidden pt-28 md:pt-20">
       {/* Cover Image */}
       <div className="absolute inset-0">
         {coverImage ? (
@@ -109,9 +109,9 @@ const BlogPostHero: React.FC<BlogPostHeroProps> = ({ post, locale }) => {
         <div className="w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
           <div className="text-center">
             {/* Semi-transparent background for text readability */}
-            <div className="inline-block p-8 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 shadow-xl">
+            <div className="inline-block p-4 md:p-8 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 shadow-xl">
               {/* Category Badge */}
-              <div className="mb-8 animate-fade-in-up">
+              <div className="mb-4 md:mb-8 animate-fade-in-up">
                 <span className={`inline-flex items-center px-6 py-3 bg-white/10 backdrop-blur-sm rounded-full text-sm font-semibold text-white border border-white/20 shadow-lg ${locale === 'ar' ? 'space-x-reverse' : ''}`}>
                   <svg className={`w-4 h-4 ${locale === 'ar' ? 'ml-2' : 'mr-2'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
@@ -121,7 +121,7 @@ const BlogPostHero: React.FC<BlogPostHeroProps> = ({ post, locale }) => {
               </div>
 
               {/* Title */}
-              <h1 className={`text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-white mb-8 ${locale === 'ar' ? 'leading-loose' : 'leading-tight'} drop-shadow-2xl animate-fade-in-up animation-delay-200`}>
+              <h1 className={`text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-white mb-4 md:mb-8 ${locale === 'ar' ? 'leading-loose' : 'leading-tight'} drop-shadow-2xl animate-fade-in-up animation-delay-200`}>
                 <span className="block bg-gradient-to-r from-white to-gray-100 bg-clip-text text-transparent pb-2">
                   {title}
                 </span>
@@ -129,7 +129,7 @@ const BlogPostHero: React.FC<BlogPostHeroProps> = ({ post, locale }) => {
 
               {/* Excerpt */}
               {excerpt && (
-                <p className="text-xl md:text-2xl text-white/95 max-w-4xl mx-auto leading-relaxed drop-shadow-lg animate-fade-in-up animation-delay-300">
+                <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-white/95 max-w-4xl mx-auto leading-relaxed drop-shadow-lg animate-fade-in-up animation-delay-300">
                   {excerpt}
                 </p>
               )}
@@ -154,7 +154,7 @@ const BlogPostHero: React.FC<BlogPostHeroProps> = ({ post, locale }) => {
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    <span>{readingTime} {locale === 'ar' ? 'دقيقة قراءة' : 'min read'}</span>
+                    <span>{readingTime} {locale === 'ar' ? 'دقائق قراءة' : 'min read'}</span>
                   </div>
                 )}
               </div>

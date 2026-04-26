@@ -81,6 +81,7 @@ export default function NewBlogPost() {
     try {
       // Transform BlogForm data to match the expected API structure
       const blogData = {
+        slug: data.slug || '',
         title: {
           en: data.title?.en || '',
           ar: data.title?.ar || ''
