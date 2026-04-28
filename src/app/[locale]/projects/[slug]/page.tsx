@@ -3,6 +3,10 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import EditorRenderer from '../../../../../components/editor/SimpleEditorRenderer';
 
+// Disable caching for project pages to ensure updates are visible immediately
+export const revalidate = 0;
+export const dynamic = 'force-dynamic';
+
 // Project interface matching API response
 interface Project {
   id: number;
@@ -62,7 +66,7 @@ export async function generateMetadata({ params }: ProjectPageProps): Promise<Me
   // Fetch project from API
   const baseUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000/api'}`;
   const response = await fetch(`${baseUrl}/projects/${slug}/`, {
-    next: { revalidate: 3600 } // Cache for 1 hour
+    cache: 'no-store'
   });
   
   if (!response.ok) {
@@ -128,7 +132,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
   // Fetch project from API
   const baseUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000/api'}`;
   const response = await fetch(`${baseUrl}/projects/${slug}/`, {
-    next: { revalidate: 3600 } // Cache for 1 hour
+    cache: 'no-store'
   });
 
   // Handle 404

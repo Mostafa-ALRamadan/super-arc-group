@@ -2,7 +2,10 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { companiesService } from '../../../../services/entities/companies.service';
-import { linksService } from '../../../../services/entities/links.service';
+
+// Disable caching for company pages to ensure updates are visible immediately
+export const revalidate = 0;
+export const dynamic = 'force-dynamic';
 import CompanyHero from '../../../../../components/companies/CompanyHero';
 import EmployeesGrid from '../../../../../components/companies/EmployeesGrid';
 // import CompanyProjects from '../../../../../components/companies/CompanyProjects';
