@@ -2,14 +2,15 @@ import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import { blogService } from '../../../../services/content/blog.service';
 import BlogPostHero from '../../../../../components/blog/BlogPostHero';
-
-// Disable caching for blog post pages to ensure updates are visible immediately
-export const revalidate = 0;
-export const dynamic = 'force-dynamic';
 import EditorRenderer from '../../../../../components/editor/SimpleEditorRenderer';
 import RelatedPosts from '../../../../../components/blog/RelatedPosts';
 import ShareButtons from '../../../../../components/blog/ShareButtons';
 import Link from 'next/link';
+
+
+// Disable caching for blog post pages to ensure updates are visible immediately
+export const revalidate = 0;
+export const dynamic = 'force-dynamic';
 
 interface BlogPostPageProps {
   params: Promise<{

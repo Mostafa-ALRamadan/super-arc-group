@@ -233,22 +233,16 @@ export default function Companies() {
                     } p-4 sm:p-6 md:p-8 w-72 sm:w-80 md:w-96`}>
                       <div className="relative z-10">
                         <div className="relative mb-6">
-                          <div className={`w-20 h-20 sm:w-24 sm:h-24 md:w-32 md:h-32 mx-auto rounded-2xl flex items-center justify-center transition-all duration-300 ${
-                            isActive 
-                              ? 'bg-gradient-to-br from-green-800 via-green-700 to-green-800 shadow-xl transform scale-105' 
-                              : 'bg-gradient-to-br from-green-700/60 to-green-800/60'
-                          }`}>
-                            <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 bg-gradient-to-br from-white to-green-900/20 rounded-xl shadow-inner flex items-center justify-center overflow-hidden">
+                          <div className="w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 mx-auto flex items-center justify-center">
                               {company.image && (
                               <img
                                 src={company.image.url}
                                 alt={locale === 'ar' ? company.image.alt_ar : company.image.alt_en}
-                                className={`w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 object-contain transition-all duration-300 ${
+                                className={`w-20 h-20 sm:w-28 sm:h-28 md:w-36 md:h-36 object-contain transition-all duration-300 ${
                                   isActive ? 'scale-110' : 'scale-100'
                                 }`}
                               />
                             )}
-                            </div>
                           </div>
                           
                           <div className={`absolute -bottom-2 left-1/2 transform -translate-x-1/2 text-white font-bold px-4 py-2 rounded-full shadow-xl transition-all duration-300 ${
